@@ -10,7 +10,6 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <assert.h>
 
 typedef int8_t  Int8;
 typedef int16_t Int16;
@@ -63,7 +62,7 @@ void app_clear(color_t color);
 void app_draw(mesh_t* mesh);
 void app_render(void);
 
-mesh_t* mesh_create(const vertex_t* vertices, uInt32 vertex_count);
+mesh_t* mesh_create(const vertex_t* vertices, uInt32 count);
 void    mesh_destroy(mesh_t* mesh);
 
 

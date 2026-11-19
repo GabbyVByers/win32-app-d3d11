@@ -41,35 +41,35 @@
 #ifndef ASSERT_PANIC
   #ifdef RELEASE
     #ifndef EXIT_TYPE
-      #define EXIT_TYPE exit(EXIT_FAILURE)
+      #define EXIT_TYPE exit(EXIT_FAILURE);
     #endif /* EXIT_TYPE */
   #endif /* RELEASE */
   #ifdef DEBUG
     #ifndef EXIT_TYPE
-      #define EXIT_TYPE __debugbreak()
+      #define EXIT_TYPE __debugbreak(); abort();
     #endif /* EXIT_TYPE */
   #endif /* DEBUG */
-  #define ASSERT_PANIC(x, ...)               \
-  do { if (!(x)) {                           \
-    int l = __LINE__;                        \
-    const char *f = strrchr(__FILE__, '\\'); \
-    f = f ? f + 1 : __FILE__;                \
-    fprintf(stderr, ">> PANIC!!!\n");        \
-    fprintf(stderr, ">> FILE: %s\n", f);     \
-    fprintf(stderr, ">> LINE: %d\n",l);      \
-    fprintf(stderr, ">> ERROR: '");          \
-    fprintf(stderr, __VA_ARGS__);            \
-    fprintf(stderr, "'\n");                  \
-    EXIT_TYPE;                               \
+  #define ASSERT_PANIC(x, ...)                 \
+  do { if (!(x)) {                             \
+    int l__ = __LINE__;                        \
+    const char *f__ = strrchr(__FILE__, '\\'); \
+    f__ = f__ ? f__ + 1 : __FILE__;            \
+    fprintf(stderr, ">> PANIC!!!\n");          \
+    fprintf(stderr, ">> FILE: %s\n", f__);     \
+    fprintf(stderr, ">> LINE: %d\n", l__);     \
+    fprintf(stderr, ">> ERROR: '");            \
+    fprintf(stderr, __VA_ARGS__);              \
+    fprintf(stderr, "'\n");                    \
+    EXIT_TYPE                                  \
   } } while (0)
-#endif /* PANIC_ASSERT */
+#endif /* ASSERT_PANIC */
 
 #ifndef CHECK_HRESULT
-  #define CHECK_HRESULT(hr, fn)                               \
-  do {                                                        \
-    bool x = FAILED(hr);                                      \
-    ULONG c = (ULONG)(hr);                                    \
-    ASSERT_PANIC(!x, "%s failed! (HRESULT: 0x%08lX)", fn, c); \
+  #define CHECK_HRESULT(hr, fn)                                   \
+  do {                                                            \
+    bool x__ = FAILED(hr);                                        \
+    ULONG c__ = (ULONG)(hr);                                      \
+    ASSERT_PANIC(!x__, "%s failed! (HRESULT: 0x%08lX)", fn, c__); \
   } while (0)
 #endif /* CHECK_HRESULT */
 
@@ -118,7 +118,7 @@ void app_init(const wchar_t* title, int width, int height)
 	 *   Window
 	 */
 
-	ASSERT_PANIC(!g_active_window, "app_init() failed!");
+	ASSERT_PANIC(!g_active_window, "app_init() failed! (already init)");
 	g_active_window = true;
 
 	g_hinstance = GetModuleHandleW(NULL);
@@ -238,10 +238,10 @@ void app_init(const wchar_t* title, int width, int height)
 	ID3DBlob* ps_blob = compile_shader(L"HLSL/shader.hlsl", "ps_main", "ps_5_0");
 
 	result = ID3D11Device_CreateVertexShader(g_device, ID3D10Blob_GetBufferPointer(vs_blob), ID3D10Blob_GetBufferSize(vs_blob), NULL, &g_vertex_shader);
-	CHECK_HRESULT(result, "ID3D11Device_CreateVertexShader");
+	CHECK_HRESULT(result, "ID3D11Device_CreateVertexShader()");
 
 	result = ID3D11Device_CreatePixelShader(g_device, ID3D10Blob_GetBufferPointer(ps_blob), ID3D10Blob_GetBufferSize(ps_blob), NULL, &g_pixel_shader);
-	CHECK_HRESULT(result, "ID3D11Device_CreatePixelShader");
+	CHECK_HRESULT(result, "ID3D11Device_CreatePixelShader()");
 
 	D3D11_INPUT_ELEMENT_DESC input_desc[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(vertex_t, xpos),  D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -256,7 +256,7 @@ void app_init(const wchar_t* title, int width, int height)
 		&g_input_layout
 	);
 
-	CHECK_HRESULT(result, "ID3D11Device_CreateInputLayout");
+	CHECK_HRESULT(result, "ID3D11Device_CreateInputLayout()");
 
 	ID3D10Blob_Release(vs_blob);
 	ID3D10Blob_Release(ps_blob);
@@ -273,7 +273,7 @@ void app_init(const wchar_t* title, int width, int height)
 
 void app_quit(void)
 {
-	ASSERT_PANIC(g_active_window, "app_quit() failed!");
+	ASSERT_PANIC(g_active_window, "app_quit() failed! (quit called before init)");
 	g_active_window = false;
 
 	ID3D11DeviceContext_ClearState(g_context);
@@ -309,6 +309,9 @@ void app_quit(void)
 	g_resize_pending = false;
 	g_screen_width   = 0u;
 	g_screen_height  = 0u;
+
+	MSG message;
+	while (PeekMessageW(&message, NULL, 0, 0, PM_REMOVE)) {}
 }
 
 bool app_closed(void)
@@ -342,7 +345,7 @@ bool app_minimized(void)
 
 void app_clear(color_t color)
 {
-	ASSERT_PANIC(!g_active_frame, "app_clear() failed!");
+	ASSERT_PANIC(!g_active_frame, "app_clear() failed! (frame already active)");
 	g_active_frame = true;
 
 	if (g_resize_pending) {
@@ -370,8 +373,8 @@ void app_clear(color_t color)
 
 void app_draw(mesh_t* mesh)
 {
-	ASSERT_PANIC(mesh, "app_draw() failed!");
-	ASSERT_PANIC(g_active_frame, "app_draw() failed!");
+	ASSERT_PANIC(mesh, "app_draw() failed! (mesh is null)");
+	ASSERT_PANIC(g_active_frame, "app_draw() failed! (no active frame)");
 
 	UINT stride = sizeof(vertex_t);
 	UINT offset = 0;
@@ -391,7 +394,7 @@ void app_draw(mesh_t* mesh)
 
 void app_render(void)
 {
-	ASSERT_PANIC(g_active_frame, "app_render() failed!");
+	ASSERT_PANIC(g_active_frame, "app_render() failed! (no active frame)");
 	g_active_frame = false;
 
 	HRESULT result = IDXGISwapChain1_Present(g_swapchain, 1, 0);
@@ -402,12 +405,16 @@ void app_render(void)
  *   ------------ MESH ------------
  */
 
-mesh_t* mesh_create(const vertex_t* vertices, uInt32 vertex_count)
+mesh_t* mesh_create(const vertex_t* vertices, uInt32 count)
 {
+	ASSERT_PANIC(vertices, "mesh_create() failed! (vertices is null)");
+	ASSERT_PANIC(count,    "mesh_create() failed! (zero vertex count)");
+
 	mesh_t* mesh = calloc(1, sizeof(mesh_t));
+	ASSERT_PANIC(mesh, "mesh_create() failed! (out of memory)");
 
 	D3D11_BUFFER_DESC vertex_buffer_desc = {
-		.ByteWidth = sizeof(vertex_t) * vertex_count,
+		.ByteWidth = sizeof(vertex_t) * count,
 		.Usage     = D3D11_USAGE_IMMUTABLE,
 		.BindFlags = D3D11_BIND_VERTEX_BUFFER,
 	};
@@ -418,7 +425,7 @@ mesh_t* mesh_create(const vertex_t* vertices, uInt32 vertex_count)
 	CHECK_HRESULT(result, "ID3D11Device_CreateBuffer()");
 
 	mesh->vertex_buffer = vertex_buffer;
-	mesh->vertex_count  = vertex_count;
+	mesh->vertex_count  = count;
 	
 	return mesh;
 }
@@ -479,7 +486,7 @@ static ID3DBlob* compile_shader(const wchar_t* path, const char* entry, const ch
 		ID3D10Blob_Release(errors);
 	}
 
-	CHECK_HRESULT(result, "D3DCompileFromFile");
+	CHECK_HRESULT(result, "D3DCompileFromFile()");
 
 	return code;
 }

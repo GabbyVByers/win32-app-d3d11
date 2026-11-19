@@ -15,11 +15,11 @@ int main(void)
 		{ .xpos =  50.0f, .ypos = 400.0f, .color = COLOR_BLUE  },
 	};
 
-	uInt32 vertex_count =
+	uInt32 count =
 		sizeof(vertices) /
 		sizeof(vertices[0]);
 
-	mesh_t* mesh = mesh_create(vertices, vertex_count);
+	mesh_t* mesh = mesh_create(vertices, count);
 
 	while (true) {
 		if (app_closed())
