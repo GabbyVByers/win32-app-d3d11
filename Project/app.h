@@ -16,10 +16,10 @@
 (((float)(r)) / 255.f),        \
 (((float)(g)) / 255.f),        \
 (((float)(b)) / 255.f),        \
-(((float)(a)) / 255.f)         \
-})
+(((float)(a)) / 255.f) })
 
 #define COLOR_WHITE  COLOR_RGBA(255, 255, 255, 255)
+#define COLOR_GRAY   COLOR_RGBA(127, 127, 127, 255)
 #define COLOR_BLACK  COLOR_RGBA(  0,   0,   0, 255)
 #define COLOR_RED    COLOR_RGBA(255,   0,   0, 255)
 #define COLOR_GREEN  COLOR_RGBA(  0, 255,   0, 255)
@@ -54,7 +54,6 @@ void app_render(void);
 
 mesh_t* mesh_create(const vertex_t* vertices, size_t count);
 void    mesh_destroy(mesh_t* mesh);
-
 
 #endif /* APP_HEADER_GUARD */
 

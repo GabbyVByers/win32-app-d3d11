@@ -49,27 +49,26 @@
       #define EXIT_TYPE __debugbreak(); abort();
     #endif /* EXIT_TYPE */
   #endif /* DEBUG */
-  #define ASSERT_PANIC(x, ...)                 \
-  do { if (!(x)) {                             \
-    int l__ = __LINE__;                        \
-    const char *f__ = strrchr(__FILE__, '\\'); \
-    f__ = f__ ? f__ + 1 : __FILE__;            \
-    fprintf(stderr, ">> PANIC!!!\n");          \
-    fprintf(stderr, ">> FILE: %s\n", f__);     \
-    fprintf(stderr, ">> LINE: %d\n", l__);     \
-    fprintf(stderr, ">> ERROR: '");            \
-    fprintf(stderr, __VA_ARGS__);              \
-    fprintf(stderr, "'\n");                    \
-    EXIT_TYPE                                  \
+  #define ASSERT_PANIC(x, ...)                   \
+  do { if (!(x)) {                               \
+    fprintf(stderr, ">> PANIC!!!\n");            \
+    fprintf(stderr, ">> FILE: %s\n",             \
+    (strrchr(__FILE__, '\\')) ?                  \
+    (strrchr(__FILE__, '\\') + 1) : (__FILE__)); \
+    fprintf(stderr, ">> LINE: %d\n", __LINE__);  \
+    fprintf(stderr, ">> ERROR: ");               \
+    fprintf(stderr, __VA_ARGS__);                \
+    fprintf(stderr, "\n");                       \
+    EXIT_TYPE                                    \
   } } while (0)
 #endif /* ASSERT_PANIC */
 
 #ifndef CHECK_HRESULT
-  #define CHECK_HRESULT(hr, fn)                                   \
-  do {                                                            \
-    bool x__ = FAILED(hr);                                        \
-    ULONG c__ = (ULONG)(hr);                                      \
-    ASSERT_PANIC(!x__, "%s failed! (HRESULT: 0x%08lX)", fn, c__); \
+  #define CHECK_HRESULT(hr, fn)      \
+  do {                               \
+    ASSERT_PANIC(!(FAILED(hr)),      \
+    "%s failed! (HRESULT: 0x%08lX)", \
+    fn, (unsigned long)(hr));        \
   } while (0)
 #endif /* CHECK_HRESULT */
 
@@ -175,6 +174,7 @@ void app_init(const wchar_t* title, int width, int height)
 	);
 
 	CHECK_HRESULT(result, "D3D11CreateDevice()");
+	CHECK_HRESULT(-1, "D3D11CreateDevice()");
 
 	#ifdef DEBUG
 	ID3D11InfoQueue* info = NULL;
