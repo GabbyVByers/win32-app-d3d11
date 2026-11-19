@@ -15,7 +15,7 @@ int main(void)
 		{ .xpos =  50.0f, .ypos = 400.0f, .color = COLOR_BLUE  },
 	};
 
-	uInt32 count =
+	size_t count =
 		sizeof(vertices) /
 		sizeof(vertices[0]);
 

@@ -80,7 +80,7 @@ typedef struct constants_t {
 
 typedef struct mesh_t {
 	ID3D11Buffer* vertex_buffer;
-	uInt32 vertex_count;
+	size_t vertex_count;
 } mesh_t;
 
 static bool g_active_window = false;
@@ -109,7 +109,7 @@ static ID3DBlob* compile_shader(const wchar_t*, const char*, const char*);
 static void create_render_target(void);
 
 /*
- *   ----------- WINDOW -----------
+ *   ------------ APP -------------
  */
 
 void app_init(const wchar_t* title, int width, int height)
@@ -405,7 +405,7 @@ void app_render(void)
  *   ------------ MESH ------------
  */
 
-mesh_t* mesh_create(const vertex_t* vertices, uInt32 count)
+mesh_t* mesh_create(const vertex_t* vertices, size_t count)
 {
 	ASSERT_PANIC(vertices, "mesh_create() failed! (vertices is null)");
 	ASSERT_PANIC(count,    "mesh_create() failed! (zero vertex count)");

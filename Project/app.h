@@ -11,16 +11,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-typedef int8_t  Int8;
-typedef int16_t Int16;
-typedef int32_t Int32;
-typedef int64_t Int64;
-
-typedef uint8_t  uInt8;
-typedef uint16_t uInt16;
-typedef uint32_t uInt32;
-typedef uint64_t uInt64;
-
 #define COLOR_RGBA(r, g, b, a) \
 ((color_t) {                   \
 (((float)(r)) / 255.f),        \
@@ -62,7 +52,7 @@ void app_clear(color_t color);
 void app_draw(mesh_t* mesh);
 void app_render(void);
 
-mesh_t* mesh_create(const vertex_t* vertices, uInt32 count);
+mesh_t* mesh_create(const vertex_t* vertices, size_t count);
 void    mesh_destroy(mesh_t* mesh);
 
 
