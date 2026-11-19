@@ -46,7 +46,7 @@
   #endif /* RELEASE */
   #ifdef DEBUG
     #ifndef EXIT_TYPE
-      #define EXIT_TYPE __debugbreak(); abort();
+      #define EXIT_TYPE __debugbreak();
     #endif /* EXIT_TYPE */
   #endif /* DEBUG */
   #define ASSERT_PANIC(x, ...)                   \
