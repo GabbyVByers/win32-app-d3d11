@@ -53,13 +53,19 @@ typedef struct vertex_t {
 	color_t color;
 } vertex_t;
 
+typedef struct mesh_t mesh_t;
+
 void app_init(const wchar_t* title, int width, int height);
 void app_quit(void);
 bool app_closed(void);
 bool app_minimized(void);
 void app_clear(color_t color);
-void app_draw(vertex_t* vertices, uInt32 vertex_count);
+void app_draw(mesh_t* mesh);
 void app_render(void);
+
+mesh_t* mesh_create(const vertex_t* vertices, uInt32 vertex_count);
+void    mesh_destroy(mesh_t* mesh);
+
 
 #endif /* APP_HEADER_GUARD */
 

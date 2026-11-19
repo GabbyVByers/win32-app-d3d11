@@ -5,30 +5,35 @@
 
 #include "app.h"
 
-#define ARRAY_SIZE(x) (sizeof((x)) / sizeof((x)[0]))
-
 int main(void)
 {
 	app_init(L"My Window", 500, 500);
 
 	vertex_t vertices[] = {
-		{ .xpos = 0, .ypos = 0, .color = COLOR_RED   },
-		{ .xpos = 0, .ypos = 0, .color = COLOR_GREEN },
-		{ .xpos = 0, .ypos = 0, .color = COLOR_BLUE  },
+		{ .xpos = 250.0f, .ypos = 100.0f, .color = COLOR_RED   },
+		{ .xpos = 450.0f, .ypos = 400.0f, .color = COLOR_GREEN },
+		{ .xpos =  50.0f, .ypos = 400.0f, .color = COLOR_BLUE  },
 	};
+
+	uInt32 vertex_count =
+		sizeof(vertices) /
+		sizeof(vertices[0]);
+
+	mesh_t* mesh = mesh_create(vertices, vertex_count);
 
 	while (true) {
 		if (app_closed())
 			break;
-
+		
 		if (app_minimized())
 			continue;
 
-		app_clear(COLOR_PURPLE);
-		app_draw(vertices, ARRAY_SIZE(vertices));
+		app_clear(COLOR_RGBA(30, 15, 70, 255));
+		app_draw(mesh);
 		app_render();
 	}
 
+	mesh_destroy(mesh);
 	app_quit();
 }
 
