@@ -11,6 +11,7 @@
 #include <d3d11.h>
 #include <dxgi1_2.h>
 #include <stddef.h>
+#include <string.h>
 #include <d3dcompiler.h>
 
 #pragma comment(lib, "user32.lib")
@@ -117,11 +118,7 @@ void app_init(const wchar_t* title, int width, int height)
 	 *   Window
 	 */
 
-	if (g_active_window) {
-		fprintf(stderr, "app_init() failed!\n");
-		exit(EXIT_FAILURE);
-	}
-
+	ASSERT_PANIC(!g_active_window, "app_init() failed!");
 	g_active_window = true;
 
 	g_hinstance = GetModuleHandleW(NULL);
@@ -134,18 +131,15 @@ void app_init(const wchar_t* title, int width, int height)
 		.lpszClassName = WINDOW_CLASS_NAME,
 	};
 
-	if (!RegisterClassExW(&window_class))
-	{
-		fprintf(stderr, "RegisterClassExW() failed! (error: %lu)\n", GetLastError());
-		exit(EXIT_FAILURE);
-	}
+	ATOM atom = RegisterClassExW(&window_class);
+	DWORD error = GetLastError();
+	ASSERT_PANIC(atom, "RegisterClassExW() failed! (error: %lu)", error);
 
 	RECT rect = { 0, 0, (long)width, (long)height };
 	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
 	width = (int)(rect.right - rect.left);
 	height = (int)(rect.bottom - rect.top);
 
-	assert(!g_hwnd);
 	g_hwnd = CreateWindowExW(0,
 		WINDOW_CLASS_NAME, title,
 		WS_OVERLAPPEDWINDOW,
@@ -156,10 +150,8 @@ void app_init(const wchar_t* title, int width, int height)
 		g_hinstance, NULL
 	);
 
-	if (!g_hwnd) {
-		fprintf(stderr, "CreateWindowExW() failed! (error: %lu)\n", GetLastError());
-		exit(EXIT_FAILURE);
-	}
+	error = GetLastError();
+	ASSERT_PANIC(g_hwnd, "CreateWindowExW() failed! (error: %lu)", error);
 
 	ShowWindow(g_hwnd, SW_SHOWDEFAULT);
 
@@ -247,16 +239,10 @@ void app_init(const wchar_t* title, int width, int height)
 	ID3DBlob* ps_blob = compile_shader(L"HLSL/shader.hlsl", "ps_main", "ps_5_0");
 
 	result = ID3D11Device_CreateVertexShader(g_device, ID3D10Blob_GetBufferPointer(vs_blob), ID3D10Blob_GetBufferSize(vs_blob), NULL, &g_vertex_shader);
-	if (FAILED(result)) {
-		fprintf(stderr, "ID3D11Device_CreateVertexShader() failed! (error: 0x%08lX)\n", (unsigned long)result);
-		exit(EXIT_FAILURE);
-	}
+	CHECK_HRESULT(result, "ID3D11Device_CreateVertexShader");
 
 	result = ID3D11Device_CreatePixelShader(g_device, ID3D10Blob_GetBufferPointer(ps_blob), ID3D10Blob_GetBufferSize(ps_blob), NULL, &g_pixel_shader);
-	if (FAILED(result)) {
-		fprintf(stderr, "ID3D11Device_CreatePixelShader() failed! (error: 0x%08lX)\n", (unsigned long)result);
-		exit(EXIT_FAILURE);
-	}
+	CHECK_HRESULT(result, "ID3D11Device_CreatePixelShader");
 
 	D3D11_INPUT_ELEMENT_DESC input_desc[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(vertex_t, xpos),  D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -270,11 +256,8 @@ void app_init(const wchar_t* title, int width, int height)
 		ID3D10Blob_GetBufferSize(vs_blob),
 		&g_input_layout
 	);
-	
-	if (FAILED(result)) {
-		fprintf(stderr, "ID3D11Device_CreateInputLayout() failed! (error: 0x%08lX)\n", (unsigned long)result);
-		exit(EXIT_FAILURE);
-	}
+
+	CHECK_HRESULT(result, ID3D11Device_CreateInputLayout);
 
 	ID3D10Blob_Release(vs_blob);
 	ID3D10Blob_Release(ps_blob);
@@ -291,11 +274,7 @@ void app_init(const wchar_t* title, int width, int height)
 
 void app_quit(void)
 {
-	if (!g_active_window) {
-		fprintf(stderr, "app_quit() failed!\n");
-		exit(EXIT_FAILURE);
-	}
-
+	ASSERT_PANIC(g_active_window, "app_quit() failed!");
 	g_active_window = false;
 
 	ID3D11DeviceContext_ClearState(g_context);
@@ -364,11 +343,7 @@ bool app_minimized(void)
 
 void app_clear(color_t color)
 {
-	if (g_active_frame) {
-		fprintf(stderr, "app_clear() failed!\n");
-		exit(EXIT_FAILURE);
-	}
-
+	ASSERT_PANIC(!g_active_frame, "app_clear() failed!");
 	g_active_frame = true;
 
 	if (g_resize_pending) {
@@ -396,10 +371,8 @@ void app_clear(color_t color)
 
 void app_draw(mesh_t* mesh)
 {
-	if (!mesh || !g_active_frame) {
-		fprintf(stderr, "app_draw() failed!\n");
-		exit(EXIT_FAILURE);
-	}
+	ASSERT_PANIC(mesh, "app_draw() failed!");
+	ASSERT_PANIC(g_active_frame, "app_draw() failed!");
 
 	UINT stride = sizeof(vertex_t);
 	UINT offset = 0;
@@ -419,11 +392,7 @@ void app_draw(mesh_t* mesh)
 
 void app_render(void)
 {
-	if (!g_active_frame) {
-		fprintf(stderr, "app_render() failed!\n");
-		exit(EXIT_FAILURE);
-	}
-
+	ASSERT_PANIC(g_active_frame, "app_render() failed!");
 	g_active_frame = false;
 
 	HRESULT result = IDXGISwapChain1_Present(g_swapchain, 1, 0);
@@ -437,11 +406,6 @@ void app_render(void)
 mesh_t* mesh_create(const vertex_t* vertices, uInt32 vertex_count)
 {
 	mesh_t* mesh = calloc(1, sizeof(mesh_t));
-
-	if (!mesh) {
-		fprintf(stderr, "mesh_create() failed!\n");
-		exit(EXIT_FAILURE);
-	}
 
 	D3D11_BUFFER_DESC vertex_buffer_desc = {
 		.ByteWidth = sizeof(vertex_t) * vertex_count,
@@ -516,10 +480,7 @@ static ID3DBlob* compile_shader(const wchar_t* path, const char* entry, const ch
 		ID3D10Blob_Release(errors);
 	}
 
-	if (FAILED(result)) {
-		fprintf(stderr, "D3DCompileFromFile('%ls', %s) failed! (error: 0x%08lX)\n", path, entry, (unsigned long)result);
-		exit(EXIT_FAILURE);
-	}
+	CHECK_HRESULT(result, "D3DCompileFromFile");
 
 	return code;
 }
