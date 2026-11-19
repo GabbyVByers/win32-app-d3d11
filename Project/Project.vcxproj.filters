@@ -18,12 +18,18 @@
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="app.c">
+    <ClCompile Include="rose\app.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rose\png.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="app.h">
+    <ClInclude Include="rose\app.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rose\png.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,37 +3,37 @@
  *   Source [main.c]
  */
 
-#include "app.h"
+#include "rose/app.h"
 
 int main(void)
 {
-	app_init(L"My Window", 500, 500);
+	ROSE_Init(L"My Window", 500, 500);
 
 	vertex_t vertices[] = {
-		{ .xpos = 250.0f, .ypos = 100.0f, .color = COLOR_RED   },
-		{ .xpos = 450.0f, .ypos = 400.0f, .color = COLOR_GREEN },
-		{ .xpos =  50.0f, .ypos = 400.0f, .color = COLOR_BLUE  },
+		{ .xpos = 250.0f, .ypos = 100.0f, .color = ROSE_COLOR_RED   },
+		{ .xpos = 430.0f, .ypos = 400.0f, .color = ROSE_COLOR_GREEN },
+		{ .xpos =  70.0f, .ypos = 400.0f, .color = ROSE_COLOR_BLUE  },
 	};
 
 	size_t count =
 		sizeof(vertices) /
 		sizeof(vertices[0]);
 
-	mesh_t* mesh = mesh_create(vertices, count);
+	ROSE_Mesh* mesh = ROSE_MeshCreate(vertices, count);
 
 	while (true) {
-		if (app_closed())
+		if (ROSE_WindowClosed())
 			break;
 		
-		if (app_minimized())
+		if (ROSE_WindowMinimized())
 			continue;
 
-		app_clear(COLOR_RGBA(30, 15, 70, 255));
-		app_draw(mesh);
-		app_render();
+		ROSE_FrameClear(COLOR_RGBA(30, 15, 70, 255));
+		ROSE_MeshDraw(mesh);
+		ROSE_FrameRender();
 	}
 
-	mesh_destroy(mesh);
-	app_quit();
+	ROSE_MeshDestroy(mesh);
+	ROSE_Quit();
 }
 

@@ -21,66 +21,17 @@
 
 #define WINDOW_CLASS_NAME L"WindowClassNameDirect3D11"
 
-#ifndef NDEBUG
-  #ifndef DEBUG
-    #define DEBUG
-  #endif /* DEBUG */
-#else
-  #ifndef RELEASE
-    #define RELEASE
-  #endif /* RELEASE */
-#endif
 
-#ifdef DEBUG
-  #ifdef RELEASE
-    #warning("D/R CONFLICT")
-    #undef RELEASE
-  #endif /* RELEASE */
-#endif /* DEBUG */
 
-#ifndef ASSERT_PANIC
-  #ifdef RELEASE
-    #ifndef EXIT_TYPE
-      #define EXIT_TYPE exit(EXIT_FAILURE);
-    #endif /* EXIT_TYPE */
-  #endif /* RELEASE */
-  #ifdef DEBUG
-    #ifndef EXIT_TYPE
-      #define EXIT_TYPE __debugbreak();
-    #endif /* EXIT_TYPE */
-  #endif /* DEBUG */
-  #define ASSERT_PANIC(x, ...)                   \
-  do { if (!(x)) {                               \
-    fprintf(stderr, ">> PANIC!!!\n");            \
-    fprintf(stderr, ">> FILE: %s\n",             \
-    (strrchr(__FILE__, '\\')) ?                  \
-    (strrchr(__FILE__, '\\') + 1) : (__FILE__)); \
-    fprintf(stderr, ">> LINE: %d\n", __LINE__);  \
-    fprintf(stderr, ">> ERROR: ");               \
-    fprintf(stderr, __VA_ARGS__);                \
-    fprintf(stderr, "\n");                       \
-    EXIT_TYPE                                    \
-  } } while (0)
-#endif /* ASSERT_PANIC */
-
-#ifndef CHECK_HRESULT
-  #define CHECK_HRESULT(hr, fn)      \
-  do {                               \
-    ASSERT_PANIC(!(FAILED(hr)),      \
-    "%s failed! (HRESULT: 0x%08lX)", \
-    fn, (unsigned long)(hr));        \
-  } while (0)
-#endif /* CHECK_HRESULT */
+typedef struct ROSE_Mesh {
+	ID3D11Buffer* vertices;
+	size_t count;
+} ROSE_Mesh;
 
 typedef struct constants_t {
 	float screen_size[2];
 	float _padding[2];
 } constants_t;
-
-typedef struct mesh_t {
-	ID3D11Buffer* vertex_buffer;
-	size_t vertex_count;
-} mesh_t;
 
 static bool g_active_window = false;
 static bool g_active_frame  = false;
@@ -111,13 +62,13 @@ static void create_render_target(void);
  *   ------------ APP -------------
  */
 
-void app_init(const wchar_t* title, int width, int height)
+void ROSE_Init(const wchar_t* title, int width, int height)
 {
 	/*
 	 *   Window
 	 */
 
-	ASSERT_PANIC(!g_active_window, "app_init() failed! (already init)");
+	ASSERT_PANIC(!g_active_window, "ROSE_Init() failed! (already init)");
 	g_active_window = true;
 
 	g_hinstance = GetModuleHandleW(NULL);
@@ -204,7 +155,7 @@ void app_init(const wchar_t* title, int width, int height)
 	DXGI_ADAPTER_DESC description;
 	IDXGIAdapter_GetDesc(adapter, &description);
 	const wchar_t* device_name = description.Description;
-	fprintf(stdout, "Using GPU Device: (%ls)\n", device_name);
+	fprintf(stdout, "Using GPU Device: %ls\n", device_name);
 	#endif /* DEBUG */
 
 	DXGI_SWAP_CHAIN_DESC1 swapchain_desc = {
@@ -270,9 +221,9 @@ void app_init(const wchar_t* title, int width, int height)
 	CHECK_HRESULT(result, "ID3D11Device_CreateBuffer()");
 }
 
-void app_quit(void)
+void ROSE_Quit(void)
 {
-	ASSERT_PANIC(g_active_window, "app_quit() failed! (quit called before init)");
+	ASSERT_PANIC(g_active_window, "ROSE_Quit() failed! (quit called before init)");
 	g_active_window = false;
 
 	ID3D11DeviceContext_ClearState(g_context);
@@ -313,7 +264,7 @@ void app_quit(void)
 	while (PeekMessageW(&message, NULL, 0, 0, PM_REMOVE)) {}
 }
 
-bool app_closed(void)
+bool ROSE_WindowClosed(void)
 {
 	bool running = true;
 	MSG message;
@@ -330,7 +281,7 @@ bool app_closed(void)
 	return (!running);
 }
 
-bool app_minimized(void)
+bool ROSE_WindowMinimized(void)
 {
 	bool minimized =
 		(g_screen_width  == 0) ||
@@ -342,9 +293,9 @@ bool app_minimized(void)
 	return minimized;
 }
 
-void app_clear(color_t color)
+void ROSE_FrameClear(color_t color)
 {
-	ASSERT_PANIC(!g_active_frame, "app_clear() failed! (frame already active)");
+	ASSERT_PANIC(!g_active_frame, "ROSE_FrameClear() failed! (frame already active)");
 	g_active_frame = true;
 
 	if (g_resize_pending) {
@@ -370,30 +321,9 @@ void app_clear(color_t color)
 	ID3D11DeviceContext_ClearRenderTargetView(g_context, g_render_target, (float*)(&color));
 }
 
-void app_draw(mesh_t* mesh)
+void ROSE_FrameRender(void)
 {
-	ASSERT_PANIC(mesh, "app_draw() failed! (mesh is null)");
-	ASSERT_PANIC(g_active_frame, "app_draw() failed! (no active frame)");
-
-	UINT stride = sizeof(vertex_t);
-	UINT offset = 0;
-	ID3D11DeviceContext_IASetInputLayout(g_context, g_input_layout);
-	ID3D11DeviceContext_IASetVertexBuffers(g_context, 0, 1, &mesh->vertex_buffer, &stride, &offset);
-	ID3D11DeviceContext_IASetPrimitiveTopology(g_context, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	ID3D11DeviceContext_VSSetShader(g_context, g_vertex_shader, NULL, 0);
-	ID3D11DeviceContext_PSSetShader(g_context, g_pixel_shader, NULL, 0);
-
-	constants_t constants = { .screen_size = { g_viewport.Width, g_viewport.Height } };
-	ID3D11DeviceContext_UpdateSubresource(g_context, (ID3D11Resource*)g_constant_buffer, 0, NULL, &constants, 0, 0);
-	ID3D11DeviceContext_VSSetConstantBuffers(g_context, 0, 1, &g_constant_buffer);
-
-	ID3D11DeviceContext_Draw(g_context, mesh->vertex_count, 0);
-}
-
-void app_render(void)
-{
-	ASSERT_PANIC(g_active_frame, "app_render() failed! (no active frame)");
+	ASSERT_PANIC(g_active_frame, "ROSE_FrameRender() failed! (no active frame)");
 	g_active_frame = false;
 
 	HRESULT result = IDXGISwapChain1_Present(g_swapchain, 1, 0);
@@ -404,13 +334,13 @@ void app_render(void)
  *   ------------ MESH ------------
  */
 
-mesh_t* mesh_create(const vertex_t* vertices, size_t count)
+ROSE_Mesh* ROSE_MeshCreate(const vertex_t* vertices, size_t count)
 {
-	ASSERT_PANIC(vertices, "mesh_create() failed! (vertices is null)");
-	ASSERT_PANIC(count,    "mesh_create() failed! (zero vertex count)");
+	ASSERT_PANIC(vertices, "ROSE_MeshCreate() failed! (vertices is null)");
+	ASSERT_PANIC(count,    "ROSE_MeshCreate() failed! (zero vertex count)");
 
-	mesh_t* mesh = calloc(1, sizeof(mesh_t));
-	ASSERT_PANIC(mesh, "mesh_create() failed! (out of memory)");
+	ROSE_Mesh* mesh = calloc(1, sizeof(ROSE_Mesh));
+	ASSERT_PANIC(mesh, "ROSE_MeshCreate() failed! (out of memory)");
 
 	D3D11_BUFFER_DESC vertex_buffer_desc = {
 		.ByteWidth = sizeof(vertex_t) * count,
@@ -418,26 +348,68 @@ mesh_t* mesh_create(const vertex_t* vertices, size_t count)
 		.BindFlags = D3D11_BIND_VERTEX_BUFFER,
 	};
 
+	ID3D11Buffer* buffer = NULL;
 	D3D11_SUBRESOURCE_DATA vertex_data = { .pSysMem = vertices };
-	ID3D11Buffer* vertex_buffer = NULL;
-	HRESULT result = ID3D11Device_CreateBuffer(g_device, &vertex_buffer_desc, &vertex_data, &vertex_buffer);
+	HRESULT result = ID3D11Device_CreateBuffer(g_device, &vertex_buffer_desc, &vertex_data, &buffer);
 	CHECK_HRESULT(result, "ID3D11Device_CreateBuffer()");
 
-	mesh->vertex_buffer = vertex_buffer;
-	mesh->vertex_count  = count;
+	mesh->vertices = buffer;
+	mesh->count  = count;
 	
 	return mesh;
 }
 
-void mesh_destroy(mesh_t* mesh)
+void ROSE_MeshDestroy(ROSE_Mesh* mesh)
 {
 	if (!mesh)
 		return;
 
-	if (mesh->vertex_buffer)
-		ID3D11Buffer_Release(mesh->vertex_buffer);
+	if (mesh->vertices)
+		ID3D11Buffer_Release(mesh->vertices);
 
 	free(mesh);
+}
+
+void ROSE_MeshDraw(ROSE_Mesh* mesh)
+{
+	ASSERT_PANIC(mesh, "ROSE_MeshDraw() failed! (mesh is null)");
+	ASSERT_PANIC(g_active_frame, "ROSE_MeshDraw() failed! (no active frame)");
+
+	UINT stride = sizeof(vertex_t);
+	UINT offset = 0;
+	ID3D11DeviceContext_IASetInputLayout(g_context, g_input_layout);
+	ID3D11DeviceContext_IASetVertexBuffers(g_context, 0, 1, &mesh->vertices, &stride, &offset);
+	ID3D11DeviceContext_IASetPrimitiveTopology(g_context, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	ID3D11DeviceContext_VSSetShader(g_context, g_vertex_shader, NULL, 0);
+	ID3D11DeviceContext_PSSetShader(g_context, g_pixel_shader, NULL, 0);
+
+	constants_t constants = { .screen_size = { g_viewport.Width, g_viewport.Height } };
+	ID3D11DeviceContext_UpdateSubresource(g_context, (ID3D11Resource*)g_constant_buffer, 0, NULL, &constants, 0, 0);
+	ID3D11DeviceContext_VSSetConstantBuffers(g_context, 0, 1, &g_constant_buffer);
+
+	ID3D11DeviceContext_Draw(g_context, mesh->count, 0);
+}
+
+void ROSE_MeshUpdate(ROSE_Mesh* mesh, const vertex_t* vertices, size_t count)
+{
+	ASSERT_PANIC(mesh,     "ROSE_MeshUpdate() failed! (mesh is null)");
+	ASSERT_PANIC(vertices, "ROSE_MeshCreate() failed! (vertices is null)");
+	ASSERT_PANIC(count,    "ROSE_MeshCreate() failed! (zero vertex count)");
+
+	if (mesh->vertices)
+		ID3D11Buffer_Release(mesh->vertices);
+
+	D3D11_BUFFER_DESC vertex_buffer_desc = {
+		.ByteWidth = sizeof(vertex_t) * count,
+		.Usage = D3D11_USAGE_IMMUTABLE,
+		.BindFlags = D3D11_BIND_VERTEX_BUFFER,
+	};
+
+	mesh->vertices = NULL;
+	D3D11_SUBRESOURCE_DATA vertex_data = { .pSysMem = vertices };
+	HRESULT result = ID3D11Device_CreateBuffer(g_device, &vertex_buffer_desc, &vertex_data, &mesh->vertices);
+	CHECK_HRESULT(result, "ID3D11Device_CreateBuffer()");
 }
 
 /*
