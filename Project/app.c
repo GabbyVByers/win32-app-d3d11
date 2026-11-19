@@ -174,7 +174,6 @@ void app_init(const wchar_t* title, int width, int height)
 	);
 
 	CHECK_HRESULT(result, "D3D11CreateDevice()");
-	CHECK_HRESULT(-1, "D3D11CreateDevice()");
 
 	#ifdef DEBUG
 	ID3D11InfoQueue* info = NULL;
