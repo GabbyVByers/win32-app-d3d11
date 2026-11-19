@@ -175,7 +175,6 @@ void app_init(const wchar_t* title, int width, int height)
 	);
 
 	CHECK_HRESULT(result, "D3D11CreateDevice()");
-	CHECK_HRESULT(-1, "D3D11CreateDevice()");
 
 	#ifdef DEBUG
 	ID3D11InfoQueue* info = NULL;
@@ -257,7 +256,7 @@ void app_init(const wchar_t* title, int width, int height)
 		&g_input_layout
 	);
 
-	CHECK_HRESULT(result, ID3D11Device_CreateInputLayout);
+	CHECK_HRESULT(result, "ID3D11Device_CreateInputLayout");
 
 	ID3D10Blob_Release(vs_blob);
 	ID3D10Blob_Release(ps_blob);
