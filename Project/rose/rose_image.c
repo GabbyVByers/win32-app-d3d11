@@ -9,10 +9,17 @@
 ROSE_Image* ROSE_ImageCreate(uInt32 width, uInt32 height)
 {
 	ROSE_Image* image = calloc(1, sizeof(ROSE_Image));
+	uInt32* pixels = NULL;
 
-	uInt32 count = width * height;
-	uInt32* pixels = malloc(count * sizeof(uInt32));
-	memset(pixels, (uInt8)255, count * sizeof(uInt32));
+	bool empty =
+		(width == 0) ||
+		(height == 0);
+
+	if (!empty) {
+		uInt32 count = width * height;
+		pixels = malloc(count * sizeof(uInt32));
+		memset(pixels, (uInt8)255, count * sizeof(uInt32));
+	}
 
 	image->width  = width;
 	image->height = height;
@@ -123,12 +130,12 @@ ROSE_Color ROSE_ImageGetPixel(ROSE_Image* image, uInt32 xpos, uInt32 ypos)
 
 	uInt32 index = (ypos * image->width) + xpos;
 	uInt32 pixel = image->pixels[index];
-	
+
 	float r = ((float)((uInt8)(pixel)))       / 255.0f;
 	float g = ((float)((uInt8)(pixel >>  8))) / 255.0f;
 	float b = ((float)((uInt8)(pixel >> 16))) / 255.0f;
 	float a = ((float)((uInt8)(pixel >> 24))) / 255.0f;
-	
+
 	return (ROSE_Color) { r, g, b, a };
 }
 

@@ -6,11 +6,8 @@
 #ifndef ROSE_ROSE_HEADER_GUARD
 #define ROSE_ROSE_HEADER_GUARD
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <assert.h>
 
 #define ROSE_COLOR_RGBA(r, g, b, a) \
 ((ROSE_Color) {                     \
@@ -29,17 +26,6 @@
 #define ROSE_COLOR_PURPLE ROSE_COLOR_RGBA(255,   0, 255, 255)
 #define ROSE_COLOR_YELLOW ROSE_COLOR_RGBA(255, 255,   0, 255)
 #define ROSE_COLOR_TRANS  ROSE_COLOR_RGBA(  0,   0,   0,   0)
-
-#ifdef TRUE
-  #undef TRUE
-#endif /* TRUE */
-
-#ifdef FALSE
-  #undef FALSE
-#endif /* FALSE */
-
-#define TRUE  ((_Bool) 1u)
-#define FALSE ((_Bool) 0u)
 
 typedef int8_t  Int8;
 typedef int16_t Int16;

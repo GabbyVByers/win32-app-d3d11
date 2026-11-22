@@ -27,9 +27,9 @@ LRESULT CALLBACK rose__proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 ID3DBlob* rose__compile_shader(const wchar_t* path, const char* entry, const char* target)
 {
 	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
-	#ifdef DEBUG
+	#ifdef ROSE_DEBUG
 	flags |= D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-	#endif /* DEBUG */
+	#endif /* ROSE_DEBUG */
 
 	ID3DBlob* code   = NULL;
 	ID3DBlob* errors = NULL;

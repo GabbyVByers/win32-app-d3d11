@@ -9,6 +9,10 @@
 #include "rose.h"
 #include "png.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+
 #define COBJMACROS
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -46,15 +50,8 @@
   #define CHECK_HRESULT(result, func)                  \
   do { if (FAILED(result)) {                           \
     fprintf(stderr, "%s failed! (HRESULT: 0x%08lX)\n", \
-    func, (unsigned int)(result)); abort();            \
+    func, (unsigned long)(result)); abort();           \
   } } while (0)
-#endif
-
-#ifdef ROSE_RELEASE
-  #ifdef CHECK_HRESULT
-    #undef CHECK_HRESULT
-  #endif
-  #define CHECK_HRESULT(result, func)
 #endif
 
 typedef struct constants_t {
