@@ -117,7 +117,8 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	CHECK_HRESULT(result, "ID3D11Device_CreatePixelShader()");
 
 	D3D11_INPUT_ELEMENT_DESC input_desc[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(ROSE_Vertex2D, xpos),  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(ROSE_Vertex2D, x),     D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(ROSE_Vertex2D, u),     D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(ROSE_Vertex2D, color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
@@ -136,17 +137,54 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 
 	D3D11_BUFFER_DESC constant_buffer_desc = {
 		.ByteWidth = sizeof(constants_t),
-		.Usage = D3D11_USAGE_DEFAULT,
+		.Usage     = D3D11_USAGE_DEFAULT,
 		.BindFlags = D3D11_BIND_CONSTANT_BUFFER,
 	};
 
 	result = ID3D11Device_CreateBuffer(rose__device, &constant_buffer_desc, NULL, &rose__constant_buffer);
 	CHECK_HRESULT(result, "ID3D11Device_CreateBuffer()");
+
+	D3D11_SAMPLER_DESC sampler_desc = {
+		.Filter         = D3D11_FILTER_MIN_MAG_MIP_POINT,
+		.AddressU       = D3D11_TEXTURE_ADDRESS_CLAMP,
+		.AddressV       = D3D11_TEXTURE_ADDRESS_CLAMP,
+		.AddressW       = D3D11_TEXTURE_ADDRESS_CLAMP,
+		.ComparisonFunc = D3D11_COMPARISON_NEVER,
+		.MinLOD         = 0.0f,
+		.MaxLOD         = D3D11_FLOAT32_MAX,
+	};
+
+	result = ID3D11Device_CreateSamplerState(rose__device, &sampler_desc, &rose__sampler);
+	CHECK_HRESULT(result, "ID3D11Device_CreateSamplerState()");
+
+	D3D11_BLEND_DESC blend_desc = {
+		.RenderTarget[0] = {
+			.BlendEnable           = TRUE,
+			.SrcBlend              = D3D11_BLEND_SRC_ALPHA,
+			.DestBlend             = D3D11_BLEND_INV_SRC_ALPHA,
+			.BlendOp               = D3D11_BLEND_OP_ADD,
+			.SrcBlendAlpha         = D3D11_BLEND_ONE,
+			.DestBlendAlpha        = D3D11_BLEND_INV_SRC_ALPHA,
+			.BlendOpAlpha          = D3D11_BLEND_OP_ADD,
+			.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL,
+		},
+	};
+
+	result = ID3D11Device_CreateBlendState(rose__device, &blend_desc, &rose__blend_state);
+	CHECK_HRESULT(result, "ID3D11Device_CreateBlendState()");
+
+	ROSE_Image* white = ROSE_ImageCreate(1, 1);
+	rose__blank_texture = ROSE_TextureCreate(white);
+	ROSE_ImageDestroy(white);
 }
 
 void ROSE_Quit(void)
 {
 	ID3D11DeviceContext_ClearState(rose__context);
+
+	ROSE_TextureDestroy(rose__blank_texture);
+	ID3D11BlendState_Release(rose__blend_state);
+	ID3D11SamplerState_Release(rose__sampler);
 
 	ID3D11Buffer_Release(rose__constant_buffer);
 	ID3D11InputLayout_Release(rose__input_layout);
@@ -162,10 +200,15 @@ void ROSE_Quit(void)
 	rose__pixel_shader    = NULL;
 	rose__vertex_shader   = NULL;
 	rose__render_target   = NULL;
+	
 	rose__swapchain = NULL;
 	rose__context   = NULL;
 	rose__device    = NULL;
 	rose__viewport  = (D3D11_VIEWPORT) { 0 };
+
+	rose__blank_texture = NULL;
+	rose__blend_state   = NULL;
+	rose__sampler       = NULL;
 
 	bool close =
 		rose__hwnd &&

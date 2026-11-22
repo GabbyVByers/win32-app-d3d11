@@ -36,6 +36,9 @@
     <ClCompile Include="rose\rose_init.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="rose\rose_texture.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rose\rose.h">

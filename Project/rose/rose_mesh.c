@@ -6,7 +6,7 @@
 #define ROSE_EXTERN
 #include "rose_internal.h"
 
-ROSE_Mesh2D* ROSE_MeshCreate(const ROSE_Vertex2D* vertices, uInt32 count)
+ROSE_Mesh2D* ROSE_Mesh2DCreate(const ROSE_Vertex2D* vertices, uInt32 count)
 {
 	ROSE_Mesh2D* mesh = calloc(1, sizeof(ROSE_Mesh2D));
 
@@ -30,7 +30,7 @@ ROSE_Mesh2D* ROSE_MeshCreate(const ROSE_Vertex2D* vertices, uInt32 count)
 	return mesh;
 }
 
-void ROSE_MeshDestroy(ROSE_Mesh2D* mesh)
+void ROSE_Mesh2DDestroy(ROSE_Mesh2D* mesh)
 {
 	if (mesh == NULL)
 		return;
@@ -41,7 +41,7 @@ void ROSE_MeshDestroy(ROSE_Mesh2D* mesh)
 	free(mesh);
 }
 
-void ROSE_MeshDraw(ROSE_Mesh2D* mesh)
+void ROSE_Mesh2DDraw(ROSE_Mesh2D* mesh, ROSE_Texture* texture)
 {
 	const bool empty =
 		(mesh->vertices == NULL) ||
@@ -49,6 +49,9 @@ void ROSE_MeshDraw(ROSE_Mesh2D* mesh)
 
 	if (empty)
 		return;
+
+	if (texture == NULL)
+		texture = rose__blank_texture;
 
 	UINT stride = sizeof(ROSE_Vertex2D);
 	UINT offset = 0;
@@ -63,10 +66,14 @@ void ROSE_MeshDraw(ROSE_Mesh2D* mesh)
 	ID3D11DeviceContext_UpdateSubresource(rose__context, (ID3D11Resource*)rose__constant_buffer, 0, NULL, &constants, 0, 0);
 	ID3D11DeviceContext_VSSetConstantBuffers(rose__context, 0, 1, &rose__constant_buffer);
 
+	ID3D11DeviceContext_PSSetShaderResources(rose__context, 0, 1, &texture->view);
+	ID3D11DeviceContext_PSSetSamplers(rose__context, 0, 1, &rose__sampler);
+	ID3D11DeviceContext_OMSetBlendState(rose__context, rose__blend_state, NULL, 0xFFFFFFFF);
+
 	ID3D11DeviceContext_Draw(rose__context, mesh->count, 0);
 }
 
-void ROSE_MeshUpdate(ROSE_Mesh2D* mesh, const ROSE_Vertex2D* vertices, uInt32 count)
+void ROSE_Mesh2DUpdate(ROSE_Mesh2D* mesh, const ROSE_Vertex2D* vertices, uInt32 count)
 {
 	const bool empty =
 		(vertices == NULL) ||

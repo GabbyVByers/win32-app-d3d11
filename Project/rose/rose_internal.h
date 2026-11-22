@@ -87,6 +87,12 @@ typedef struct ROSE_Image {
     uInt32* pixels;
 } ROSE_Image;
 
+typedef struct ROSE_Texture {
+    ID3D11ShaderResourceView* view;
+    uInt32 width;
+    uInt32 height;
+} ROSE_Texture;
+
 typedef struct ROSE_Mesh2D {
     ID3D11Buffer* vertices;
     uInt32 count;
@@ -114,6 +120,10 @@ ROSE_GLOBAL(D3D11_VIEWPORT,          rose__viewport)
 
 ROSE_GLOBAL(ID3D11VertexShader*, rose__vertex_shader)
 ROSE_GLOBAL(ID3D11PixelShader*,  rose__pixel_shader)
+
+ROSE_GLOBAL(ID3D11SamplerState*, rose__sampler)
+ROSE_GLOBAL(ID3D11BlendState*,   rose__blend_state)
+ROSE_GLOBAL(ROSE_Texture*,       rose__blank_texture)
 
 ROSE_GLOBAL(bool,   rose__resize_pending)
 ROSE_GLOBAL(uInt32, rose__screen_width)

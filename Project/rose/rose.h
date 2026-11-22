@@ -52,19 +52,18 @@ typedef uint32_t uInt32;
 typedef uint64_t uInt64;
 
 typedef struct ROSE_Color {
-	float r;
-	float g;
-	float b;
-	float a;
+	float r, g, b, a;
 } ROSE_Color;
 
 typedef struct ROSE_Vertex2D {
-	float xpos;
-	float ypos;
+	float x, y;
+	float u, v;
 	ROSE_Color color;
 } ROSE_Vertex2D;
 
-typedef struct ROSE_Image ROSE_Image;
+typedef struct ROSE_Image   ROSE_Image;
+typedef struct ROSE_Texture ROSE_Texture;
+
 typedef struct ROSE_Mesh2D ROSE_Mesh2D;
 
 void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height);
@@ -75,21 +74,24 @@ bool ROSE_WindowMinimized(void);
 void ROSE_FrameClear(ROSE_Color color);
 void ROSE_FrameRender(void);
 
-ROSE_Image*  ROSE_ImageCreate(uInt32 width, uInt32 height);
-void         ROSE_ImageDestroy(ROSE_Image* image);
-ROSE_Image*  ROSE_ImageLoad(const char* path);
-void         ROSE_ImageSave(ROSE_Image* image, const char* path);
-void         ROSE_ImageResize(ROSE_Image* image, uInt32 width, uInt32 height);
-void         ROSE_ImageFillColor(ROSE_Image* image, ROSE_Color color);
-ROSE_Color   ROSE_ImageGetPixel(ROSE_Image* image, uInt32 xpos, uInt32 ypos);
-void         ROSE_ImageSetPixel(ROSE_Image* image, uInt32 xpos, uInt32 ypos, ROSE_Color color);
-void         ROSE_ImageSize(ROSE_Image* image, uInt32* width, uInt32* height);
-uInt32*      ROSE_ImageCopyPixels(ROSE_Image* image);
+ROSE_Image*   ROSE_ImageCreate(uInt32 width, uInt32 height);
+void          ROSE_ImageDestroy(ROSE_Image* image);
+ROSE_Image*   ROSE_ImageLoad(const char* path);
+void          ROSE_ImageSave(ROSE_Image* image, const char* path);
+void          ROSE_ImageResize(ROSE_Image* image, uInt32 width, uInt32 height);
+void          ROSE_ImageFillColor(ROSE_Image* image, ROSE_Color color);
+ROSE_Color    ROSE_ImageGetPixel(ROSE_Image* image, uInt32 xpos, uInt32 ypos);
+void          ROSE_ImageSetPixel(ROSE_Image* image, uInt32 xpos, uInt32 ypos, ROSE_Color color);
+void          ROSE_ImageSize(ROSE_Image* image, uInt32* width, uInt32* height);
+uInt32*       ROSE_ImageCopyPixels(ROSE_Image* image);
 
-ROSE_Mesh2D* ROSE_MeshCreate(const ROSE_Vertex2D* vertices, uInt32 count);
-void         ROSE_MeshDestroy(ROSE_Mesh2D* mesh);
-void         ROSE_MeshUpdate(ROSE_Mesh2D* mesh, const ROSE_Vertex2D* vertices, uInt32 count);
-void         ROSE_MeshDraw(ROSE_Mesh2D* mesh);
+ROSE_Texture* ROSE_TextureCreate(ROSE_Image* image);
+void          ROSE_TextureDestroy(ROSE_Texture* texture);
+
+ROSE_Mesh2D*  ROSE_Mesh2DCreate(const ROSE_Vertex2D* vertices, uInt32 count);
+void          ROSE_Mesh2DDestroy(ROSE_Mesh2D* mesh);
+void          ROSE_Mesh2DUpdate(ROSE_Mesh2D* mesh, const ROSE_Vertex2D* vertices, uInt32 count);
+void          ROSE_Mesh2DDraw(ROSE_Mesh2D* mesh, ROSE_Texture* texture);
 
 #endif /* ROSE_ROSE_HEADER_GUARD */
 
