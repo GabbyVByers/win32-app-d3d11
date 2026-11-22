@@ -6,7 +6,7 @@
 #define ROSE_EXTERN
 #include "rose_internal.h"
 
-LRESULT CALLBACK proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+LRESULT CALLBACK rose__proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 	switch (msg) {
 		case (WM_DESTROY): {
@@ -24,7 +24,7 @@ LRESULT CALLBACK proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	return DefWindowProcW(hwnd, msg, wparam, lparam);
 }
 
-ID3DBlob* compile_shader(const wchar_t* path, const char* entry, const char* target)
+ID3DBlob* rose__compile_shader(const wchar_t* path, const char* entry, const char* target)
 {
 	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
 	#ifdef DEBUG
@@ -52,7 +52,7 @@ ID3DBlob* compile_shader(const wchar_t* path, const char* entry, const char* tar
 	return code;
 }
 
-void create_render_target(void)
+void rose__create_render_target(void)
 {
 	ID3D11Texture2D* back_buffer = NULL;
 	HRESULT result = IDXGISwapChain1_GetBuffer(rose__swapchain, 0, &IID_ID3D11Texture2D, (void**)&back_buffer);

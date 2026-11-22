@@ -11,7 +11,7 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	WNDCLASSEXW window_class = {
 		.cbSize        = sizeof(WNDCLASSEXW),
 		.style         = CS_HREDRAW | CS_VREDRAW,
-		.lpfnWndProc   = proc,
+		.lpfnWndProc   = rose__proc,
 		.hInstance     = rose__hinstance,
 		.hCursor       = LoadCursor(NULL, IDC_ARROW),
 		.lpszClassName = WINDOW_CLASS_NAME,
@@ -108,9 +108,9 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	IDXGIAdapter_Release(adapter);
 	IDXGIDevice_Release(dxgi_device);
 
-	create_render_target();
-	ID3DBlob* vs_blob = compile_shader(L"HLSL/shader.hlsl", "vs_main", "vs_5_0");
-	ID3DBlob* ps_blob = compile_shader(L"HLSL/shader.hlsl", "ps_main", "ps_5_0");
+	rose__create_render_target();
+	ID3DBlob* vs_blob = rose__compile_shader(L"HLSL/shader.hlsl", "vs_main", "vs_5_0");
+	ID3DBlob* ps_blob = rose__compile_shader(L"HLSL/shader.hlsl", "ps_main", "ps_5_0");
 
 	result = ID3D11Device_CreateVertexShader(rose__device, ID3D10Blob_GetBufferPointer(vs_blob), ID3D10Blob_GetBufferSize(vs_blob), NULL, &rose__vertex_shader);
 	CHECK_HRESULT(result, "ID3D11Device_CreateVertexShader()");
@@ -174,6 +174,7 @@ void ROSE_Quit(void)
 
 	UnregisterClassW(WINDOW_CLASS_NAME, rose__hinstance);
 
+	rose__quit      = FALSE;
 	rose__hwnd      = NULL;
 	rose__hinstance = NULL;
 

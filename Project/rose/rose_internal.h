@@ -119,9 +119,9 @@ ROSE_GLOBAL(bool,   rose__resize_pending)
 ROSE_GLOBAL(uInt32, rose__screen_width)
 ROSE_GLOBAL(uInt32, rose__screen_height)
 
-LRESULT CALLBACK proc(HWND, UINT, WPARAM, LPARAM);
-ID3DBlob* compile_shader(const wchar_t* path, const char* entry, const char* target);
-void create_render_target(void);
+LRESULT CALLBACK rose__proc(HWND, UINT, WPARAM, LPARAM);
+ID3DBlob* rose__compile_shader(const wchar_t* path, const char* entry, const char* target);
+void rose__create_render_target(void);
 
 #endif /* ROSE_INTERNAL_HEADER_GUARD */
 

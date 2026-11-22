@@ -74,6 +74,16 @@ void ROSE_MeshDraw(ROSE_Mesh* mesh)
 
 void ROSE_MeshUpdate(ROSE_Mesh* mesh, const ROSE_Vertex2D* vertices, uInt32 count)
 {
+	const bool empty =
+		!vertices ||
+		count == 0;
+
+	if (empty) {
+		mesh->vertices = NULL;
+		mesh->count = 0;
+		return;
+	}
+
 	if (mesh->vertices)
 		ID3D11Buffer_Release(mesh->vertices);
 

@@ -50,7 +50,7 @@ void ROSE_FrameClear(ROSE_Color color)
 		);
 
 		CHECK_HRESULT(result, "IDXGISwapChain1_ResizeBuffers()");
-		create_render_target();
+		rose__create_render_target();
 	}
 
 	ID3D11DeviceContext_OMSetRenderTargets(rose__context, 1, &rose__render_target, NULL);

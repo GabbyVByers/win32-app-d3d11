@@ -15,7 +15,7 @@ int main(void)
 		{ .xpos =  70.0f, .ypos = 400.0f, .color = ROSE_COLOR_BLUE  },
 	};
 
-	size_t count =
+	uInt32 count =
 		sizeof(vertices) /
 		sizeof(vertices[0]);
 
@@ -24,7 +24,7 @@ int main(void)
 	while (true) {
 		if (ROSE_WindowClosed())
 			break;
-		
+
 		if (ROSE_WindowMinimized())
 			continue;
 
