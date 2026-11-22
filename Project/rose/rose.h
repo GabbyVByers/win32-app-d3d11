@@ -29,26 +29,26 @@
 #define ROSE_COLOR_YELLOW ROSE_COLOR_RGBA(255, 255,   0, 255)
 #define ROSE_COLOR_TRANS  ROSE_COLOR_RGBA(  0,   0,   0,   0)
 
-/**/ #ifdef TRUE
-/**/   #undef TRUE
-/**/ #endif /* TRUE */
-/**/
-/**/ #ifdef FALSE
-/**/   #undef FALSE
-/**/ #endif /* FALSE */
-/**/
-/**/ #define TRUE  ((_Bool) 1u)
-/**/ #define FALSE ((_Bool) 0u)
-/**/
-/**/ typedef int8_t  Int8;
-/**/ typedef int16_t Int16;
-/**/ typedef int32_t Int32;
-/**/ typedef int64_t Int64;
-/**/
-/**/ typedef uint8_t  uInt8;
-/**/ typedef uint16_t uInt16;
-/**/ typedef uint32_t uInt32;
-/**/ typedef uint64_t uInt64;
+/* do remove */ #ifdef TRUE
+/* do remove */   #undef TRUE
+/* do remove */ #endif /* TRUE */
+/* do remove */
+/* do remove */ #ifdef FALSE
+/* do remove */   #undef FALSE
+/* do remove */ #endif /* FALSE */
+/* do remove */
+/* do remove */ #define TRUE  ((_Bool) 1u)
+/* do remove */ #define FALSE ((_Bool) 0u)
+
+/* don't remove */ typedef int8_t  Int8;
+/* don't remove */ typedef int16_t Int16;
+/* don't remove */ typedef int32_t Int32;
+/* don't remove */ typedef int64_t Int64;
+/* don't remove */
+/* don't remove */ typedef uint8_t  uInt8;
+/* don't remove */ typedef uint16_t uInt16;
+/* don't remove */ typedef uint32_t uInt32;
+/* don't remove */ typedef uint64_t uInt64;
 
 typedef struct ROSE_Color {
 	float r;
@@ -78,12 +78,12 @@ ROSE_Image* ROSE_ImageCreate(uInt32 width, uInt32 height);
 void        ROSE_ImageDestroy(ROSE_Image* image);
 ROSE_Image* ROSE_ImageLoad(const char* path);
 void        ROSE_ImageSave(ROSE_Image* image, const char* path);
-/**/
+/* need to implement vvv */
 void        ROSE_ImageResize(ROSE_Image* image, uInt32 width, uInt32 height);
 void        ROSE_ImageFillColor(ROSE_Image* image, ROSE_Color color);
 ROSE_Color  ROSE_ImageGetPixel(ROSE_Image* image, uInt32 xpos, uInt32 ypos);
 void        ROSE_ImageSetPixel(ROSE_Image* image, uInt32 xpos, uInt32 ypos, ROSE_Color color);
-/**/
+/* need to implement ^^^ */
 void        ROSE_ImageSize(ROSE_Image* image, uInt32* width, uInt32* height);
 uInt32*     ROSE_ImageCopyPixels(ROSE_Image* image);
 
