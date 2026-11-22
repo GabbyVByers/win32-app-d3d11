@@ -37,13 +37,13 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 		rose__hinstance, NULL
 	);
 
-	assert(rose__hwnd, "CreateWindowExW() failed!");
+	assert(rose__hwnd && "CreateWindowExW() failed!");
 	ShowWindow(rose__hwnd, SW_SHOWDEFAULT);
 
 	UINT flags = 0u;
-	#ifdef DEBUG
+	#ifdef ROSE_DEBUG
 	flags |= D3D11_CREATE_DEVICE_DEBUG;
-	#endif /* DEBUG */
+	#endif /* ROSE_DEBUG */
 
 	D3D_FEATURE_LEVEL levels[] = { D3D_FEATURE_LEVEL_11_0 };
 
@@ -57,13 +57,13 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 
 	CHECK_HRESULT(result, "D3D11CreateDevice()");
 
-	#ifdef DEBUG
+	#ifdef ROSE_DEBUG
 	ID3D11InfoQueue* info = NULL;
 	if (SUCCEEDED(ID3D11Device_QueryInterface(rose__device, &IID_ID3D11InfoQueue, (void**)&info))) {
 		ID3D11InfoQueue_SetBreakOnSeverity(info, D3D11_MESSAGE_SEVERITY_CORRUPTION, TRUE);
 		ID3D11InfoQueue_SetBreakOnSeverity(info, D3D11_MESSAGE_SEVERITY_ERROR, TRUE);
 		ID3D11InfoQueue_Release(info); }
-	#endif /* DEBUG */
+	#endif /* ROSE_DEBUG */
 
 	IDXGIDevice*   dxgi_device = NULL;
 	IDXGIAdapter*  adapter     = NULL;
@@ -78,12 +78,12 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	result = IDXGIAdapter_GetParent(adapter, &IID_IDXGIFactory2, (void**)&factory);
 	CHECK_HRESULT(result, "IDXGIAdapter_GetParent()");
 
-	#ifdef DEBUG
+	#ifdef ROSE_DEBUG
 	DXGI_ADAPTER_DESC description;
 	IDXGIAdapter_GetDesc(adapter, &description);
 	const wchar_t* name = description.Description;
 	fprintf(stdout, "Using GPU Device: %ls\n", name);
-	#endif /* DEBUG */
+	#endif /* ROSE_DEBUG */
 
 	DXGI_SWAP_CHAIN_DESC1 swapchain_desc = {
 		.Width       = 0,
@@ -193,6 +193,14 @@ void ROSE_Quit(void)
 	ID3D11RenderTargetView_Release(rose__render_target);
 	IDXGISwapChain1_Release(rose__swapchain);
 	ID3D11DeviceContext_Release(rose__context);
+
+	#ifdef ROSE_DEBUG
+	ID3D11Debug* debug = NULL;
+	if (SUCCEEDED(ID3D11Device_QueryInterface(rose__device, &IID_ID3D11Debug, (void**)&debug))) {
+		ID3D11Debug_ReportLiveDeviceObjects(debug, D3D11_RLDO_DETAIL | D3D11_RLDO_IGNORE_INTERNAL);
+		ID3D11Debug_Release(debug); }
+	#endif /* ROSE_DEBUG */
+
 	ID3D11Device_Release(rose__device);
 
 	rose__constant_buffer = NULL;

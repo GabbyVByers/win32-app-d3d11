@@ -41,7 +41,7 @@ ROSE_Image* ROSE_ImageLoad(const char* path)
 	uInt32* pixels = NULL;
 
 	int retcode = png_decode(path, &pixels, &width, &height);
-	assert(retcode != 0 && "png_decode() failed!");
+	assert(retcode == 0 && "png_decode() failed!");
 
 	image->width  = width;
 	image->height = height;
@@ -57,7 +57,7 @@ void ROSE_ImageSave(ROSE_Image* image, const char* path)
 	uInt32* pixels = image->pixels;
 
 	int retcode = png_encode(path, pixels, width, height);
-	assert(retcode != 0 && "png_encode() failed!");
+	assert(retcode == 0 && "png_encode() failed!");
 }
 
 void ROSE_ImageResize(ROSE_Image* image, uInt32 width, uInt32 height)
@@ -66,7 +66,7 @@ void ROSE_ImageResize(ROSE_Image* image, uInt32 width, uInt32 height)
 	uInt32* pixels = NULL;
 	
 	if (count != 0) {
-		pixels = calloc(count, sizeof(uInt32));
+		pixels = malloc(count * sizeof(uInt32));
 		memset(pixels, 255, count * sizeof(uInt32));
 	}
 

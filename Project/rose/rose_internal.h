@@ -26,33 +26,33 @@
 #define WINDOW_CLASS_NAME L"WindowClassNameDirect3D11"
 
 #ifndef NDEBUG
-  #ifndef DEBUG
-    #define DEBUG
-  #endif /* DEBUG */
+  #ifndef ROSE_DEBUG
+    #define ROSE_DEBUG
+  #endif /* ROSE_DEBUG */
 #else
-  #ifndef RELEASE
-    #define RELEASE
-  #endif /* RELEASE */
+  #ifndef ROSE_RELEASE
+    #define ROSE_RELEASE
+  #endif /* ROSE_RELEASE */
 #endif
 
-#ifdef DEBUG
-  #ifdef RELEASE
+#ifdef ROSE_DEBUG
+  #ifdef ROSE_RELEASE
     #warning("D/R CONFLICT")
-    #undef RELEASE
-  #endif /* RELEASE */
-#endif /* DEBUG */
+    #undef ROSE_RELEASE
+  #endif /* ROSE_RELEASE */
+#endif /* ROSE_DEBUG */
 
 #ifndef ROSE_ASSERT
-  #ifdef RELEASE
+  #ifdef ROSE_RELEASE
     #ifndef EXIT_TYPE
       #define EXIT_TYPE exit(EXIT_FAILURE);
     #endif /* EXIT_TYPE */
-  #endif /* RELEASE */
-  #ifdef DEBUG
+  #endif /* ROSE_RELEASE */
+  #ifdef ROSE_DEBUG
     #ifndef EXIT_TYPE
       #define EXIT_TYPE __debugbreak();
     #endif /* EXIT_TYPE */
-  #endif /* DEBUG */
+  #endif /* ROSE_DEBUG */
   #define ROSE_ASSERT(x, ...)                    \
   do { if (!(x)) {                               \
     fprintf(stderr, ">> PANIC!!!\n");            \

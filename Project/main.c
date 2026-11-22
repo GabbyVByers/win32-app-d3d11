@@ -50,7 +50,7 @@ int main(void)
 		ROSE_FrameRender();
 	}
 
-	ROSE_TextureDestroy(mesh);
+	ROSE_TextureDestroy(texture);
 	ROSE_Mesh2DDestroy(mesh);
 	ROSE_Quit();
 }

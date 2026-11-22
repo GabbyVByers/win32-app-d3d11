@@ -43,14 +43,18 @@ void ROSE_Mesh2DDestroy(ROSE_Mesh2D* mesh)
 
 void ROSE_Mesh2DDraw(ROSE_Mesh2D* mesh, ROSE_Texture* texture)
 {
-	const bool empty =
+	bool empty =
 		(mesh->vertices == NULL) ||
 		(mesh->count == 0);
 
 	if (empty)
 		return;
 
-	if (texture == NULL)
+	bool blank =
+		(texture == NULL) ||
+		(texture->view == NULL);
+
+	if (blank)
 		texture = rose__blank_texture;
 
 	UINT stride = sizeof(ROSE_Vertex2D);
@@ -75,6 +79,9 @@ void ROSE_Mesh2DDraw(ROSE_Mesh2D* mesh, ROSE_Texture* texture)
 
 void ROSE_Mesh2DUpdate(ROSE_Mesh2D* mesh, const ROSE_Vertex2D* vertices, uInt32 count)
 {
+	if (mesh->vertices != NULL)
+		ID3D11Buffer_Release(mesh->vertices);
+
 	const bool empty =
 		(vertices == NULL) ||
 		(count == 0);
@@ -85,15 +92,11 @@ void ROSE_Mesh2DUpdate(ROSE_Mesh2D* mesh, const ROSE_Vertex2D* vertices, uInt32 
 		return;
 	}
 
-	if (mesh->vertices)
-		ID3D11Buffer_Release(mesh->vertices);
-
 	D3D11_BUFFER_DESC vertex_buffer_desc = {
 		.ByteWidth = sizeof(ROSE_Vertex2D) * count,
 		.Usage = D3D11_USAGE_IMMUTABLE,
 		.BindFlags = D3D11_BIND_VERTEX_BUFFER,
 	};
-
 
 	mesh->vertices = NULL;
 	mesh->count = count;
