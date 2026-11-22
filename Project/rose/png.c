@@ -280,12 +280,12 @@ int png_decode(const char* path, uint32_t** pixels_result, uint32_t* width_resul
 		uint32_t* dst = pixels + (size_t)y * width;
 		if (channels == 4) {
 			for (uint32_t x = 0; x < width; x++, src += 4) {
-				dst[x] = ((uint32_t)src[0] << 24) | ((uint32_t)src[1] << 16) | ((uint32_t)src[2] << 8) | (uint32_t)src[3];
+				dst[x] = ((uint32_t)src[3] << 24) | ((uint32_t)src[2] << 16) | ((uint32_t)src[1] << 8) | (uint32_t)src[0];
 			}
 		}
 		else {
 			for (uint32_t x = 0; x < width; x++, src += 3) {
-				dst[x] = ((uint32_t)src[0] << 24) | ((uint32_t)src[1] << 16) | ((uint32_t)src[2] << 8) | 0xFFu;
+				dst[x] = 0xFF000000u | ((uint32_t)src[2] << 16) | ((uint32_t)src[1] << 8) | (uint32_t)src[0];
 			}
 		}
 	}
@@ -343,10 +343,10 @@ int png_encode(const char* path, uint32_t* pixels, uint32_t width, uint32_t heig
 		const uint32_t* src = pixels + (size_t)y * width;
 		for (uint32_t x = 0; x < width; x++) {
 			uint32_t pixel = src[x];
-			line[(size_t)x * 4 + 0] = (uint8_t)(pixel >> 24);
-			line[(size_t)x * 4 + 1] = (uint8_t)(pixel >> 16);
-			line[(size_t)x * 4 + 2] = (uint8_t)(pixel >> 8);
-			line[(size_t)x * 4 + 3] = (uint8_t)pixel;
+			line[(size_t)x * 4 + 0] = (uint8_t)pixel;
+			line[(size_t)x * 4 + 1] = (uint8_t)(pixel >> 8);
+			line[(size_t)x * 4 + 2] = (uint8_t)(pixel >> 16);
+			line[(size_t)x * 4 + 3] = (uint8_t)(pixel >> 24);
 		}
 
 		png_encode_filter_row(raw + (size_t)y * (stride + 1), line, prior, stride);

@@ -18,7 +18,7 @@
  * 
  * Position (0, 0) is the image's top-left corner.
  * Images are stored in memory such that indexing is done using '(y * width) + x'.
- * Each pixel is an unsigned 32 bit integer in the form '0xRRGGBBAA'.
+ * Each pixel is an unsigned 32 bit integer in the form '0xAABBGGRR'.
  * 
  */
 

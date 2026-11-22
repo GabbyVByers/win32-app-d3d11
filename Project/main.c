@@ -3,13 +3,13 @@
  *   Source [main.c]
  */
 
-#include "rose/app.h"
+#include "rose/rose.h"
 
 int main(void)
 {
 	ROSE_Init(L"My Window", 500, 500);
 
-	vertex_t vertices[] = {
+	ROSE_Vertex2D vertices[] = {
 		{ .xpos = 250.0f, .ypos = 100.0f, .color = ROSE_COLOR_RED   },
 		{ .xpos = 430.0f, .ypos = 400.0f, .color = ROSE_COLOR_GREEN },
 		{ .xpos =  70.0f, .ypos = 400.0f, .color = ROSE_COLOR_BLUE  },
@@ -28,7 +28,7 @@ int main(void)
 		if (ROSE_WindowMinimized())
 			continue;
 
-		ROSE_FrameClear(COLOR_RGBA(30, 15, 70, 255));
+		ROSE_FrameClear(ROSE_COLOR_RGBA(30, 15, 70, 255));
 		ROSE_MeshDraw(mesh);
 		ROSE_FrameRender();
 	}

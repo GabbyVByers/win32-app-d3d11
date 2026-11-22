@@ -140,11 +140,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.c" />
-    <ClCompile Include="rose\app.c" />
     <ClCompile Include="rose\png.c" />
+    <ClCompile Include="rose\rose_image.c" />
+    <ClCompile Include="rose\rose_init.c" />
+    <ClCompile Include="rose\rose_internal.c" />
+    <ClCompile Include="rose\rose_mesh.c" />
+    <ClCompile Include="rose\rose_window.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="rose\app.h" />
+    <ClInclude Include="rose\rose_internal.h" />
+    <ClInclude Include="rose\rose.h" />
     <ClInclude Include="rose\png.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -18,18 +18,33 @@
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="rose\app.c">
+    <ClCompile Include="rose\png.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="rose\png.c">
+    <ClCompile Include="rose\rose_image.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rose\rose_internal.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rose\rose_mesh.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rose\rose_window.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rose\rose_init.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="rose\app.h">
+    <ClInclude Include="rose\rose.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="rose\png.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rose\rose_internal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
