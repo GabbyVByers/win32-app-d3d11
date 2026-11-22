@@ -87,10 +87,10 @@ typedef struct ROSE_Image {
     uInt32* pixels;
 } ROSE_Image;
 
-typedef struct ROSE_Mesh {
+typedef struct ROSE_Mesh2D {
     ID3D11Buffer* vertices;
     uInt32 count;
-} ROSE_Mesh;
+} ROSE_Mesh2D;
 
 #define ROSE_GLOBAL(type, name) \
 type name = { 0 };

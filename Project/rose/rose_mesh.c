@@ -6,17 +6,11 @@
 #define ROSE_EXTERN
 #include "rose_internal.h"
 
-ROSE_Mesh* ROSE_MeshCreate(const ROSE_Vertex2D* vertices, uInt32 count)
+ROSE_Mesh2D* ROSE_MeshCreate(const ROSE_Vertex2D* vertices, uInt32 count)
 {
-	ROSE_Mesh* mesh = calloc(1, sizeof(ROSE_Mesh));
-	mesh->vertices = NULL;
-	mesh->count = 0;
+	ROSE_Mesh2D* mesh = calloc(1, sizeof(ROSE_Mesh2D));
 
-	const bool empty =
-		!vertices ||
-		count == 0;
-
-	if (empty)
+	if ((vertices == NULL) || (count == 0))
 		return mesh;
 
 	D3D11_BUFFER_DESC vertex_buffer_desc = {
@@ -36,22 +30,22 @@ ROSE_Mesh* ROSE_MeshCreate(const ROSE_Vertex2D* vertices, uInt32 count)
 	return mesh;
 }
 
-void ROSE_MeshDestroy(ROSE_Mesh* mesh)
+void ROSE_MeshDestroy(ROSE_Mesh2D* mesh)
 {
-	if (!mesh)
+	if (mesh == NULL)
 		return;
 
-	if (mesh->vertices)
+	if (mesh->vertices != NULL)
 		ID3D11Buffer_Release(mesh->vertices);
 
 	free(mesh);
 }
 
-void ROSE_MeshDraw(ROSE_Mesh* mesh)
+void ROSE_MeshDraw(ROSE_Mesh2D* mesh)
 {
 	const bool empty =
-		!mesh->vertices ||
-		mesh->count == 0;
+		(mesh->vertices == NULL) ||
+		(mesh->count == 0);
 
 	if (empty)
 		return;
@@ -72,11 +66,11 @@ void ROSE_MeshDraw(ROSE_Mesh* mesh)
 	ID3D11DeviceContext_Draw(rose__context, mesh->count, 0);
 }
 
-void ROSE_MeshUpdate(ROSE_Mesh* mesh, const ROSE_Vertex2D* vertices, uInt32 count)
+void ROSE_MeshUpdate(ROSE_Mesh2D* mesh, const ROSE_Vertex2D* vertices, uInt32 count)
 {
 	const bool empty =
-		!vertices ||
-		count == 0;
+		(vertices == NULL) ||
+		(count == 0);
 
 	if (empty) {
 		mesh->vertices = NULL;
@@ -92,6 +86,7 @@ void ROSE_MeshUpdate(ROSE_Mesh* mesh, const ROSE_Vertex2D* vertices, uInt32 coun
 		.Usage = D3D11_USAGE_IMMUTABLE,
 		.BindFlags = D3D11_BIND_VERTEX_BUFFER,
 	};
+
 
 	mesh->vertices = NULL;
 	mesh->count = count;

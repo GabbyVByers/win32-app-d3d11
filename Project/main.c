@@ -19,7 +19,7 @@ int main(void)
 		sizeof(vertices) /
 		sizeof(vertices[0]);
 
-	ROSE_Mesh* mesh = ROSE_MeshCreate(vertices, count);
+	ROSE_Mesh2D* mesh = ROSE_MeshCreate(vertices, count);
 
 	while (true) {
 		if (ROSE_WindowClosed())

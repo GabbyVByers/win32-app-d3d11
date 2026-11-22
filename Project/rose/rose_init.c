@@ -19,7 +19,7 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 
 	ATOM atom = RegisterClassExW(&window_class);
 	DWORD error = GetLastError();
-	ROSE_ASSERT(atom, "RegisterClassExW() failed! (error: %lu)", error);
+	assert(atom && "RegisterClassExW() failed!");
 
 	RECT rect = { 0, 0, (long)width, (long)height };
 	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
@@ -37,9 +37,7 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 		rose__hinstance, NULL
 	);
 
-	error = GetLastError();
-	ROSE_ASSERT(rose__hwnd, "CreateWindowExW() failed! (error: %lu)", error);
-
+	assert(rose__hwnd, "CreateWindowExW() failed!");
 	ShowWindow(rose__hwnd, SW_SHOWDEFAULT);
 
 	UINT flags = 0u;
@@ -83,8 +81,8 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	#ifdef DEBUG
 	DXGI_ADAPTER_DESC description;
 	IDXGIAdapter_GetDesc(adapter, &description);
-	const wchar_t* device_name = description.Description;
-	fprintf(stdout, "Using GPU Device: %ls\n", device_name);
+	const wchar_t* name = description.Description;
+	fprintf(stdout, "Using GPU Device: %ls\n", name);
 	#endif /* DEBUG */
 
 	DXGI_SWAP_CHAIN_DESC1 swapchain_desc = {
@@ -169,7 +167,11 @@ void ROSE_Quit(void)
 	rose__device    = NULL;
 	rose__viewport  = (D3D11_VIEWPORT) { 0 };
 
-	if (rose__hwnd && IsWindow(rose__hwnd))
+	bool close =
+		rose__hwnd &&
+		IsWindow(rose__hwnd);
+
+	if (close)
 		DestroyWindow(rose__hwnd);
 
 	UnregisterClassW(WINDOW_CLASS_NAME, rose__hinstance);
