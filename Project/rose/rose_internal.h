@@ -28,53 +28,34 @@
 #ifndef NDEBUG
   #ifndef ROSE_DEBUG
     #define ROSE_DEBUG
-  #endif /* ROSE_DEBUG */
+  #endif
 #else
   #ifndef ROSE_RELEASE
     #define ROSE_RELEASE
-  #endif /* ROSE_RELEASE */
+  #endif
 #endif
 
 #ifdef ROSE_DEBUG
   #ifdef ROSE_RELEASE
     #warning("D/R CONFLICT")
     #undef ROSE_RELEASE
-  #endif /* ROSE_RELEASE */
-#endif /* ROSE_DEBUG */
-
-#ifndef ROSE_ASSERT
-  #ifdef ROSE_RELEASE
-    #ifndef EXIT_TYPE
-      #define EXIT_TYPE exit(EXIT_FAILURE);
-    #endif /* EXIT_TYPE */
-  #endif /* ROSE_RELEASE */
-  #ifdef ROSE_DEBUG
-    #ifndef EXIT_TYPE
-      #define EXIT_TYPE __debugbreak();
-    #endif /* EXIT_TYPE */
-  #endif /* ROSE_DEBUG */
-  #define ROSE_ASSERT(x, ...)                    \
-  do { if (!(x)) {                               \
-    fprintf(stderr, ">> PANIC!!!\n");            \
-    fprintf(stderr, ">> FILE: %s\n",             \
-    (strrchr(__FILE__, '\\')) ?                  \
-    (strrchr(__FILE__, '\\') + 1) : (__FILE__)); \
-    fprintf(stderr, ">> LINE: %d\n", __LINE__);  \
-    fprintf(stderr, ">> ERROR: ");               \
-    fprintf(stderr, __VA_ARGS__);                \
-    fprintf(stderr, "\n");                       \
-    EXIT_TYPE                                    \
-  } } while (0)
-#endif /* ROSE_ASSERT */
+  #endif
+#endif
 
 #ifndef CHECK_HRESULT
-  #define CHECK_HRESULT(hr, fn)      \
-  do {                               \
-    ROSE_ASSERT(!(FAILED(hr)),       \
-    "%s failed! (HRESULT: 0x%08lX)", \
-    fn, (unsigned long)(hr));        \
-  } while (0)
-#endif /* CHECK_HRESULT */
+  #define CHECK_HRESULT(result, func)                  \
+  do { if (FAILED(result)) {                           \
+    fprintf(stderr, "%s failed! (HRESULT: 0x%08lX)\n", \
+    func, (unsigned int)(result)); abort();            \
+  } } while (0)
+#endif
+
+#ifdef ROSE_RELEASE
+  #ifdef CHECK_HRESULT
+    #undef CHECK_HRESULT
+  #endif
+  #define CHECK_HRESULT(result, func)
+#endif
 
 typedef struct constants_t {
 	float screen_size[2];
