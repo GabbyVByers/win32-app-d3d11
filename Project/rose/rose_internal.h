@@ -76,7 +76,7 @@ extern type name;
   #undef ROSE_GLOBAL
   #define ROSE_GLOBAL(type, name) \
   type name = { 0 };
-#endif /* ROSE_EXTERN */
+#endif /* ROSE_DEFINE_GLOBALS */
 
 ROSE_GLOBAL(bool,      rose__quit)
 ROSE_GLOBAL(HINSTANCE, rose__hinstance)

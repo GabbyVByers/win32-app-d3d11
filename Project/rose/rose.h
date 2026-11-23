@@ -60,10 +60,13 @@ typedef struct ROSE_Text   ROSE_Text;
 void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height);
 void ROSE_Quit(void);
 
-bool ROSE_WindowClosed(void);
-bool ROSE_WindowMinimized(void);
-void ROSE_FrameClear(ROSE_Color color);
-void ROSE_FrameRender(void);
+bool  ROSE_WindowClosed(void);
+bool  ROSE_WindowMinimized(void);
+void  ROSE_WindowVSync(bool vsync); // enable or diable vsync
+void  ROSE_WindowMaxFPS(float max); // set frame limit
+float ROSE_WindowFPS(void);         // get the current framerate
+void  ROSE_FrameClear(ROSE_Color color);
+void  ROSE_FrameRender(void);
 
 ROSE_Image*   ROSE_ImageCreate(uInt32 width, uInt32 height);
 void          ROSE_ImageDestroy(ROSE_Image* image);

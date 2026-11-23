@@ -7,7 +7,7 @@
 
 static void reserve(ROSE_Mesh2D* mesh, uInt32 capacity)
 {
-	if (capacity < mesh->capacity)
+	if (capacity <= mesh->capacity)
 		return;
 
 	if (mesh->vertices != NULL)
@@ -100,12 +100,6 @@ void ROSE_Mesh2DUpdate(ROSE_Mesh2D* mesh, const ROSE_Vertex2D* vertices, uInt32 
 
 		reserve(mesh, capacity);
 	}
-
-	D3D11_BUFFER_DESC vertex_buffer_desc = {
-		.ByteWidth = sizeof(ROSE_Vertex2D) * count,
-		.Usage     = D3D11_USAGE_IMMUTABLE,
-		.BindFlags = D3D11_BIND_VERTEX_BUFFER,
-	};
 
 	D3D11_MAPPED_SUBRESOURCE mapped;
 	HRESULT result = ID3D11DeviceContext_Map(rose__context, (ID3D11Resource*)mesh->vertices, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
