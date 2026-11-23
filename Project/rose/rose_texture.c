@@ -50,6 +50,7 @@ void ROSE_TextureDestroy(ROSE_Texture* texture)
 	if (texture == NULL)
 		return;
 
+	rose__batch_flush();
 	if (texture->view != NULL)
 		ID3D11ShaderResourceView_Release(texture->view);
 

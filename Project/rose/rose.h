@@ -89,5 +89,9 @@ void          ROSE_Mesh2DDestroy(ROSE_Mesh2D* mesh);
 void          ROSE_Mesh2DUpdate(ROSE_Mesh2D* mesh, const ROSE_Vertex2D* vertices, uInt32 count);
 void          ROSE_Mesh2DDraw(ROSE_Mesh2D* mesh, ROSE_Texture* texture);
 
+ROSE_Sprite*  ROSE_SpriteCreate(ROSE_Texture* texture);
+void          ROSE_SpriteDestroy(ROSE_Sprite* sprite);
+void          ROSE_SpriteDraw(ROSE_Sprite* sprite, float xpos, float ypos, float scale, ROSE_Color color);
+
 #endif /* ROSE_ROSE_HEADER_GUARD */
 

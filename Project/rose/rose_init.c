@@ -175,6 +175,7 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 
 	ROSE_Image* white = ROSE_ImageCreate(1, 1);
 	rose__blank_texture = ROSE_TextureCreate(white);
+	rose__batch_create();
 	ROSE_ImageDestroy(white);
 
 	LARGE_INTEGER frequency;
@@ -200,6 +201,7 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 void ROSE_Quit(void)
 {
 	ID3D11DeviceContext_ClearState(rose__context);
+	rose__batch_destroy();
 
 	ROSE_TextureDestroy(rose__blank_texture);
 	ID3D11BlendState_Release(rose__blend_state);

@@ -82,3 +82,26 @@ Int64 rose__ticks(void)
 	return ticks.QuadPart;
 }
 
+void rose__bind_2d(ID3D11Buffer* vertices, ROSE_Texture* texture)
+{
+	if ((texture == NULL) || (texture->view == NULL))
+		texture = rose__blank_texture;
+
+	UINT stride = sizeof(ROSE_Vertex2D);
+	UINT offset = 0;
+	ID3D11DeviceContext_IASetInputLayout(rose__context, rose__input_layout);
+	ID3D11DeviceContext_IASetVertexBuffers(rose__context, 0, 1, &vertices, &stride, &offset);
+	ID3D11DeviceContext_IASetPrimitiveTopology(rose__context, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	ID3D11DeviceContext_VSSetShader(rose__context, rose__vertex_shader, NULL, 0);
+	ID3D11DeviceContext_PSSetShader(rose__context, rose__pixel_shader, NULL, 0);
+
+	constants_t constants = { .screen_size = { rose__viewport.Width, rose__viewport.Height } };
+	ID3D11DeviceContext_UpdateSubresource(rose__context, (ID3D11Resource*)rose__constant_buffer, 0, NULL, &constants, 0, 0);
+	ID3D11DeviceContext_VSSetConstantBuffers(rose__context, 0, 1, &rose__constant_buffer);
+
+	ID3D11DeviceContext_PSSetShaderResources(rose__context, 0, 1, &texture->view);
+	ID3D11DeviceContext_PSSetSamplers(rose__context, 0, 1, &rose__sampler);
+	ID3D11DeviceContext_OMSetBlendState(rose__context, rose__blend_state, NULL, 0xFFFFFFFF);
+}
+

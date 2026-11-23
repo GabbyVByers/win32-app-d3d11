@@ -65,10 +65,18 @@ typedef struct ROSE_Texture {
 } ROSE_Texture;
 
 typedef struct ROSE_Mesh2D {
-	ID3D11Buffer* vertices;
 	uInt32 count;
 	uInt32 capacity;
+	ID3D11Buffer* vertices;
 } ROSE_Mesh2D;
+
+typedef struct ROSE_Sprite {
+	float width;
+	float height;
+	float u0, v0;
+	float u1, v1;
+	ROSE_Texture* texture;
+} ROSE_Sprite;
 
 #define ROSE_GLOBAL(type, name) \
 extern type name;
@@ -110,10 +118,14 @@ ROSE_GLOBAL(float,  rose__fps)
 ROSE_GLOBAL(uInt32, rose__fps_frames)
 ROSE_GLOBAL(Int64,  rose__fps_window_start)
 
-LRESULT CALLBACK rose__proc(HWND, UINT, WPARAM, LPARAM);
-ID3DBlob*        rose__compile_shader(const wchar_t*, const char*, const char*);
-void             rose__create_render_target(void);
-Int64            rose__ticks(void);
+LRESULT CALLBACK rose__proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+ID3DBlob* rose__compile_shader(const wchar_t* path, const char* entry, const char* target);
+void  rose__create_render_target(void);
+Int64 rose__ticks(void);
+void  rose__bind_2d(ID3D11Buffer* vertices, ROSE_Texture* texture);
+void  rose__batch_create(void);
+void  rose__batch_destroy(void);
+void  rose__batch_flush(void);
 
 #endif /* ROSE_INTERNAL_HEADER_GUARD */
 

@@ -85,6 +85,7 @@ void ROSE_FrameClear(ROSE_Color color)
 
 void ROSE_FrameRender(void)
 {
+	rose__batch_flush();
 	HRESULT result = IDXGISwapChain1_Present(rose__swapchain, (UINT)rose__vsync, 0);
 	CHECK_HRESULT(result, "IDXGISwapChain1_Present()");
 
