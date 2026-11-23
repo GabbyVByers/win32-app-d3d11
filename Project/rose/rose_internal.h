@@ -60,20 +60,20 @@ typedef struct constants_t {
 } constants_t;
 
 typedef struct ROSE_Image {
-    uInt32 width;
-    uInt32 height;
-    uInt32* pixels;
+	uInt32 width;
+	uInt32 height;
+	uInt32* pixels;
 } ROSE_Image;
 
 typedef struct ROSE_Texture {
-    ID3D11ShaderResourceView* view;
-    uInt32 width;
-    uInt32 height;
+	uInt32 width;
+	uInt32 height;
+	ID3D11ShaderResourceView* view;
 } ROSE_Texture;
 
 typedef struct ROSE_Mesh2D {
-    ID3D11Buffer* vertices;
-    uInt32 count;
+	ID3D11Buffer* vertices;
+	uInt32 count;
 } ROSE_Mesh2D;
 
 #define ROSE_GLOBAL(type, name) \
@@ -108,7 +108,7 @@ ROSE_GLOBAL(uInt32, rose__screen_width)
 ROSE_GLOBAL(uInt32, rose__screen_height)
 
 LRESULT CALLBACK rose__proc(HWND, UINT, WPARAM, LPARAM);
-ID3DBlob* rose__compile_shader(const wchar_t* path, const char* entry, const char* target);
+ID3DBlob* rose__compile_shader(const wchar_t*, const char*, const char*);
 void rose__create_render_target(void);
 
 #endif /* ROSE_INTERNAL_HEADER_GUARD */
