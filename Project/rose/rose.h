@@ -92,6 +92,7 @@ void          ROSE_Mesh2DDraw(ROSE_Mesh2D* mesh, ROSE_Texture* texture);
 ROSE_Sprite*  ROSE_SpriteCreate(ROSE_Texture* texture);
 void          ROSE_SpriteDestroy(ROSE_Sprite* sprite);
 void          ROSE_SpriteDraw(ROSE_Sprite* sprite, float xpos, float ypos, float scale, ROSE_Color color);
+void          ROSE_SpriteRegion(ROSE_Sprite* sprite, uInt32 xpos, uInt32 ypos, uInt32 width, uInt32 height);
 
 #endif /* ROSE_ROSE_HEADER_GUARD */
 

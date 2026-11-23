@@ -63,6 +63,19 @@ void ROSE_SpriteDraw(ROSE_Sprite* sprite, float xpos, float ypos, float scale, R
 	batch_count += 6;
 }
 
+void ROSE_SpriteRegion(ROSE_Sprite* sprite, uInt32 xpos, uInt32 ypos, uInt32 width, uInt32 height)
+{
+	float tw = (float)sprite->texture->width;
+	float th = (float)sprite->texture->height;
+
+	sprite->u0 = (float)xpos / tw;
+	sprite->v0 = (float)ypos / th;
+	sprite->u1 = (float)(xpos + width)  / tw;
+	sprite->v1 = (float)(ypos + height) / th;
+	sprite->width  = (float)width;
+	sprite->height = (float)height;
+}
+
 void rose__batch_create(void)
 {
 	D3D11_BUFFER_DESC desc = {
