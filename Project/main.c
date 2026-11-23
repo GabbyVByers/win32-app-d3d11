@@ -4,6 +4,7 @@
  */
 
 #include "rose/rose.h"
+#include <math.h>
 
 int main(void)
 {
@@ -20,16 +21,13 @@ int main(void)
 	ROSE_Texture* texture = ROSE_TextureCreate(image);
 	ROSE_ImageDestroy(image);
 
-	float x0 = 100.0f, y0 = 100.0f;
-	float x1 = 400.0f, y1 = 400.0f;
-
 	ROSE_Vertex2D vertices[] = {
-		{ .x = x0, .y = y0, .u = 0.0f, .v = 0.0f, .color = ROSE_COLOR_WHITE },
-		{ .x = x1, .y = y0, .u = 1.0f, .v = 0.0f, .color = ROSE_COLOR_WHITE },
-		{ .x = x0, .y = y1, .u = 0.0f, .v = 1.0f, .color = ROSE_COLOR_WHITE },
-		{ .x = x1, .y = y0, .u = 1.0f, .v = 0.0f, .color = ROSE_COLOR_WHITE },
-		{ .x = x1, .y = y1, .u = 1.0f, .v = 1.0f, .color = ROSE_COLOR_WHITE },
-		{ .x = x0, .y = y1, .u = 0.0f, .v = 1.0f, .color = ROSE_COLOR_WHITE },
+		{ .x = 100.0f, .y = 100.0f, .u = 0.0f, .v = 0.0f, .color = ROSE_COLOR_WHITE },
+		{ .x = 400.0f, .y = 100.0f, .u = 1.0f, .v = 0.0f, .color = ROSE_COLOR_WHITE },
+		{ .x = 100.0f, .y = 400.0f, .u = 0.0f, .v = 1.0f, .color = ROSE_COLOR_WHITE },
+		{ .x = 400.0f, .y = 100.0f, .u = 1.0f, .v = 0.0f, .color = ROSE_COLOR_WHITE },
+		{ .x = 400.0f, .y = 400.0f, .u = 1.0f, .v = 1.0f, .color = ROSE_COLOR_WHITE },
+		{ .x = 100.0f, .y = 400.0f, .u = 0.0f, .v = 1.0f, .color = ROSE_COLOR_WHITE },
 	};
 
 	uInt32 count =
@@ -38,12 +36,32 @@ int main(void)
 
 	ROSE_Mesh2D* mesh = ROSE_Mesh2DCreate(vertices, count);
 
+	uInt32 frame = 0;
+
 	while (true) {
 		if (ROSE_WindowClosed())
 			break;
 
 		if (ROSE_WindowMinimized())
 			continue;
+
+		float t = (float)frame++ / 60.0f;
+		float dx = sinf(t * 2.0f) * 80.0f;
+		float dy = cosf(t * 3.0f) * 40.0f;
+
+		float ax = 100.0f + dx, ay = 100.0f + dy;
+		float bx = 400.0f + dx, by = 400.0f + dy;
+
+		ROSE_Vertex2D moving[] = {
+			{ .x = ax, .y = ay, .u = 0.0f, .v = 0.0f, .color = ROSE_COLOR_WHITE },
+			{ .x = bx, .y = ay, .u = 1.0f, .v = 0.0f, .color = ROSE_COLOR_WHITE },
+			{ .x = ax, .y = by, .u = 0.0f, .v = 1.0f, .color = ROSE_COLOR_WHITE },
+			{ .x = bx, .y = ay, .u = 1.0f, .v = 0.0f, .color = ROSE_COLOR_WHITE },
+			{ .x = bx, .y = by, .u = 1.0f, .v = 1.0f, .color = ROSE_COLOR_WHITE },
+			{ .x = ax, .y = by, .u = 0.0f, .v = 1.0f, .color = ROSE_COLOR_WHITE },
+		};
+
+		ROSE_Mesh2DUpdate(mesh, moving, 6);
 
 		ROSE_FrameClear(ROSE_COLOR_RGBA(30, 15, 70, 255));
 		ROSE_Mesh2DDraw(mesh, texture);

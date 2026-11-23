@@ -67,6 +67,7 @@ typedef struct ROSE_Texture {
 typedef struct ROSE_Mesh2D {
 	ID3D11Buffer* vertices;
 	uInt32 count;
+	uInt32 capacity;
 } ROSE_Mesh2D;
 
 #define ROSE_GLOBAL(type, name) \

@@ -5,27 +5,32 @@
 
 #include "rose_internal.h"
 
+static void reserve(ROSE_Mesh2D* mesh, uInt32 capacity)
+{
+	if (capacity < mesh->capacity)
+		return;
+
+	if (mesh->vertices != NULL)
+		ID3D11Buffer_Release(mesh->vertices);
+
+	D3D11_BUFFER_DESC vertex_buffer_desc = {
+		.ByteWidth      = sizeof(ROSE_Vertex2D) * capacity,
+		.Usage          = D3D11_USAGE_DYNAMIC,
+		.BindFlags      = D3D11_BIND_VERTEX_BUFFER,
+		.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE,
+	};
+
+	mesh->vertices = NULL;
+	HRESULT result = ID3D11Device_CreateBuffer(rose__device, &vertex_buffer_desc, NULL, &mesh->vertices);
+	CHECK_HRESULT(result, "ID3D11Device_CreateBuffer()");
+
+	mesh->capacity = capacity;
+}
+
 ROSE_Mesh2D* ROSE_Mesh2DCreate(const ROSE_Vertex2D* vertices, uInt32 count)
 {
 	ROSE_Mesh2D* mesh = calloc(1, sizeof(ROSE_Mesh2D));
-
-	if ((vertices == NULL) || (count == 0))
-		return mesh;
-
-	D3D11_BUFFER_DESC vertex_buffer_desc = {
-		.ByteWidth = sizeof(ROSE_Vertex2D) * count,
-		.Usage     = D3D11_USAGE_IMMUTABLE,
-		.BindFlags = D3D11_BIND_VERTEX_BUFFER,
-	};
-
-	ID3D11Buffer* buffer = NULL;
-	D3D11_SUBRESOURCE_DATA vertex_data = { .pSysMem = vertices };
-	HRESULT result = ID3D11Device_CreateBuffer(rose__device, &vertex_buffer_desc, &vertex_data, &buffer);
-	CHECK_HRESULT(result, "ID3D11Device_CreateBuffer()");
-
-	mesh->vertices = buffer;
-	mesh->count = count;
-
+	ROSE_Mesh2DUpdate(mesh, vertices, count);
 	return mesh;
 }
 
@@ -78,17 +83,22 @@ void ROSE_Mesh2DDraw(ROSE_Mesh2D* mesh, ROSE_Texture* texture)
 
 void ROSE_Mesh2DUpdate(ROSE_Mesh2D* mesh, const ROSE_Vertex2D* vertices, uInt32 count)
 {
-	if (mesh->vertices != NULL)
-		ID3D11Buffer_Release(mesh->vertices);
-
-	const bool empty =
+	bool empty =
 		(vertices == NULL) ||
 		(count == 0);
 
 	if (empty) {
-		mesh->vertices = NULL;
 		mesh->count = 0;
 		return;
+	}
+
+	if (count > mesh->capacity) {
+		uInt32 capacity = (mesh->capacity * 2);
+
+		if (capacity < count)
+			capacity = count;
+
+		reserve(mesh, capacity);
 	}
 
 	D3D11_BUFFER_DESC vertex_buffer_desc = {
@@ -97,11 +107,13 @@ void ROSE_Mesh2DUpdate(ROSE_Mesh2D* mesh, const ROSE_Vertex2D* vertices, uInt32 
 		.BindFlags = D3D11_BIND_VERTEX_BUFFER,
 	};
 
-	mesh->vertices = NULL;
-	mesh->count = count;
+	D3D11_MAPPED_SUBRESOURCE mapped;
+	HRESULT result = ID3D11DeviceContext_Map(rose__context, (ID3D11Resource*)mesh->vertices, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
+	CHECK_HRESULT(result, "ID3D11DeviceContext_Map()");
 
-	D3D11_SUBRESOURCE_DATA vertex_data = { .pSysMem = vertices };
-	HRESULT result = ID3D11Device_CreateBuffer(rose__device, &vertex_buffer_desc, &vertex_data, &mesh->vertices);
-	CHECK_HRESULT(result, "ID3D11Device_CreateBuffer()");
+	memcpy(mapped.pData, vertices, sizeof(ROSE_Vertex2D) * count);
+	ID3D11DeviceContext_Unmap(rose__context, (ID3D11Resource*)mesh->vertices, 0);
+
+	mesh->count = count;
 }
 
