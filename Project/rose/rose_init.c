@@ -176,6 +176,25 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	ROSE_Image* white = ROSE_ImageCreate(1, 1);
 	rose__blank_texture = ROSE_TextureCreate(white);
 	ROSE_ImageDestroy(white);
+
+	LARGE_INTEGER frequency;
+	QueryPerformanceFrequency(&frequency);
+	rose__qpc_frequency = frequency.QuadPart;
+
+	Int64 now = rose__ticks();
+	rose__time_start       = now;
+	rose__frame_last       = now;
+	rose__frame_next       = now;
+	rose__fps_window_start = now;
+	rose__vsync = TRUE;
+
+	rose__timer = CreateWaitableTimerExW(
+		NULL, NULL,
+		CREATE_WAITABLE_TIMER_HIGH_RESOLUTION,
+		TIMER_ALL_ACCESS
+	);
+
+	assert(rose__timer && "CreateWaitableTimerExW() failed!");
 }
 
 void ROSE_Quit(void)
@@ -226,6 +245,16 @@ void ROSE_Quit(void)
 		DestroyWindow(rose__hwnd);
 
 	UnregisterClassW(WINDOW_CLASS_NAME, rose__hinstance);
+
+	if (rose__timer != NULL)
+		CloseHandle(rose__timer);
+
+	rose__timer       = NULL;
+	rose__vsync       = FALSE;
+	rose__max_fps     = 0.0f;
+	rose__frame_delta = 0.0f;
+	rose__fps         = 0.0f;
+	rose__fps_frames  = 0u;
 
 	rose__quit      = FALSE;
 	rose__hwnd      = NULL;

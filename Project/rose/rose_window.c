@@ -32,6 +32,32 @@ bool ROSE_WindowMinimized(void)
 	return minimized;
 }
 
+void ROSE_WindowVSync(bool vsync)
+{
+	rose__vsync = vsync;
+}
+
+void ROSE_WindowMaxFPS(float max)
+{
+	rose__max_fps = (max > 0.0f) ? max : 0.0f;
+	rose__frame_next = rose__ticks();
+}
+
+float ROSE_WindowFPS(void)
+{
+	return rose__fps;
+}
+
+float ROSE_FrameDelta(void)
+{
+	return rose__frame_delta;
+}
+
+double ROSE_Time(void)
+{
+	return (double)(rose__ticks() - rose__time_start) / (double)rose__qpc_frequency;
+}
+
 void ROSE_FrameClear(ROSE_Color color)
 {
 	if (rose__resize_pending) {
@@ -59,7 +85,43 @@ void ROSE_FrameClear(ROSE_Color color)
 
 void ROSE_FrameRender(void)
 {
-	HRESULT result = IDXGISwapChain1_Present(rose__swapchain, 1, 0);
+	HRESULT result = IDXGISwapChain1_Present(rose__swapchain, (UINT)rose__vsync, 0);
 	CHECK_HRESULT(result, "IDXGISwapChain1_Present()");
+
+	if (rose__max_fps > 0.0f) {
+		Int64 period = (Int64)((double)rose__qpc_frequency / (double)rose__max_fps);
+		rose__frame_next += period;
+
+		if (rose__frame_next < rose__ticks()) {
+			rose__frame_next = rose__ticks();
+		}
+		else {
+			Int64 spin = rose__qpc_frequency / 1000;
+			Int64 remaining = rose__frame_next - rose__ticks();
+
+			if (remaining > spin) {
+				LARGE_INTEGER due = { 0 };
+				due.QuadPart = -((remaining - spin) * 10000000 / rose__qpc_frequency);
+				SetWaitableTimer(rose__timer, &due, 0, NULL, NULL, FALSE);
+				WaitForSingleObject(rose__timer, INFINITE);
+			}
+
+			while (rose__ticks() < rose__frame_next)
+				YieldProcessor();
+		}
+	}
+
+	Int64 now = rose__ticks();
+	double delta = (double)(now - rose__frame_last) / (double)rose__qpc_frequency;
+	rose__frame_last = now;
+	rose__frame_delta = (float)((delta > 0.25) ? 0.25 : delta);
+
+	rose__fps_frames++;
+	Int64 elapsed = now - rose__fps_window_start;
+	if (elapsed >= rose__qpc_frequency / 2) {
+		rose__fps = (float)((double)rose__fps_frames * (double)rose__qpc_frequency / (double)elapsed);
+		rose__fps_frames = 0u;
+		rose__fps_window_start = now;
+	}
 }
 

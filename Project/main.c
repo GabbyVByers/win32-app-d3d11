@@ -4,11 +4,15 @@
  */
 
 #include "rose/rose.h"
+
+#include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
 int main(void)
 {
 	ROSE_Init(L"My Window", 500, 500);
+	//ROSE_WindowVSync(false);
 
 	ROSE_Image* image = ROSE_ImageCreate(8, 8);
 	for (uInt32 y = 0; y < 8; y++) {
@@ -66,6 +70,8 @@ int main(void)
 		ROSE_FrameClear(ROSE_COLOR_RGBA(30, 15, 70, 255));
 		ROSE_Mesh2DDraw(mesh, texture);
 		ROSE_FrameRender();
+
+		fprintf(stdout, "FPS: %d\n", (int)ROSE_WindowFPS());
 	}
 
 	ROSE_TextureDestroy(texture);

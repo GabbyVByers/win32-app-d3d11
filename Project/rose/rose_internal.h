@@ -78,10 +78,9 @@ extern type name;
   type name = { 0 };
 #endif /* ROSE_DEFINE_GLOBALS */
 
-ROSE_GLOBAL(bool,      rose__quit)
-ROSE_GLOBAL(HINSTANCE, rose__hinstance)
-ROSE_GLOBAL(HWND,      rose__hwnd)
-
+ROSE_GLOBAL(bool,                    rose__quit)
+ROSE_GLOBAL(HINSTANCE,               rose__hinstance)
+ROSE_GLOBAL(HWND,                    rose__hwnd)
 ROSE_GLOBAL(ID3D11Device*,           rose__device)
 ROSE_GLOBAL(ID3D11DeviceContext*,    rose__context)
 ROSE_GLOBAL(IDXGISwapChain1*,        rose__swapchain)
@@ -89,21 +88,32 @@ ROSE_GLOBAL(ID3D11Buffer*,           rose__constant_buffer)
 ROSE_GLOBAL(ID3D11InputLayout*,      rose__input_layout)
 ROSE_GLOBAL(ID3D11RenderTargetView*, rose__render_target)
 ROSE_GLOBAL(D3D11_VIEWPORT,          rose__viewport)
-
-ROSE_GLOBAL(ID3D11VertexShader*, rose__vertex_shader)
-ROSE_GLOBAL(ID3D11PixelShader*,  rose__pixel_shader)
-
-ROSE_GLOBAL(ID3D11SamplerState*, rose__sampler)
-ROSE_GLOBAL(ID3D11BlendState*,   rose__blend_state)
-ROSE_GLOBAL(ROSE_Texture*,       rose__blank_texture)
+ROSE_GLOBAL(ID3D11VertexShader*,     rose__vertex_shader)
+ROSE_GLOBAL(ID3D11PixelShader*,      rose__pixel_shader)
+ROSE_GLOBAL(ID3D11SamplerState*,     rose__sampler)
+ROSE_GLOBAL(ID3D11BlendState*,       rose__blend_state)
+ROSE_GLOBAL(ROSE_Texture*,           rose__blank_texture)
 
 ROSE_GLOBAL(bool,   rose__resize_pending)
 ROSE_GLOBAL(uInt32, rose__screen_width)
 ROSE_GLOBAL(uInt32, rose__screen_height)
 
+ROSE_GLOBAL(HANDLE, rose__timer)
+ROSE_GLOBAL(Int64,  rose__qpc_frequency)
+ROSE_GLOBAL(Int64,  rose__time_start)
+ROSE_GLOBAL(bool,   rose__vsync)
+ROSE_GLOBAL(float,  rose__max_fps)
+ROSE_GLOBAL(Int64,  rose__frame_next)
+ROSE_GLOBAL(Int64,  rose__frame_last)
+ROSE_GLOBAL(float,  rose__frame_delta)
+ROSE_GLOBAL(float,  rose__fps)
+ROSE_GLOBAL(uInt32, rose__fps_frames)
+ROSE_GLOBAL(Int64,  rose__fps_window_start)
+
 LRESULT CALLBACK rose__proc(HWND, UINT, WPARAM, LPARAM);
-ID3DBlob* rose__compile_shader(const wchar_t*, const char*, const char*);
-void rose__create_render_target(void);
+ID3DBlob*        rose__compile_shader(const wchar_t*, const char*, const char*);
+void             rose__create_render_target(void);
+Int64            rose__ticks(void);
 
 #endif /* ROSE_INTERNAL_HEADER_GUARD */
 

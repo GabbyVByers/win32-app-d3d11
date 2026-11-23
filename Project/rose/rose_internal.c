@@ -75,3 +75,10 @@ void rose__create_render_target(void)
 	};
 }
 
+Int64 rose__ticks(void)
+{
+	LARGE_INTEGER ticks;
+	QueryPerformanceCounter(&ticks);
+	return ticks.QuadPart;
+}
+
