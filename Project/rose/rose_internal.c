@@ -3,7 +3,7 @@
  *   Source [rose_internal.c]
  */
 
-#define ROSE_EXTERN
+#define ROSE_DEFINE_GLOBALS
 #include "rose_internal.h"
 
 LRESULT CALLBACK rose__proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)

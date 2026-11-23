@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <wchar.h>
 
 #define ROSE_COLOR_RGBA(r, g, b, a) \
 ((ROSE_Color) {                     \
@@ -51,6 +52,10 @@ typedef struct ROSE_Image   ROSE_Image;
 typedef struct ROSE_Texture ROSE_Texture;
 
 typedef struct ROSE_Mesh2D ROSE_Mesh2D;
+typedef struct ROSE_Mesh3D ROSE_Mesh3D;
+
+typedef struct ROSE_Sprite ROSE_Sprite;
+typedef struct ROSE_Text   ROSE_Text;
 
 void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height);
 void ROSE_Quit(void);
@@ -65,7 +70,7 @@ void          ROSE_ImageDestroy(ROSE_Image* image);
 ROSE_Image*   ROSE_ImageLoad(const char* path);
 void          ROSE_ImageSave(ROSE_Image* image, const char* path);
 void          ROSE_ImageResize(ROSE_Image* image, uInt32 width, uInt32 height);
-void          ROSE_ImageFillColor(ROSE_Image* image, ROSE_Color color);
+void          ROSE_ImageFill(ROSE_Image* image, ROSE_Color color);
 ROSE_Color    ROSE_ImageGetPixel(ROSE_Image* image, uInt32 xpos, uInt32 ypos);
 void          ROSE_ImageSetPixel(ROSE_Image* image, uInt32 xpos, uInt32 ypos, ROSE_Color color);
 void          ROSE_ImageSize(ROSE_Image* image, uInt32* width, uInt32* height);

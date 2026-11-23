@@ -3,7 +3,6 @@
  *   Source [rose_image.c]
  */
 
-#define ROSE_EXTERN
 #include "rose_internal.h"
 
 ROSE_Image* ROSE_ImageCreate(uInt32 width, uInt32 height)
@@ -82,7 +81,7 @@ void ROSE_ImageResize(ROSE_Image* image, uInt32 width, uInt32 height)
 		(image->pixels != NULL);
 
 	if (copy) {
-		uInt32 copy_width = (width < image->width) ? width : image->width;
+		uInt32 copy_width  = (width < image->width)   ? width  : image->width;
 		uInt32 copy_height = (height < image->height) ? height : image->height;
 
 		for (uInt32 y = 0; y < copy_height; y++) {
@@ -102,7 +101,7 @@ void ROSE_ImageResize(ROSE_Image* image, uInt32 width, uInt32 height)
 	image->pixels = pixels;
 }
 
-void ROSE_ImageFillColor(ROSE_Image* image, ROSE_Color color)
+void ROSE_ImageFill(ROSE_Image* image, ROSE_Color color)
 {
 	uInt8 r = (uInt8)(color.r * 255.5f);
 	uInt8 g = (uInt8)(color.g * 255.5f);

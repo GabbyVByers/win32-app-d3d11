@@ -3,7 +3,6 @@
  *   Source [rose_mesh.c]
  */
 
-#define ROSE_EXTERN
 #include "rose_internal.h"
 
 ROSE_Mesh2D* ROSE_Mesh2DCreate(const ROSE_Vertex2D* vertices, uInt32 count)
@@ -26,7 +25,7 @@ ROSE_Mesh2D* ROSE_Mesh2DCreate(const ROSE_Vertex2D* vertices, uInt32 count)
 
 	mesh->vertices = buffer;
 	mesh->count = count;
-	
+
 	return mesh;
 }
 
@@ -94,7 +93,7 @@ void ROSE_Mesh2DUpdate(ROSE_Mesh2D* mesh, const ROSE_Vertex2D* vertices, uInt32 
 
 	D3D11_BUFFER_DESC vertex_buffer_desc = {
 		.ByteWidth = sizeof(ROSE_Vertex2D) * count,
-		.Usage = D3D11_USAGE_IMMUTABLE,
+		.Usage     = D3D11_USAGE_IMMUTABLE,
 		.BindFlags = D3D11_BIND_VERTEX_BUFFER,
 	};
 

@@ -3,7 +3,6 @@
  *   Source [rose_texture.c]
  */
 
-#define ROSE_EXTERN
 #include "rose_internal.h"
 
 ROSE_Texture* ROSE_TextureCreate(ROSE_Image* image)

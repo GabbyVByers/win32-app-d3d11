@@ -39,13 +39,6 @@
   #endif
 #endif
 
-#ifdef ROSE_DEBUG
-  #ifdef ROSE_RELEASE
-    #warning("D/R CONFLICT")
-    #undef ROSE_RELEASE
-  #endif
-#endif
-
 #ifndef CHECK_HRESULT
   #define CHECK_HRESULT(result, func)                  \
   do { if (FAILED(result)) {                           \
@@ -77,11 +70,11 @@ typedef struct ROSE_Mesh2D {
 } ROSE_Mesh2D;
 
 #define ROSE_GLOBAL(type, name) \
-type name = { 0 };
-#ifdef ROSE_EXTERN
-  #undef  ROSE_GLOBAL
+extern type name;
+#ifdef ROSE_DEFINE_GLOBALS
+  #undef ROSE_GLOBAL
   #define ROSE_GLOBAL(type, name) \
-  extern type name;
+  type name = { 0 };
 #endif /* ROSE_EXTERN */
 
 ROSE_GLOBAL(bool,      rose__quit)

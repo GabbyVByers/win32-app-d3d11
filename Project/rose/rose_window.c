@@ -3,7 +3,6 @@
  *   Source [rose_window.c]
  */
 
-#define ROSE_EXTERN
 #include "rose_internal.h"
 
 bool ROSE_WindowClosed(void)
