@@ -84,7 +84,7 @@ bool  ROSE_MousePressed(ROSE_MouseButton button);
 bool  ROSE_MouseReleased(ROSE_MouseButton button);
 float ROSE_MouseScroll(void);
 void  ROSE_MousePosition(float* xpos, float* ypos);
-void  ROSE_MouseVelocity(float* xdelta, float* ydelta);
+void  ROSE_MouseVelocity(float* xvel, float* yvel);
 
 ROSE_Image*   ROSE_ImageCreate(uInt32 width, uInt32 height);
 void          ROSE_ImageDestroy(ROSE_Image* image);
