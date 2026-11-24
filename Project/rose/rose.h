@@ -71,16 +71,16 @@ double ROSE_Time(void);
 void   ROSE_FrameClear(ROSE_Color color);
 void   ROSE_FrameRender(void);
 
-bool  ROSE_MousePressing(ROSE_MouseButton button);
-bool  ROSE_MousePressed(ROSE_MouseButton button);
-bool  ROSE_MouseReleased(ROSE_MouseButton button);
-float ROSE_MouseScroll(void);
-void  ROSE_MousePosition(float* xpos, float* ypos);
-void  ROSE_MouseVelocity(float* xvel, float* yvel);
+bool   ROSE_MousePressing(ROSE_MouseButton button);
+bool   ROSE_MousePressed(ROSE_MouseButton button);
+bool   ROSE_MouseReleased(ROSE_MouseButton button);
+float  ROSE_MouseScroll(void);
+void   ROSE_MousePosition(float* xpos, float* ypos);
+void   ROSE_MouseVelocity(float* xvel, float* yvel);
 
-bool  ROSE_KeyboardPressing(ROSE_Scancode scancode);
-bool  ROSE_KeyboardPressed(ROSE_Scancode scancode);
-bool  ROSE_KeyboardReleased(ROSE_Scancode scancode);
+bool   ROSE_KeyboardPressing(ROSE_Scancode scancode);
+bool   ROSE_KeyboardPressed(ROSE_Scancode scancode);
+bool   ROSE_KeyboardReleased(ROSE_Scancode scancode);
 
 ROSE_Image*   ROSE_ImageCreate(uInt32 width, uInt32 height);
 void          ROSE_ImageDestroy(ROSE_Image* image);
@@ -103,8 +103,13 @@ void          ROSE_Mesh2DDraw(ROSE_Mesh2D* mesh, ROSE_Texture* texture);
 
 ROSE_Sprite*  ROSE_SpriteCreate(ROSE_Texture* texture);
 void          ROSE_SpriteDestroy(ROSE_Sprite* sprite);
-void          ROSE_SpriteDraw(ROSE_Sprite* sprite, float xpos, float ypos, float scale, ROSE_Color color);
 void          ROSE_SpriteRegion(ROSE_Sprite* sprite, uInt32 xpos, uInt32 ypos, uInt32 width, uInt32 height);
+void          ROSE_SpriteDraw(ROSE_Sprite* sprite, float xpos, float ypos, float scale, ROSE_Color color);
+
+ROSE_Text*    ROSE_TextCreate(const char* format, ...);
+void          ROSE_TextDestroy(ROSE_Text* text);
+void          ROSE_TextUpdate(ROSE_Text* text, const char* format, ...);
+void          ROSE_TextDraw(ROSE_Text* text, float xpos, float ypos, float scale, ROSE_Color color);
 
 #endif /* ROSE_ROSE_HEADER_GUARD */
 

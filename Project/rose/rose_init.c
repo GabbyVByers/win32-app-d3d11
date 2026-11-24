@@ -173,10 +173,15 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	result = ID3D11Device_CreateBlendState(rose__device, &blend_desc, &rose__blend_state);
 	CHECK_HRESULT(result, "ID3D11Device_CreateBlendState()");
 
-	ROSE_Image* white = ROSE_ImageCreate(1, 1);
-	rose__blank_texture = ROSE_TextureCreate(white);
+	ROSE_Image* blank = ROSE_ImageCreate(1, 1);
+	ROSE_Image* ascii = ROSE_ImageLoad("textures/ascii.png");
+	
+	rose__blank_texture = ROSE_TextureCreate(blank);
+	rose__ascii_texture = ROSE_TextureCreate(ascii);
 	rose__batch_create();
-	ROSE_ImageDestroy(white);
+
+	ROSE_ImageDestroy(blank);
+	ROSE_ImageDestroy(ascii);
 
 	LARGE_INTEGER frequency;
 	QueryPerformanceFrequency(&frequency);
@@ -216,6 +221,8 @@ void ROSE_Quit(void)
 	rose__batch_destroy();
 
 	ROSE_TextureDestroy(rose__blank_texture);
+	ROSE_TextureDestroy(rose__ascii_texture);
+
 	ID3D11BlendState_Release(rose__blend_state);
 	ID3D11SamplerState_Release(rose__sampler);
 
@@ -248,6 +255,8 @@ void ROSE_Quit(void)
 	rose__viewport  = (D3D11_VIEWPORT) { 0 };
 
 	rose__blank_texture = NULL;
+	rose__ascii_texture = NULL;
+
 	rose__blend_state   = NULL;
 	rose__sampler       = NULL;
 

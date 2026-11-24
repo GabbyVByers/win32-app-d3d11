@@ -14,19 +14,11 @@ int main(void)
 	ROSE_Init(L"My Window", 500, 500);
 	//ROSE_WindowVSync(false);
 
-	ROSE_Image* image = ROSE_ImageCreate(8, 8);
-	for (uInt32 y = 0; y < 8; y++) {
-		for (uInt32 x = 0; x < 8; x++) {
-			ROSE_Color color = ((x + y) & 1) ? ROSE_COLOR_WHITE : ROSE_COLOR_PURPLE;
-			ROSE_ImageSetPixel(image, x, y, color);
-		}
-	}
-
-	ROSE_Texture* texture = ROSE_TextureCreate(image);
-	ROSE_ImageDestroy(image);
-
-	ROSE_Sprite* checker = ROSE_SpriteCreate(texture);
-	ROSE_Sprite* dot     = ROSE_SpriteCreate(NULL);
+	ROSE_Text* stats = ROSE_TextCreate("FPS: --");
+	ROSE_Text* hello = ROSE_TextCreate(
+		"Hello, rose!\n"
+		"lowercase -> UPPERCASE\n"
+		"not in font: ~ \xC3\xA9 \t <- 3 specials");
 
 	float time = 0.0f;
 	while (true) {
@@ -38,17 +30,9 @@ int main(void)
 
 		ROSE_FrameClear(ROSE_COLOR_RGBA(30, 15, 70, 255));
 
-		for (uInt32 gy = 0; gy < 30; gy++) {
-			for (uInt32 gx = 0; gx < 30; gx++) {
-				float wobble = sinf(time * 3.0f + (float)(gx + gy) * 0.4f) * 4.0f;
-				float x = 10.0f + (float)gx * 16.0f;
-				float y = 10.0f + (float)gy * 16.0f + wobble;
-				ROSE_SpriteDraw(checker, x, y, 1.5f, ROSE_COLOR_WHITE);
-			}
-		}
-
-		float dot_x = 250.0f + sinf(time) * 200.0f;
-		ROSE_SpriteDraw(dot, dot_x, 240.0f, 20.0f, ROSE_COLOR_RED);
+		ROSE_TextUpdate(stats, "FPS: %.0f\nDELTA: %.2f MS", ROSE_WindowFPS(), ROSE_FrameDelta() * 1000.0f);
+		ROSE_TextDraw(stats, 8.0f, 8.0f, 2.0f, ROSE_COLOR_YELLOW);
+		ROSE_TextDraw(hello, 8.0f, 400.0f, 2.0f, ROSE_COLOR_WHITE);
 
 		ROSE_FrameRender();
 		time += ROSE_FrameDelta();
@@ -92,9 +76,9 @@ int main(void)
 			fprintf(stdout, "FPS: %d\n", (int)ROSE_WindowFPS());
 	}
 
-	ROSE_TextureDestroy(texture);
-	ROSE_SpriteDestroy(checker);
-	ROSE_SpriteDestroy(dot);
+	ROSE_TextDestroy(stats);
+	ROSE_TextDestroy(hello);
+
 	ROSE_Quit();
 }
 

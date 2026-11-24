@@ -70,11 +70,8 @@ LRESULT CALLBACK rose__proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	if (scancode) {
 		rose__keyboard_message(msg, wparam, lparam);
 
-		bool system =
-			(msg == WM_SYSKEYDOWN) ||
-			(msg == WM_SYSKEYUP);
-
-		if (system)
+		if ((msg == WM_SYSKEYDOWN) ||
+			(msg == WM_SYSKEYUP))
 			return DefWindowProcW(hwnd, msg, wparam, lparam);
 
 		return 0;

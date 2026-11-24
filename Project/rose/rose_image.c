@@ -160,8 +160,8 @@ void ROSE_ImageSetPixel(ROSE_Image* image, uInt32 xpos, uInt32 ypos, ROSE_Color 
 
 void ROSE_ImageSize(ROSE_Image* image, uInt32* width, uInt32* height)
 {
-	*width  = image->width;
-	*height = image->height;
+	(*width)  = image->width;
+	(*height) = image->height;
 }
 
 uInt32* ROSE_ImageCopyPixels(ROSE_Image* image)
