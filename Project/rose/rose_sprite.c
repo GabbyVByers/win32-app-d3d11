@@ -65,7 +65,6 @@ void ROSE_SpriteDraw(ROSE_Sprite* sprite, float xpos, float ypos, float scale, R
 	verts[3] = (ROSE_Vertex2D){ x1, y0, u1, v0, color };
 	verts[4] = (ROSE_Vertex2D){ x1, y1, u1, v1, color };
 	verts[5] = (ROSE_Vertex2D){ x0, y1, u0, v1, color };
-	batch_count += 6;
 }
 
 ROSE_Vertex2D* rose__batch_alloc(ROSE_Texture* texture, uInt32 count)

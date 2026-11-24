@@ -20,7 +20,7 @@ static void text_vupdate(ROSE_Text* text, const char* format, va_list args)
 	if (length < 0)
 		length = 0;
 
-	uInt32 count = length;
+	uInt32 count = (uInt32)length;
 
 	rose__text_reserve(text, count);
 	vsnprintf(text->string, (size_t)count + 1, format, args);
