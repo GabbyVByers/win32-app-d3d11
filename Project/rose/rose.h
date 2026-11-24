@@ -62,11 +62,11 @@ void ROSE_Quit(void);
 
 bool   ROSE_WindowClosed(void);
 bool   ROSE_WindowMinimized(void);
-void   ROSE_WindowVSync(bool vsync); // enable or disable vsync
-void   ROSE_WindowMaxFPS(float max); // set frame limit
-float  ROSE_WindowFPS(void);         // get the current framerate
-float  ROSE_FrameDelta(void);        // seconds the previous frame took
-double ROSE_Time(void);              // seconds since ROSE_Init
+void   ROSE_WindowVSync(bool vsync);
+void   ROSE_WindowMaxFPS(float max);
+float  ROSE_WindowFPS(void);
+float  ROSE_FrameDelta(void);
+double ROSE_Time(void);
 void   ROSE_FrameClear(ROSE_Color color);
 void   ROSE_FrameRender(void);
 

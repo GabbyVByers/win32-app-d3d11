@@ -8,8 +8,8 @@
 #define BATCH_VERTICES (2048 * 6)
 
 static ID3D11Buffer* batch_buffer  = NULL;
-static uInt32        batch_cursor  = 0u;
-static uInt32        batch_count   = 0u;
+static uInt32        batch_cursor  = 0;
+static uInt32        batch_count   = 0;
 static ROSE_Texture* batch_texture = NULL;
 static ROSE_Vertex2D batch_vertices[BATCH_VERTICES];
 
@@ -89,7 +89,7 @@ void rose__batch_create(void)
 	CHECK_HRESULT(result, "ID3D11Device_CreateBuffer()");
 
 	batch_cursor  = BATCH_VERTICES;
-	batch_count   = 0u;
+	batch_count   = 0;
 	batch_texture = NULL;
 }
 
@@ -99,8 +99,8 @@ void rose__batch_destroy(void)
 		ID3D11Buffer_Release(batch_buffer);
 
 	batch_buffer  = NULL;
-	batch_cursor  = 0u;
-	batch_count   = 0u;
+	batch_cursor  = 0;
+	batch_count   = 0;
 	batch_texture = NULL;
 }
 

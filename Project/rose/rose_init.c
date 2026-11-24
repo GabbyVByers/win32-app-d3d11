@@ -256,15 +256,15 @@ void ROSE_Quit(void)
 	rose__max_fps     = 0.0f;
 	rose__frame_delta = 0.0f;
 	rose__fps         = 0.0f;
-	rose__fps_frames  = 0u;
+	rose__fps_frames  = 0;
 
 	rose__quit      = FALSE;
 	rose__hwnd      = NULL;
 	rose__hinstance = NULL;
 
 	rose__resize_pending = FALSE;
-	rose__screen_width   = 0u;
-	rose__screen_height  = 0u;
+	rose__screen_width   = 0;
+	rose__screen_height  = 0;
 
 	MSG message;
 	while (PeekMessageW(&message, NULL, 0, 0, PM_REMOVE)) {}

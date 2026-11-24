@@ -42,8 +42,8 @@ ROSE_Image* ROSE_ImageLoad(const char* path)
 {
 	ROSE_Image* image = calloc(1, sizeof(ROSE_Image));
 
-	uInt32 width   = 0u;
-	uInt32 height  = 0u;
+	uInt32 width   = 0;
+	uInt32 height  = 0;
 	uInt32* pixels = NULL;
 
 	int retcode = png_decode(path, &pixels, &width, &height);

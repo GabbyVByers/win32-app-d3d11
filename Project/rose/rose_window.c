@@ -121,7 +121,7 @@ void ROSE_FrameRender(void)
 	Int64 elapsed = now - rose__fps_window_start;
 	if (elapsed >= rose__qpc_frequency / 2) {
 		rose__fps = (float)((double)rose__fps_frames * (double)rose__qpc_frequency / (double)elapsed);
-		rose__fps_frames = 0u;
+		rose__fps_frames = 0;
 		rose__fps_window_start = now;
 	}
 }
