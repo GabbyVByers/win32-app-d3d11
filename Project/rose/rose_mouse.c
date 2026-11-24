@@ -96,22 +96,5 @@ void rose__mouse_release(void)
 	}
 
 	rose__mouse_update();
-
-	bool any = false;
-	for (uInt32 i = 0; i < ROSE_MOUSE_COUNT; i++) {
-		if (rose__mouse.pressing[i]) {
-			any = true;
-			break;
-		}
-	}
-
-	bool capture = (any)  && (GetCapture() != rose__hwnd);
-	bool release = (!any) && (GetCapture() == rose__hwnd);
-
-	if (capture)
-		SetCapture(rose__hwnd);
-
-	if (release)
-		ReleaseCapture();
 }
 
