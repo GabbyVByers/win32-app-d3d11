@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <math.h>
 
 #define COBJMACROS
 #define WIN32_LEAN_AND_MEAN
@@ -48,10 +49,19 @@
   } } while (0)
 #endif
 
+typedef struct rose__matrix_t {
+	float m[16];
+} rose__matrix_t;
+
 typedef struct rose__constants_t {
 	float screen_size[2];
 	float _padding[2];
 } rose__constants_t;
+
+typedef struct rose__constants3d_t {
+	rose__matrix_t mvp;
+	ROSE_Color tint;
+} rose__constants3d_t;
 
 typedef struct rose__mouse_t {
 	bool pressing[ROSE_MOUSE_COUNT];
@@ -67,6 +77,14 @@ typedef struct rose__keyboard_t {
 	bool pressed[ROSE_SCANCODE_COUNT];
 	bool released[ROSE_SCANCODE_COUNT];
 } rose__keyboard_t;
+
+typedef struct rose__camera_t {
+	float fov;
+	float near_plane;
+	float far_plane;
+	ROSE_Vec3 position;
+	ROSE_Quat orientation;
+} rose__camera_t;
 
 typedef struct ROSE_Image {
 	uInt32 width;
@@ -85,6 +103,12 @@ typedef struct ROSE_Mesh2D {
 	uInt32 capacity;
 	ID3D11Buffer* vertices;
 } ROSE_Mesh2D;
+
+typedef struct ROSE_Mesh3D {
+	uInt32 count;
+	uInt32 capacity;
+	ID3D11Buffer* vertices;
+} ROSE_Mesh3D;
 
 typedef struct ROSE_Sprite {
 	float width;
@@ -146,6 +170,16 @@ ROSE_GLOBAL(Int64,  rose__fps_window_start)
 
 ROSE_GLOBAL(rose__mouse_t,    rose__mouse)
 ROSE_GLOBAL(rose__keyboard_t, rose__keyboard)
+ROSE_GLOBAL(rose__camera_t,   rose__camera)
+
+ROSE_GLOBAL(ID3D11DepthStencilView*,  rose__depth_view)
+ROSE_GLOBAL(ID3D11DepthStencilState*, rose__depth_on)
+ROSE_GLOBAL(ID3D11DepthStencilState*, rose__depth_off)
+
+ROSE_GLOBAL(ID3D11VertexShader*, rose__vertex_shader_3d)
+ROSE_GLOBAL(ID3D11PixelShader*,  rose__pixel_shader_3d)
+ROSE_GLOBAL(ID3D11InputLayout*,  rose__input_layout_3d)
+ROSE_GLOBAL(ID3D11Buffer*,       rose__constant_buffer_3d)
 
 LRESULT CALLBACK rose__proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 ID3DBlob* rose__compile_shader(const wchar_t* path, const char* entry, const char* target);
@@ -172,6 +206,17 @@ void rose__keyboard_release(void);
 
 void rose__text_reserve(ROSE_Text* text, uInt32 count);
 void rose__text_write_characters(ROSE_Text* text);
+
+ROSE_Vec3 rose__vec3_add(ROSE_Vec3 a, ROSE_Vec3 b);
+ROSE_Vec3 rose__vec3_scale(ROSE_Vec3 v, float s);
+float     rose__vec3_dot(ROSE_Vec3 a, ROSE_Vec3 b);
+ROSE_Vec3 rose__vec3_normalize(ROSE_Vec3 v);
+ROSE_Quat rose__quat_normalize(ROSE_Quat q);
+
+rose__matrix_t rose__matrix_multiply(rose__matrix_t a, rose__matrix_t b);
+rose__matrix_t rose__matrix_world(ROSE_Vec3 position, ROSE_Quat orientation, float scale);
+rose__matrix_t rose__matrix_view(ROSE_Vec3 position, ROSE_Quat orientation);
+rose__matrix_t rose__matrix_perspective(float fov_degrees, float aspect, float near_plane, float far_plane);
 
 #endif /* ROSE_INTERNAL_HEADER_GUARD */
 

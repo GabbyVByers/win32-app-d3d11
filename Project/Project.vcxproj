@@ -149,6 +149,7 @@
     <ClCompile Include="rose\rose_init.c" />
     <ClCompile Include="rose\rose_internal.c" />
     <ClCompile Include="rose\rose_keyboard.c" />
+    <ClCompile Include="rose\rose_math.c" />
     <ClCompile Include="rose\rose_mesh.c" />
     <ClCompile Include="rose\rose_mouse.c" />
     <ClCompile Include="rose\rose_sprite.c" />

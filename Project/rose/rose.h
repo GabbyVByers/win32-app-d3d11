@@ -111,5 +111,46 @@ void          ROSE_TextDestroy(ROSE_Text* text);
 void          ROSE_TextUpdate(ROSE_Text* text, const char* format, ...);
 void          ROSE_TextDraw(ROSE_Text* text, float xpos, float ypos, float scale, ROSE_Color color);
 
+/* ------------ MESH 3D API ------------ */
+
+typedef struct ROSE_Vec3 {
+	float x, y, z;
+} ROSE_Vec3;
+
+typedef struct ROSE_Vertex3D {
+	float x, y, z;
+	ROSE_Color color;
+} ROSE_Vertex3D;
+
+typedef struct ROSE_Quat {
+	float w, x, y, z;
+} ROSE_Quat;
+
+#define ROSE_QUAT_IDENTITY \
+((ROSE_Quat){ 1.0f, 0.0f, 0.0f, 0.0f })
+
+ROSE_Quat     ROSE_QuatRotate(ROSE_Quat quat, ROSE_Vec3 axis, float degrees);
+ROSE_Vec3     ROSE_QuatForward(ROSE_Quat quat);
+ROSE_Vec3     ROSE_QuatUp(ROSE_Quat quat);
+ROSE_Vec3     ROSE_QuatRight(ROSE_Quat quat);
+
+void          ROSE_CameraFOV(float degrees);
+void          ROSE_CameraNearPlane(float distance);
+void          ROSE_CameraFarPlane(float distance);
+void          ROSE_CameraPositionMove(ROSE_Vec3 direction, float distance);
+void          ROSE_CameraPositionSet(ROSE_Vec3 position);
+ROSE_Vec3     ROSE_CameraPositionGet(void);
+void          ROSE_CameraRotate(ROSE_Vec3 axis, float theta);
+ROSE_Vec3     ROSE_CameraDirectionForward(void);
+ROSE_Vec3     ROSE_CameraDirectionUp(void);
+ROSE_Vec3     ROSE_CameraDirectionRight(void);
+ROSE_Quat     ROSE_CameraOrientationGet(void);
+void          ROSE_CameraOrientationSet(ROSE_Quat orientation);
+
+ROSE_Mesh3D*  ROSE_Mesh3DCreate(const ROSE_Vertex3D* vertices, uInt32 count);
+void          ROSE_Mesh3DDestroy(ROSE_Mesh3D* mesh);
+void          ROSE_Mesh3DUpdate(ROSE_Mesh3D* mesh, const ROSE_Vertex3D* vertices, uInt32 count);
+void          ROSE_Mesh3DDraw(ROSE_Mesh3D* mesh, ROSE_Vec3 position, ROSE_Quat orientation, float scale, ROSE_Color color);
+
 #endif /* ROSE_ROSE_HEADER_GUARD */
 

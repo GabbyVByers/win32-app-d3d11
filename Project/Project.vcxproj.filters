@@ -51,6 +51,9 @@
     <ClCompile Include="rose\rose_text.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="rose\rose_math.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rose\rose.h">

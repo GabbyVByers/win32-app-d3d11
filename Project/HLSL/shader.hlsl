@@ -1,6 +1,6 @@
 
 /*
- *   HLSL Shader
+ *   HLSL Shader (2D)
  */
 
 cbuffer constants : register(b0)
