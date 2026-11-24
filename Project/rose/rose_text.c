@@ -10,8 +10,13 @@
 #define GLYPH_COUNT  95
 #define GLYPH_SPECIAL (GLYPH_COUNT - 1)
 
-static void text_vupdate(ROSE_Text* text, const char* format, va_list args)
+ROSE_Text* ROSE_TextCreate(const char* format, ...)
 {
+	ROSE_Text* text = calloc(1, sizeof(ROSE_Text));
+
+	va_list args;
+	va_start(args, format);
+
 	va_list measure;
 	va_copy(measure, args);
 	int length = vsnprintf(NULL, 0, format, measure);
@@ -27,15 +32,6 @@ static void text_vupdate(ROSE_Text* text, const char* format, va_list args)
 
 	text->count = count;
 	rose__text_write_characters(text);
-}
-
-ROSE_Text* ROSE_TextCreate(const char* format, ...)
-{
-	ROSE_Text* text = calloc(1, sizeof(ROSE_Text));
-
-	va_list args;
-	va_start(args, format);
-	text_vupdate(text, format, args);
 	va_end(args);
 
 	return text;
@@ -55,7 +51,22 @@ void ROSE_TextUpdate(ROSE_Text* text, const char* format, ...)
 {
 	va_list args;
 	va_start(args, format);
-	text_vupdate(text, format, args);
+
+	va_list measure;
+	va_copy(measure, args);
+	int length = vsnprintf(NULL, 0, format, measure);
+	va_end(measure);
+
+	if (length < 0)
+		length = 0;
+
+	uInt32 count = (uInt32)length;
+
+	rose__text_reserve(text, count);
+	vsnprintf(text->string, (size_t)count + 1, format, args);
+
+	text->count = count;
+	rose__text_write_characters(text);
 	va_end(args);
 }
 
@@ -99,14 +110,6 @@ void rose__text_reserve(ROSE_Text* text, uInt32 count)
 	text->capacity = capacity;
 }
 
-static uInt32 glyph_index(unsigned char c)
-{
-	if ((c >= ' ') && (c <= '}'))
-		return (uInt32)(c - ' ');
-
-	return GLYPH_SPECIAL;
-}
-
 void rose__text_write_characters(ROSE_Text* text)
 {
 	float pen_x = 0.0f;
@@ -125,7 +128,9 @@ void rose__text_write_characters(ROSE_Text* text)
 		if ((c & 0xC0) == 0x80)
 			continue;
 
-		uInt32 glyph = glyph_index(c);
+		uInt32 glyph = GLYPH_SPECIAL;
+		if ((c >= ' ') && (c <= '}'))
+			glyph = (uInt32)(c - ' ');
 
 		float x0 = pen_x;
 		float y0 = pen_y;
