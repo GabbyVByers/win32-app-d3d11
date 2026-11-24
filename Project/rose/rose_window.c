@@ -74,7 +74,8 @@ void ROSE_FrameClear(ROSE_Color color)
 			rose__swapchain, 0,
 			rose__screen_width,
 			rose__screen_height,
-			DXGI_FORMAT_UNKNOWN, 0
+			DXGI_FORMAT_UNKNOWN,
+			rose__tearing ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0
 		);
 
 		CHECK_HRESULT(result, "IDXGISwapChain1_ResizeBuffers()");
@@ -90,7 +91,8 @@ void ROSE_FrameClear(ROSE_Color color)
 void ROSE_FrameRender(void)
 {
 	rose__batch_flush();
-	HRESULT result = IDXGISwapChain1_Present(rose__swapchain, (UINT)rose__vsync, 0);
+	UINT flags = (!rose__vsync && rose__tearing) ? DXGI_PRESENT_ALLOW_TEARING : 0;
+	HRESULT result = IDXGISwapChain1_Present(rose__swapchain, (UINT)rose__vsync, flags);
 	CHECK_HRESULT(result, "IDXGISwapChain1_Present()");
 
 	if (rose__max_fps > 0.0f) {

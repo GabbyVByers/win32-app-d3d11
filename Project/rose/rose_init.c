@@ -85,6 +85,14 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	fprintf(stdout, "Using GPU Device: %ls\n", name);
 	#endif /* ROSE_DEBUG */
 
+	IDXGIFactory5* factory5 = NULL;
+	if (SUCCEEDED(IDXGIFactory2_QueryInterface(factory, &IID_IDXGIFactory5, (void**)&factory5))) {
+		BOOL allow = FALSE;
+		IDXGIFactory5_CheckFeatureSupport(factory5, DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allow, sizeof(allow));
+		rose__tearing = (allow == TRUE);
+		IDXGIFactory5_Release(factory5);
+	}
+
 	DXGI_SWAP_CHAIN_DESC1 swapchain_desc = {
 		.Width       = 0,
 		.Height      = 0,
@@ -95,6 +103,7 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 		.Scaling     = DXGI_SCALING_NONE,
 		.SwapEffect  = DXGI_SWAP_EFFECT_FLIP_DISCARD,
 		.AlphaMode   = DXGI_ALPHA_MODE_UNSPECIFIED,
+		.Flags       = rose__tearing ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0,
 	};
 
 	result = IDXGIFactory2_CreateSwapChainForHwnd(factory, (IUnknown*)rose__device, rose__hwnd, &swapchain_desc, NULL, NULL, &rose__swapchain);
@@ -359,6 +368,7 @@ void ROSE_Quit(void)
 
 	rose__timer       = NULL;
 	rose__vsync       = FALSE;
+	rose__tearing     = FALSE;
 	rose__max_fps     = 0.0f;
 	rose__frame_delta = 0.0f;
 	rose__fps         = 0.0f;

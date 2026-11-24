@@ -19,7 +19,7 @@
 #include <windows.h>
 #include <windowsx.h>
 #include <d3d11.h>
-#include <dxgi1_2.h>
+#include <dxgi1_5.h>
 #include <stddef.h>
 #include <string.h>
 #include <d3dcompiler.h>
@@ -160,6 +160,7 @@ ROSE_GLOBAL(HANDLE, rose__timer)
 ROSE_GLOBAL(Int64,  rose__qpc_frequency)
 ROSE_GLOBAL(Int64,  rose__time_start)
 ROSE_GLOBAL(bool,   rose__vsync)
+ROSE_GLOBAL(bool,   rose__tearing)
 ROSE_GLOBAL(float,  rose__max_fps)
 ROSE_GLOBAL(Int64,  rose__frame_next)
 ROSE_GLOBAL(Int64,  rose__frame_last)
