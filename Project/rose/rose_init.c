@@ -136,7 +136,7 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	ID3D10Blob_Release(ps_blob);
 
 	D3D11_BUFFER_DESC constant_buffer_desc = {
-		.ByteWidth = sizeof(constants_t),
+		.ByteWidth = sizeof(rose__constants_t),
 		.Usage     = D3D11_USAGE_DEFAULT,
 		.BindFlags = D3D11_BIND_CONSTANT_BUFFER,
 	};
@@ -196,6 +196,18 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	);
 
 	assert(rose__timer && "CreateWaitableTimerExW() failed!");
+
+	POINT cursor;
+	GetCursorPos(&cursor);
+	ScreenToClient(rose__hwnd, &cursor);
+	
+	float mouse_xpos = (float)cursor.x;
+	float mouse_ypos = (float)cursor.y;
+
+	rose__mouse.curr_xpos = mouse_xpos;
+	rose__mouse.curr_ypos = mouse_ypos;
+	rose__mouse.prev_xpos = mouse_xpos;
+	rose__mouse.prev_ypos = mouse_ypos;
 }
 
 void ROSE_Quit(void)
@@ -265,6 +277,8 @@ void ROSE_Quit(void)
 	rose__resize_pending = FALSE;
 	rose__screen_width   = 0;
 	rose__screen_height  = 0;
+
+	rose__mouse = (rose__mouse_t){ 0 };
 
 	MSG message;
 	while (PeekMessageW(&message, NULL, 0, 0, PM_REMOVE)) {}

@@ -16,6 +16,7 @@
 #define COBJMACROS
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <windowsx.h>
 #include <d3d11.h>
 #include <dxgi1_2.h>
 #include <stddef.h>
@@ -47,10 +48,19 @@
   } } while (0)
 #endif
 
-typedef struct constants_t {
+typedef struct rose__constants_t {
 	float screen_size[2];
 	float _padding[2];
-} constants_t;
+} rose__constants_t;
+
+typedef struct rose__mouse_t {
+	bool pressing[ROSE_MOUSE_COUNT];
+	bool pressed[ROSE_MOUSE_COUNT];
+	bool released[ROSE_MOUSE_COUNT];
+	float curr_xpos, curr_ypos;
+	float prev_xpos, prev_ypos;
+	float scroll;
+} rose__mouse_t;
 
 typedef struct ROSE_Image {
 	uInt32 width;
@@ -118,14 +128,22 @@ ROSE_GLOBAL(float,  rose__fps)
 ROSE_GLOBAL(uInt32, rose__fps_frames)
 ROSE_GLOBAL(Int64,  rose__fps_window_start)
 
+ROSE_GLOBAL(rose__mouse_t, rose__mouse)
+
 LRESULT CALLBACK rose__proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 ID3DBlob* rose__compile_shader(const wchar_t* path, const char* entry, const char* target);
 void  rose__create_render_target(void);
 Int64 rose__ticks(void);
 void  rose__bind_2d(ID3D11Buffer* vertices, ROSE_Texture* texture);
-void  rose__batch_create(void);
-void  rose__batch_destroy(void);
-void  rose__batch_flush(void);
+
+void rose__batch_create(void);
+void rose__batch_destroy(void);
+void rose__batch_flush(void);
+
+void rose__mouse_update(void);
+void rose__mouse_clear(void);
+void rose__mouse_button(ROSE_MouseButton button, bool pressing);
+void rose__mouse_release(void);
 
 #endif /* ROSE_INTERNAL_HEADER_GUARD */
 

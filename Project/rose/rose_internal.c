@@ -8,17 +8,56 @@
 
 LRESULT CALLBACK rose__proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-	switch (msg) {
-		case (WM_DESTROY): {
-			PostQuitMessage(0);
-			return 0;
-		}
-		case (WM_SIZE): {
-			rose__screen_width   = LOWORD(lparam);
-			rose__screen_height  = HIWORD(lparam);
-			rose__resize_pending = TRUE;
-			return 0;
-		}
+	if (msg == WM_DESTROY) {
+		PostQuitMessage(0);
+		return 0;
+	}
+
+	if (msg == WM_SIZE) {
+		rose__screen_width   = LOWORD(lparam);
+		rose__screen_height  = HIWORD(lparam);
+		rose__resize_pending = TRUE;
+		return 0;
+	}
+
+	if (msg == WM_MOUSEMOVE) {
+		rose__mouse.curr_xpos = (float)GET_X_LPARAM(lparam);
+		rose__mouse.curr_ypos = (float)GET_Y_LPARAM(lparam);
+		return 0;
+	}
+
+	if (msg == WM_LBUTTONDOWN) { rose__mouse_button(ROSE_MOUSE_LEFT,   true);  return 0; }
+	if (msg == WM_LBUTTONUP)   { rose__mouse_button(ROSE_MOUSE_LEFT,   false); return 0; }
+	if (msg == WM_MBUTTONDOWN) { rose__mouse_button(ROSE_MOUSE_MIDDLE, true);  return 0; }
+	if (msg == WM_MBUTTONUP)   { rose__mouse_button(ROSE_MOUSE_MIDDLE, false); return 0; }
+	if (msg == WM_RBUTTONDOWN) { rose__mouse_button(ROSE_MOUSE_RIGHT,  true);  return 0; }
+	if (msg == WM_RBUTTONUP)   { rose__mouse_button(ROSE_MOUSE_RIGHT,  false); return 0; }
+
+	bool mousex =
+		(msg == WM_XBUTTONDOWN) ||
+		(msg == WM_XBUTTONUP);
+
+	if (mousex) {
+		ROSE_MouseButton button =
+			(GET_XBUTTON_WPARAM(wparam) == XBUTTON1) ?
+			(ROSE_MOUSE_X1) :
+			(ROSE_MOUSE_X2);
+
+		bool pressed = (msg == WM_XBUTTONDOWN);
+		rose__mouse_button(button, pressed);
+		return TRUE;
+	}
+
+	if (msg == WM_MOUSEWHEEL) {
+		rose__mouse.scroll +=
+			(float)GET_WHEEL_DELTA_WPARAM(wparam) /
+			(float)WHEEL_DELTA;
+		return 0;
+	}
+
+	if (msg == WM_KILLFOCUS) {
+		rose__mouse_release();
+		return 0;
 	}
 
 	return DefWindowProcW(hwnd, msg, wparam, lparam);
@@ -96,7 +135,7 @@ void rose__bind_2d(ID3D11Buffer* vertices, ROSE_Texture* texture)
 	ID3D11DeviceContext_VSSetShader(rose__context, rose__vertex_shader, NULL, 0);
 	ID3D11DeviceContext_PSSetShader(rose__context, rose__pixel_shader, NULL, 0);
 
-	constants_t constants = { .screen_size = { rose__viewport.Width, rose__viewport.Height } };
+	rose__constants_t constants = { .screen_size = { rose__viewport.Width, rose__viewport.Height } };
 	ID3D11DeviceContext_UpdateSubresource(rose__context, (ID3D11Resource*)rose__constant_buffer, 0, NULL, &constants, 0, 0);
 	ID3D11DeviceContext_VSSetConstantBuffers(rose__context, 0, 1, &rose__constant_buffer);
 

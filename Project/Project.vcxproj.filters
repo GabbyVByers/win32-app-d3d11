@@ -42,6 +42,9 @@
     <ClCompile Include="rose\rose_sprite.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="rose\rose_mouse.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rose\rose.h">

@@ -70,6 +70,22 @@ double ROSE_Time(void);
 void   ROSE_FrameClear(ROSE_Color color);
 void   ROSE_FrameRender(void);
 
+typedef enum ROSE_MouseButton {
+	ROSE_MOUSE_LEFT,
+	ROSE_MOUSE_MIDDLE,
+	ROSE_MOUSE_RIGHT,
+	ROSE_MOUSE_X1,
+	ROSE_MOUSE_X2,
+	ROSE_MOUSE_COUNT,
+} ROSE_MouseButton;
+
+bool  ROSE_MousePressing(ROSE_MouseButton button);
+bool  ROSE_MousePressed(ROSE_MouseButton button);
+bool  ROSE_MouseReleased(ROSE_MouseButton button);
+float ROSE_MouseScroll(void);
+void  ROSE_MousePosition(float* xpos, float* ypos);
+void  ROSE_MouseVelocity(float* xdelta, float* ydelta);
+
 ROSE_Image*   ROSE_ImageCreate(uInt32 width, uInt32 height);
 void          ROSE_ImageDestroy(ROSE_Image* image);
 ROSE_Image*   ROSE_ImageLoad(const char* path);

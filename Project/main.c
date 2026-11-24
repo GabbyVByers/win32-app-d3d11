@@ -53,7 +53,33 @@ int main(void)
 		ROSE_FrameRender();
 		time += ROSE_FrameDelta();
 
-		fprintf(stdout, "FPS: %d\n", (int)ROSE_WindowFPS());
+		//fprintf(stdout, "FPS: %d\n", (int)ROSE_WindowFPS());
+
+		if (ROSE_MousePressing(ROSE_MOUSE_RIGHT)) {
+			fprintf(stdout, "Pressing RIGHT BUTTON\n");
+		}
+
+		if (ROSE_MousePressed(ROSE_MOUSE_LEFT)) {
+			fprintf(stdout, "Pressed LEFT BUTTON\n");
+		}
+
+		if (ROSE_MouseReleased(ROSE_MOUSE_LEFT)) {
+			fprintf(stdout, "Released LEFT BUTTON\n");
+		}
+
+		float scroll = ROSE_MouseScroll();
+		if (scroll != 0.0f) {
+			fprintf(stdout, "SCROLL: %f\n", scroll);
+		}
+
+		float x, y;
+		float dx, dy;
+		ROSE_MousePosition(&x, &y);
+		ROSE_MouseVelocity(&dx, &dy);
+
+		if (ROSE_MousePressing(ROSE_MOUSE_MIDDLE)) {
+			fprintf(stdout, "Mouse: (pos: %f, %f) (vel: %f, %f)\n", x, y, dx, dy);
+		}
 	}
 
 	ROSE_TextureDestroy(texture);

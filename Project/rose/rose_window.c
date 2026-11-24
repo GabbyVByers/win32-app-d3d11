@@ -7,6 +7,8 @@
 
 bool ROSE_WindowClosed(void)
 {
+	rose__mouse_clear();
+
 	MSG message;
 	while (PeekMessageW(&message, NULL, 0, 0, PM_REMOVE)) {
 		if (message.message == WM_QUIT) {
