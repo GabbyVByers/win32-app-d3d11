@@ -126,6 +126,26 @@ void rose__create_render_target(void)
 
 	D3D11_TEXTURE2D_DESC desc;
 	ID3D11Texture2D_GetDesc(back_buffer, &desc);
+	
+	D3D11_TEXTURE2D_DESC depth_desc = {
+		.Width      = desc.Width,
+		.Height     = desc.Height,
+		.MipLevels  = 1,
+		.ArraySize  = 1,
+		.Format     = DXGI_FORMAT_D32_FLOAT,
+		.SampleDesc = {.Count = 1, .Quality = 0 },
+		.Usage      = D3D11_USAGE_DEFAULT,
+		.BindFlags  = D3D11_BIND_DEPTH_STENCIL,
+	};
+
+	ID3D11Texture2D* depth_texture = NULL;
+	result = ID3D11Device_CreateTexture2D(rose__device, &depth_desc, NULL, &depth_texture);
+	CHECK_HRESULT(result, "ID3D11Device_CreateTexture2D()");
+
+	result = ID3D11Device_CreateDepthStencilView(rose__device, (ID3D11Resource*)depth_texture, NULL, &rose__depth_view);
+	CHECK_HRESULT(result, "ID3D11Device_CreateDepthStencilView()");
+
+	ID3D11Texture2D_Release(depth_texture);
 	ID3D11Texture2D_Release(back_buffer);
 
 	rose__viewport = (D3D11_VIEWPORT) {
@@ -166,5 +186,6 @@ void rose__bind_2d(ID3D11Buffer* vertices, ROSE_Texture* texture)
 	ID3D11DeviceContext_PSSetShaderResources(rose__context, 0, 1, &texture->view);
 	ID3D11DeviceContext_PSSetSamplers(rose__context, 0, 1, &rose__sampler);
 	ID3D11DeviceContext_OMSetBlendState(rose__context, rose__blend_state, NULL, 0xFFFFFFFF);
+	ID3D11DeviceContext_OMSetDepthStencilState(rose__context, rose__depth_off, 0);
 }
 

@@ -11,6 +11,9 @@
 #include <wchar.h>
 #include "rose_enums.h"
 
+#define ROSE_QUAT_IDENTITY \
+((ROSE_Quat){ 1.0f, 0.0f, 0.0f, 0.0f })
+
 #define ROSE_COLOR_RGBA(r, g, b, a) \
 ((ROSE_Color) {                     \
 (((float)(r)) / 255.f),             \
@@ -39,6 +42,14 @@ typedef uint16_t uInt16;
 typedef uint32_t uInt32;
 typedef uint64_t uInt64;
 
+typedef struct ROSE_Vec3 {
+	float x, y, z;
+} ROSE_Vec3;
+
+typedef struct ROSE_Quat {
+	float w, x, y, z;
+} ROSE_Quat;
+
 typedef struct ROSE_Color {
 	float r, g, b, a;
 } ROSE_Color;
@@ -48,6 +59,11 @@ typedef struct ROSE_Vertex2D {
 	float u, v;
 	ROSE_Color color;
 } ROSE_Vertex2D;
+
+typedef struct ROSE_Vertex3D {
+	float x, y, z;
+	ROSE_Color color;
+} ROSE_Vertex3D;
 
 typedef struct ROSE_Image   ROSE_Image;
 typedef struct ROSE_Texture ROSE_Texture;
@@ -110,24 +126,6 @@ ROSE_Text*    ROSE_TextCreate(const char* format, ...);
 void          ROSE_TextDestroy(ROSE_Text* text);
 void          ROSE_TextUpdate(ROSE_Text* text, const char* format, ...);
 void          ROSE_TextDraw(ROSE_Text* text, float xpos, float ypos, float scale, ROSE_Color color);
-
-/* ------------ MESH 3D API ------------ */
-
-typedef struct ROSE_Vec3 {
-	float x, y, z;
-} ROSE_Vec3;
-
-typedef struct ROSE_Vertex3D {
-	float x, y, z;
-	ROSE_Color color;
-} ROSE_Vertex3D;
-
-typedef struct ROSE_Quat {
-	float w, x, y, z;
-} ROSE_Quat;
-
-#define ROSE_QUAT_IDENTITY \
-((ROSE_Quat){ 1.0f, 0.0f, 0.0f, 0.0f })
 
 ROSE_Quat     ROSE_QuatRotate(ROSE_Quat quat, ROSE_Vec3 axis, float degrees);
 ROSE_Vec3     ROSE_QuatForward(ROSE_Quat quat);

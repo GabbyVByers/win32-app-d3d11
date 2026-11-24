@@ -214,9 +214,9 @@ ROSE_Vec3 rose__vec3_normalize(ROSE_Vec3 v);
 ROSE_Quat rose__quat_normalize(ROSE_Quat q);
 
 rose__matrix_t rose__matrix_multiply(rose__matrix_t a, rose__matrix_t b);
-rose__matrix_t rose__matrix_world(ROSE_Vec3 position, ROSE_Quat orientation, float scale);
+rose__matrix_t rose__matrix_model(ROSE_Vec3 position, ROSE_Quat orientation, float scale);
 rose__matrix_t rose__matrix_view(ROSE_Vec3 position, ROSE_Quat orientation);
-rose__matrix_t rose__matrix_perspective(float fov_degrees, float aspect, float near_plane, float far_plane);
+rose__matrix_t rose__matrix_project(float fov_degrees, float aspect, float near_plane, float far_plane);
 
 #endif /* ROSE_INTERNAL_HEADER_GUARD */
 

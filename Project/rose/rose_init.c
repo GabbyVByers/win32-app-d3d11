@@ -107,19 +107,34 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	IDXGIDevice_Release(dxgi_device);
 
 	rose__create_render_target();
+	
 	ID3DBlob* vs_blob = rose__compile_shader(L"HLSL/shader.hlsl", "vs_main", "vs_5_0");
 	ID3DBlob* ps_blob = rose__compile_shader(L"HLSL/shader.hlsl", "ps_main", "ps_5_0");
+
+	ID3DBlob* vs3d_blob = rose__compile_shader(L"HLSL/shader3d.hlsl", "vs_main", "vs_5_0");
+	ID3DBlob* ps3d_blob = rose__compile_shader(L"HLSL/shader3d.hlsl", "ps_main", "ps_5_0");
 
 	result = ID3D11Device_CreateVertexShader(rose__device, ID3D10Blob_GetBufferPointer(vs_blob), ID3D10Blob_GetBufferSize(vs_blob), NULL, &rose__vertex_shader);
 	CHECK_HRESULT(result, "ID3D11Device_CreateVertexShader()");
 
+	result = ID3D11Device_CreateVertexShader(rose__device, ID3D10Blob_GetBufferPointer(vs3d_blob), ID3D10Blob_GetBufferSize(vs3d_blob), NULL, &rose__vertex_shader_3d);
+	CHECK_HRESULT(result, "ID3D11Device_CreateVertexShader()");
+
 	result = ID3D11Device_CreatePixelShader(rose__device, ID3D10Blob_GetBufferPointer(ps_blob), ID3D10Blob_GetBufferSize(ps_blob), NULL, &rose__pixel_shader);
+	CHECK_HRESULT(result, "ID3D11Device_CreatePixelShader()");
+
+	result = ID3D11Device_CreatePixelShader(rose__device, ID3D10Blob_GetBufferPointer(ps3d_blob), ID3D10Blob_GetBufferSize(ps3d_blob), NULL, &rose__pixel_shader_3d);
 	CHECK_HRESULT(result, "ID3D11Device_CreatePixelShader()");
 
 	D3D11_INPUT_ELEMENT_DESC input_desc[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(ROSE_Vertex2D, x),     D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(ROSE_Vertex2D, u),     D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(ROSE_Vertex2D, color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+
+	D3D11_INPUT_ELEMENT_DESC input_desc_3d[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, offsetof(ROSE_Vertex3D, x),     D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(ROSE_Vertex3D, color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
 	result = ID3D11Device_CreateInputLayout(
@@ -132,8 +147,30 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 
 	CHECK_HRESULT(result, "ID3D11Device_CreateInputLayout()");
 
+	result = ID3D11Device_CreateInputLayout(
+		rose__device, input_desc_3d,
+		ARRAYSIZE(input_desc_3d),
+		ID3D10Blob_GetBufferPointer(vs3d_blob),
+		ID3D10Blob_GetBufferSize(vs3d_blob),
+		&rose__input_layout_3d
+	);
+
+	CHECK_HRESULT(result, "ID3D11Device_CreateInputLayout()");
+
 	ID3D10Blob_Release(vs_blob);
 	ID3D10Blob_Release(ps_blob);
+
+	ID3D10Blob_Release(vs3d_blob);
+	ID3D10Blob_Release(ps3d_blob);
+
+	D3D11_BUFFER_DESC constant_buffer_3d_desc = {
+		.ByteWidth = sizeof(rose__constants3d_t),
+		.Usage = D3D11_USAGE_DEFAULT,
+		.BindFlags = D3D11_BIND_CONSTANT_BUFFER,
+	};
+
+	result = ID3D11Device_CreateBuffer(rose__device, &constant_buffer_3d_desc, NULL, &rose__constant_buffer_3d);
+	CHECK_HRESULT(result, "ID3D11Device_CreateBuffer()");
 
 	D3D11_BUFFER_DESC constant_buffer_desc = {
 		.ByteWidth = sizeof(rose__constants_t),
@@ -172,6 +209,45 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 
 	result = ID3D11Device_CreateBlendState(rose__device, &blend_desc, &rose__blend_state);
 	CHECK_HRESULT(result, "ID3D11Device_CreateBlendState()");
+
+	D3D11_DEPTH_STENCILOP_DESC stencil_keep = {
+		.StencilFailOp      = D3D11_STENCIL_OP_KEEP,
+		.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP,
+		.StencilPassOp      = D3D11_STENCIL_OP_KEEP,
+		.StencilFunc        = D3D11_COMPARISON_ALWAYS,
+	};
+
+	D3D11_DEPTH_STENCIL_DESC depth_on_desc = {
+		.DepthEnable    = TRUE,
+		.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL,
+		.DepthFunc      = D3D11_COMPARISON_LESS,
+		.StencilEnable  = FALSE,
+		.FrontFace      = stencil_keep,
+		.BackFace       = stencil_keep,
+	};
+
+	D3D11_DEPTH_STENCIL_DESC depth_off_desc = {
+		.DepthEnable    = FALSE,
+		.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO,
+		.DepthFunc      = D3D11_COMPARISON_ALWAYS,
+		.StencilEnable  = FALSE,
+		.FrontFace      = stencil_keep,
+		.BackFace       = stencil_keep,
+	};
+
+	result = ID3D11Device_CreateDepthStencilState(rose__device, &depth_on_desc, &rose__depth_on);
+	CHECK_HRESULT(result, "ID3D11Device_CreateDepthStencilState()");
+
+	result = ID3D11Device_CreateDepthStencilState(rose__device, &depth_off_desc, &rose__depth_off);
+	CHECK_HRESULT(result, "ID3D11Device_CreateDepthStencilState()");
+
+	rose__camera = (rose__camera_t) {
+		.fov         = 100.0f,
+		.near_plane  = 0.1f,
+		.far_plane   = 100.0f,
+		.position    = { 0.0f, 0.0f, 0.0f },
+		.orientation = ROSE_QUAT_IDENTITY,
+	};
 
 	ROSE_Image* blank = ROSE_ImageCreate(1, 1);
 	ROSE_Image* ascii = ROSE_ImageLoad("textures/ascii.png");
@@ -234,6 +310,15 @@ void ROSE_Quit(void)
 	IDXGISwapChain1_Release(rose__swapchain);
 	ID3D11DeviceContext_Release(rose__context);
 
+	ID3D11DepthStencilState_Release(rose__depth_on);
+	ID3D11DepthStencilState_Release(rose__depth_off);
+	ID3D11DepthStencilView_Release(rose__depth_view);
+
+	ID3D11Buffer_Release(rose__constant_buffer_3d);
+	ID3D11InputLayout_Release(rose__input_layout_3d);
+	ID3D11PixelShader_Release(rose__pixel_shader_3d);
+	ID3D11VertexShader_Release(rose__vertex_shader_3d);
+
 	#ifdef ROSE_DEBUG
 	ID3D11Debug* debug = NULL;
 	if (SUCCEEDED(ID3D11Device_QueryInterface(rose__device, &IID_ID3D11Debug, (void**)&debug))) {
@@ -287,8 +372,18 @@ void ROSE_Quit(void)
 	rose__screen_width   = 0;
 	rose__screen_height  = 0;
 
+	rose__depth_on   = NULL;
+	rose__depth_off  = NULL;
+	rose__depth_view = NULL;
+
+	rose__constant_buffer_3d = NULL;
+	rose__input_layout_3d    = NULL;
+	rose__pixel_shader_3d    = NULL;
+	rose__vertex_shader_3d   = NULL;
+
 	rose__mouse    = (rose__mouse_t){ 0 };
 	rose__keyboard = (rose__keyboard_t){ 0 };
+	rose__camera   = (rose__camera_t){ 0 };
 
 	MSG message;
 	while (PeekMessageW(&message, NULL, 0, 0, PM_REMOVE)) {}

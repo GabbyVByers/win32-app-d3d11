@@ -81,9 +81,10 @@ void ROSE_FrameClear(ROSE_Color color)
 		rose__create_render_target();
 	}
 
-	ID3D11DeviceContext_OMSetRenderTargets(rose__context, 1, &rose__render_target, NULL);
+	ID3D11DeviceContext_OMSetRenderTargets(rose__context, 1, &rose__render_target, rose__depth_view);
 	ID3D11DeviceContext_RSSetViewports(rose__context, 1, &rose__viewport);
 	ID3D11DeviceContext_ClearRenderTargetView(rose__context, rose__render_target, (float*)(&color));
+	ID3D11DeviceContext_ClearDepthStencilView(rose__context, rose__depth_view, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
 void ROSE_FrameRender(void)

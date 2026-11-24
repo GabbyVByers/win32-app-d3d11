@@ -148,7 +148,7 @@ rose__matrix_t rose__matrix_multiply(rose__matrix_t a, rose__matrix_t b)
 	return result;
 }
 
-rose__matrix_t rose__matrix_world(ROSE_Vec3 position, ROSE_Quat orientation, float scale)
+rose__matrix_t rose__matrix_model(ROSE_Vec3 position, ROSE_Quat orientation, float scale)
 {
 	ROSE_Vec3 r = rose__vec3_scale(ROSE_QuatRight(orientation), scale);
 	ROSE_Vec3 u = rose__vec3_scale(ROSE_QuatUp(orientation), scale);
@@ -178,7 +178,7 @@ rose__matrix_t rose__matrix_view(ROSE_Vec3 position, ROSE_Quat orientation)
 	}};
 }
 
-rose__matrix_t rose__matrix_perspective(float fov_degrees, float aspect, float near_plane, float far_plane)
+rose__matrix_t rose__matrix_project(float fov_degrees, float aspect, float near_plane, float far_plane)
 {
 	float ys = 1.0f / tanf(fov_degrees * DEGREE_TO_RADIAN * 0.5f);
 	float xs = ys / aspect;
