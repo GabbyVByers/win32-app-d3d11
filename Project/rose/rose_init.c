@@ -278,7 +278,8 @@ void ROSE_Quit(void)
 	rose__screen_width   = 0;
 	rose__screen_height  = 0;
 
-	rose__mouse = (rose__mouse_t){ 0 };
+	rose__mouse    = (rose__mouse_t){ 0 };
+	rose__keyboard = (rose__keyboard_t){ 0 };
 
 	MSG message;
 	while (PeekMessageW(&message, NULL, 0, 0, PM_REMOVE)) {}

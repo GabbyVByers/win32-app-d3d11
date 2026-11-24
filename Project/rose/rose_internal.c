@@ -57,8 +57,35 @@ LRESULT CALLBACK rose__proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 
 	if (msg == WM_KILLFOCUS) {
 		rose__mouse_release();
+		rose__keyboard_release();
 		return 0;
 	}
+
+	bool scancode =
+		(msg == WM_KEYDOWN)    ||
+		(msg == WM_KEYUP)      ||
+		(msg == WM_SYSKEYDOWN) ||
+		(msg == WM_SYSKEYUP);
+
+	if (scancode) {
+		rose__keyboard_message(msg, wparam, lparam);
+
+		bool system =
+			(msg == WM_SYSKEYDOWN) ||
+			(msg == WM_SYSKEYUP);
+
+		if (system)
+			return DefWindowProcW(hwnd, msg, wparam, lparam);
+
+		return 0;
+	}
+
+	bool menu =
+		(msg == WM_SYSCOMMAND) &&
+		((wparam & 0xFFF0) == SC_KEYMENU);
+
+	if (menu)
+		return 0;
 
 	return DefWindowProcW(hwnd, msg, wparam, lparam);
 }

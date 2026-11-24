@@ -148,6 +148,7 @@
     <ClCompile Include="rose\rose_image.c" />
     <ClCompile Include="rose\rose_init.c" />
     <ClCompile Include="rose\rose_internal.c" />
+    <ClCompile Include="rose\rose_keyboard.c" />
     <ClCompile Include="rose\rose_mesh.c" />
     <ClCompile Include="rose\rose_mouse.c" />
     <ClCompile Include="rose\rose_sprite.c" />
@@ -155,6 +156,7 @@
     <ClCompile Include="rose\rose_window.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="rose\rose_enums.h" />
     <ClInclude Include="rose\rose_internal.h" />
     <ClInclude Include="rose\rose.h" />
     <ClInclude Include="rose\png.h" />

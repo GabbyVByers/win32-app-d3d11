@@ -53,33 +53,43 @@ int main(void)
 		ROSE_FrameRender();
 		time += ROSE_FrameDelta();
 
-		//fprintf(stdout, "FPS: %d\n", (int)ROSE_WindowFPS());
+		/*
+		 *   Test Mouse
+		 */
 
-		if (ROSE_MousePressing(ROSE_MOUSE_RIGHT)) {
-			fprintf(stdout, "Pressing RIGHT BUTTON\n");
-		}
-
-		if (ROSE_MousePressed(ROSE_MOUSE_LEFT)) {
-			fprintf(stdout, "Pressed LEFT BUTTON\n");
-		}
-
-		if (ROSE_MouseReleased(ROSE_MOUSE_LEFT)) {
-			fprintf(stdout, "Released LEFT BUTTON\n");
-		}
+		if (ROSE_MousePressing(ROSE_MOUSE_RIGHT)) fprintf(stdout, "Pressing RIGHT BUTTON\n");
+		if (ROSE_MousePressed(ROSE_MOUSE_LEFT))   fprintf(stdout, "Pressed LEFT BUTTON\n");
+		if (ROSE_MouseReleased(ROSE_MOUSE_LEFT))  fprintf(stdout, "Released LEFT BUTTON\n");
 
 		float scroll = ROSE_MouseScroll();
 		if (scroll != 0.0f) {
 			fprintf(stdout, "SCROLL: %f\n", scroll);
 		}
 
-		float x, y;
-		float dx, dy;
-		ROSE_MousePosition(&x, &y);
-		ROSE_MouseVelocity(&dx, &dy);
+		float mouse_px, mouse_py;
+		float mouse_vx, mouse_vy;
+		ROSE_MousePosition(&mouse_px, &mouse_py);
+		ROSE_MouseVelocity(&mouse_vx, &mouse_vy);
 
 		if (ROSE_MousePressing(ROSE_MOUSE_MIDDLE)) {
-			fprintf(stdout, "Mouse: (pos: %f, %f) (vel: %f, %f)\n", x, y, dx, dy);
+			fprintf(stdout, "Mouse: (pos: %f, %f) (vel: %f, %f)\n",
+				mouse_px, mouse_py, mouse_vx, mouse_vy);
 		}
+
+		/*
+		 *   Test Keyboard
+		 */
+
+		if (ROSE_KeyboardPressing(ROSE_SCANCODE_W)) fprintf(stdout, "Pressing W\n");
+		if (ROSE_KeyboardPressing(ROSE_SCANCODE_A)) fprintf(stdout, "Pressing A\n");
+		if (ROSE_KeyboardPressing(ROSE_SCANCODE_S)) fprintf(stdout, "Pressing S\n");
+		if (ROSE_KeyboardPressing(ROSE_SCANCODE_D)) fprintf(stdout, "Pressing D\n");
+
+		if (ROSE_KeyboardPressed(ROSE_SCANCODE_Q))  fprintf(stdout, "Pressed Q\n");
+		if (ROSE_KeyboardReleased(ROSE_SCANCODE_Q)) fprintf(stdout, "Released Q\n");
+
+		if (ROSE_KeyboardPressing(ROSE_SCANCODE_E))
+			fprintf(stdout, "FPS: %d\n", (int)ROSE_WindowFPS());
 	}
 
 	ROSE_TextureDestroy(texture);

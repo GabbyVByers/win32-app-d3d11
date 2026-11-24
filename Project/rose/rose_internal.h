@@ -62,6 +62,12 @@ typedef struct rose__mouse_t {
 	float scroll;
 } rose__mouse_t;
 
+typedef struct rose__keyboard_t {
+	bool pressing[ROSE_SCANCODE_COUNT];
+	bool pressed[ROSE_SCANCODE_COUNT];
+	bool released[ROSE_SCANCODE_COUNT];
+} rose__keyboard_t;
+
 typedef struct ROSE_Image {
 	uInt32 width;
 	uInt32 height;
@@ -128,7 +134,8 @@ ROSE_GLOBAL(float,  rose__fps)
 ROSE_GLOBAL(uInt32, rose__fps_frames)
 ROSE_GLOBAL(Int64,  rose__fps_window_start)
 
-ROSE_GLOBAL(rose__mouse_t, rose__mouse)
+ROSE_GLOBAL(rose__mouse_t,    rose__mouse)
+ROSE_GLOBAL(rose__keyboard_t, rose__keyboard)
 
 LRESULT CALLBACK rose__proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 ID3DBlob* rose__compile_shader(const wchar_t* path, const char* entry, const char* target);
@@ -144,6 +151,11 @@ void rose__mouse_update(void);
 void rose__mouse_clear(void);
 void rose__mouse_button(ROSE_MouseButton button, bool pressing);
 void rose__mouse_release(void);
+
+void rose__keyboard_scancode(ROSE_Scancode scancode, bool pressing);
+void rose__keyboard_message(UINT msg, WPARAM wparam, LPARAM lparam);
+void rose__keyboard_clear(void);
+void rose__keyboard_release(void);
 
 #endif /* ROSE_INTERNAL_HEADER_GUARD */
 
