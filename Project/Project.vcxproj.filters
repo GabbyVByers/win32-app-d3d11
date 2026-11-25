@@ -18,40 +18,40 @@
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="rose\png.c">
+    <ClCompile Include="rose\source\png.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="rose\rose_image.c">
+    <ClCompile Include="rose\source\rose_image.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="rose\rose_internal.c">
+    <ClCompile Include="rose\source\rose_internal.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="rose\rose_mesh.c">
+    <ClCompile Include="rose\source\rose_mesh.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="rose\rose_window.c">
+    <ClCompile Include="rose\source\rose_window.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="rose\rose_texture.c">
+    <ClCompile Include="rose\source\rose_texture.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="rose\rose_sprite.c">
+    <ClCompile Include="rose\source\rose_sprite.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="rose\rose_mouse.c">
+    <ClCompile Include="rose\source\rose_mouse.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="rose\rose_keyboard.c">
+    <ClCompile Include="rose\source\rose_keyboard.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="rose\rose_text.c">
+    <ClCompile Include="rose\source\rose_text.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="rose\rose_math.c">
+    <ClCompile Include="rose\source\rose_math.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="rose\rose_mesh3d.c">
+    <ClCompile Include="rose\source\rose_mesh3d.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
