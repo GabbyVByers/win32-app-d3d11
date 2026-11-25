@@ -49,17 +49,13 @@
   } } while (0)
 #endif
 
-typedef struct rose__matrix_t {
-	float m[16];
-} rose__matrix_t;
-
 typedef struct rose__constants_t {
 	float screen_size[2];
 	float _padding[2];
 } rose__constants_t;
 
 typedef struct rose__constants3d_t {
-	rose__matrix_t mvp;
+	ROSE_Matrix mvp;
 	ROSE_Color tint;
 } rose__constants3d_t;
 
@@ -196,17 +192,6 @@ void rose__keyboard_release(void);
 
 void rose__text_reserve(ROSE_Text* text, uInt32 count);
 void rose__text_write_characters(ROSE_Text* text);
-
-ROSE_Vec3 rose__vec3_add(ROSE_Vec3 a, ROSE_Vec3 b);
-ROSE_Vec3 rose__vec3_scale(ROSE_Vec3 v, float s);
-float     rose__vec3_dot(ROSE_Vec3 a, ROSE_Vec3 b);
-ROSE_Vec3 rose__vec3_normalize(ROSE_Vec3 v);
-ROSE_Quat rose__quat_normalize(ROSE_Quat q);
-
-rose__matrix_t rose__matrix_multiply(rose__matrix_t a, rose__matrix_t b);
-rose__matrix_t rose__matrix_model(ROSE_Vec3 position, ROSE_Quat orientation, float scale);
-rose__matrix_t rose__matrix_view(ROSE_Vec3 position, ROSE_Quat orientation);
-rose__matrix_t rose__matrix_project(float fov_degrees, float aspect, float near_plane, float far_plane);
 
 #endif /* ROSE_INTERNAL_HEADER_GUARD */
 

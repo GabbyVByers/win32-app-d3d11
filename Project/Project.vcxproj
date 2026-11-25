@@ -78,6 +78,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <AdditionalIncludeDirectories>$(SolutionDir)Project\rose;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -97,6 +98,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <AdditionalIncludeDirectories>$(SolutionDir)Project\rose;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -114,6 +116,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <AdditionalIncludeDirectories>$(SolutionDir)Project\rose;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,6 +136,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <AdditionalIncludeDirectories>$(SolutionDir)Project\rose;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -144,23 +148,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.c" />
-    <ClCompile Include="rose\png.c" />
-    <ClCompile Include="rose\rose_image.c" />
-    <ClCompile Include="rose\rose_init.c" />
-    <ClCompile Include="rose\rose_internal.c" />
-    <ClCompile Include="rose\rose_keyboard.c" />
-    <ClCompile Include="rose\rose_math.c" />
-    <ClCompile Include="rose\rose_mesh.c" />
-    <ClCompile Include="rose\rose_mesh3d.c" />
-    <ClCompile Include="rose\rose_mouse.c" />
-    <ClCompile Include="rose\rose_sprite.c" />
-    <ClCompile Include="rose\rose_text.c" />
-    <ClCompile Include="rose\rose_texture.c" />
-    <ClCompile Include="rose\rose_window.c" />
+    <ClCompile Include="rose\source\png.c" />
+    <ClCompile Include="rose\source\rose_image.c" />
+    <ClCompile Include="rose\source\rose_internal.c" />
+    <ClCompile Include="rose\source\rose_keyboard.c" />
+    <ClCompile Include="rose\source\rose_math.c" />
+    <ClCompile Include="rose\source\rose_mesh.c" />
+    <ClCompile Include="rose\source\rose_mesh3d.c" />
+    <ClCompile Include="rose\source\rose_mouse.c" />
+    <ClCompile Include="rose\source\rose_sprite.c" />
+    <ClCompile Include="rose\source\rose_text.c" />
+    <ClCompile Include="rose\source\rose_texture.c" />
+    <ClCompile Include="rose\source\rose_window.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rose\rose_enums.h" />
     <ClInclude Include="rose\rose_internal.h" />
+    <ClInclude Include="rose\rose_math.h" />
     <ClInclude Include="rose\rose.h" />
     <ClInclude Include="rose\png.h" />
   </ItemGroup>

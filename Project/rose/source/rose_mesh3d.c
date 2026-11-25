@@ -80,12 +80,12 @@ void ROSE_Mesh3DDraw(ROSE_Mesh3D* mesh, ROSE_Camera camera, ROSE_Vec3 position, 
 
 	float aspect = rose__viewport.Width / rose__viewport.Height;
 
-	rose__matrix_t model   = rose__matrix_model(position, orientation, scale);
-	rose__matrix_t view    = rose__matrix_view(camera.position, camera.orientation);
-	rose__matrix_t project = rose__matrix_project(camera.fov, aspect, camera.near_plane, camera.far_plane);
+	ROSE_Matrix model   = ROSE_MatrixModel(position, orientation, scale);
+	ROSE_Matrix view    = ROSE_MatrixView(camera.position, camera.orientation);
+	ROSE_Matrix project = ROSE_MatrixProject(camera.fov, aspect, camera.near_plane, camera.far_plane);
 
 	rose__constants3d_t constants = {
-		.mvp = rose__matrix_multiply(rose__matrix_multiply(model, view), project),
+		.mvp  = ROSE_MatrixMVP(model, view, project),
 		.tint = color,
 	};
 

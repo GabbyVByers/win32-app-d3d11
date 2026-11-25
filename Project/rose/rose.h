@@ -9,13 +9,11 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <wchar.h>
+#include "rose_math.h"
 #include "rose_enums.h"
 
-#define ROSE_QUAT_IDENTITY \
-((ROSE_Quat){ 1.0f, 0.0f, 0.0f, 0.0f })
-
 #define ROSE_CAMERA_DEFAULT       \
-((ROSE_Camera){                   \
+((ROSE_Camera) {                  \
 .fov = 100.0f,                    \
 .near_plane = 0.1f,               \
 .far_plane = 100.0f,              \
@@ -49,14 +47,6 @@ typedef uint8_t  uInt8;
 typedef uint16_t uInt16;
 typedef uint32_t uInt32;
 typedef uint64_t uInt64;
-
-typedef struct ROSE_Vec3 {
-	float x, y, z;
-} ROSE_Vec3;
-
-typedef struct ROSE_Quat {
-	float w, x, y, z;
-} ROSE_Quat;
 
 typedef struct ROSE_Color {
 	float r, g, b, a;
@@ -142,11 +132,6 @@ ROSE_Text*    ROSE_TextCreate(const char* format, ...);
 void          ROSE_TextDestroy(ROSE_Text* text);
 void          ROSE_TextUpdate(ROSE_Text* text, const char* format, ...);
 void          ROSE_TextDraw(ROSE_Text* text, float xpos, float ypos, float scale, ROSE_Color color);
-
-ROSE_Quat     ROSE_QuatRotate(ROSE_Quat quat, ROSE_Vec3 axis, float degrees);
-ROSE_Vec3     ROSE_QuatForward(ROSE_Quat quat);
-ROSE_Vec3     ROSE_QuatUp(ROSE_Quat quat);
-ROSE_Vec3     ROSE_QuatRight(ROSE_Quat quat);
 
 ROSE_Mesh3D*  ROSE_Mesh3DCreate(const ROSE_Vertex3D* vertices, uInt32 count);
 void          ROSE_Mesh3DDestroy(ROSE_Mesh3D* mesh);
