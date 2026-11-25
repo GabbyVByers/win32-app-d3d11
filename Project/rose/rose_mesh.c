@@ -55,7 +55,21 @@ void ROSE_Mesh2DUpdate(ROSE_Mesh2D* mesh, const ROSE_Vertex2D* vertices, uInt32 
 		if (capacity < count)
 			capacity = count;
 
-		rose__mesh_reserve(mesh, capacity);
+		if (mesh->vertices != NULL)
+		ID3D11Buffer_Release(mesh->vertices);
+
+		D3D11_BUFFER_DESC vertex_buffer_desc = {
+			.ByteWidth      = sizeof(ROSE_Vertex2D) * capacity,
+			.Usage          = D3D11_USAGE_DYNAMIC,
+			.BindFlags      = D3D11_BIND_VERTEX_BUFFER,
+			.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE,
+		};
+
+		mesh->vertices = NULL;
+		HRESULT result = ID3D11Device_CreateBuffer(rose__device, &vertex_buffer_desc, NULL, &mesh->vertices);
+		CHECK_HRESULT(result, "ID3D11Device_CreateBuffer()");
+
+		mesh->capacity = capacity;
 	}
 
 	D3D11_MAPPED_SUBRESOURCE mapped;
@@ -66,27 +80,5 @@ void ROSE_Mesh2DUpdate(ROSE_Mesh2D* mesh, const ROSE_Vertex2D* vertices, uInt32 
 	ID3D11DeviceContext_Unmap(rose__context, (ID3D11Resource*)mesh->vertices, 0);
 
 	mesh->count = count;
-}
-
-void rose__mesh_reserve(ROSE_Mesh2D* mesh, uInt32 capacity)
-{
-	if (capacity <= mesh->capacity)
-		return;
-
-	if (mesh->vertices != NULL)
-		ID3D11Buffer_Release(mesh->vertices);
-
-	D3D11_BUFFER_DESC vertex_buffer_desc = {
-		.ByteWidth      = sizeof(ROSE_Vertex2D) * capacity,
-		.Usage          = D3D11_USAGE_DYNAMIC,
-		.BindFlags      = D3D11_BIND_VERTEX_BUFFER,
-		.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE,
-	};
-
-	mesh->vertices = NULL;
-	HRESULT result = ID3D11Device_CreateBuffer(rose__device, &vertex_buffer_desc, NULL, &mesh->vertices);
-	CHECK_HRESULT(result, "ID3D11Device_CreateBuffer()");
-
-	mesh->capacity = capacity;
 }
 

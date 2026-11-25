@@ -18,7 +18,6 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	};
 
 	ATOM atom = RegisterClassExW(&window_class);
-	DWORD error = GetLastError();
 	assert(atom && "RegisterClassExW() failed!");
 
 	RECT rect = { 0, 0, (long)width, (long)height };

@@ -51,7 +51,6 @@ int main(void)
 		"lowercase -> UPPERCASE\n"
 		"not in font: ~ \xC3\xA9 \t <- 3 specials");
 
-	float time = 0.0f;
 	while (true) {
 		if (ROSE_WindowClosed())
 			break;

@@ -84,10 +84,10 @@ ROSE_Quat rose__quat_normalize(ROSE_Quat quat)
 
 	float inverse = 1.0f / length;
 	return (ROSE_Quat) {
-		quat.w* inverse,
-		quat.x* inverse,
-		quat.y* inverse,
-		quat.z* inverse
+		quat.w * inverse,
+		quat.x * inverse,
+		quat.y * inverse,
+		quat.z * inverse
 	};
 }
 

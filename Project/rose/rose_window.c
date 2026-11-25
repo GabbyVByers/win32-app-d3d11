@@ -68,6 +68,7 @@ void ROSE_FrameClear(ROSE_Color color)
 
 		ID3D11DeviceContext_OMSetRenderTargets(rose__context, 0, NULL, NULL);
 		ID3D11RenderTargetView_Release(rose__render_target);
+		ID3D11DepthStencilView_Release(rose__depth_view);
 		ID3D11DeviceContext_Flush(rose__context);
 
 		HRESULT result = IDXGISwapChain1_ResizeBuffers(

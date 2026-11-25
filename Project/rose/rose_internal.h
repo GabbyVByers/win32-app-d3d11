@@ -188,8 +188,6 @@ void rose__create_render_target(void);
 Int64 rose__ticks(void);
 void rose__bind_2d(ID3D11Buffer* vertices, ROSE_Texture* texture);
 
-void rose__mesh_reserve(ROSE_Mesh2D* mesh, uInt32 capacity);
-
 ROSE_Vertex2D* rose__batch_alloc(ROSE_Texture* texture, uInt32 count);
 void rose__batch_create(void);
 void rose__batch_destroy(void);
