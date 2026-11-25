@@ -145,7 +145,6 @@
   <ItemGroup>
     <ClCompile Include="main.c" />
     <ClCompile Include="rose\png.c" />
-    <ClCompile Include="rose\rose_camera.c" />
     <ClCompile Include="rose\rose_image.c" />
     <ClCompile Include="rose\rose_init.c" />
     <ClCompile Include="rose\rose_internal.c" />

@@ -39,17 +39,14 @@ int main(void)
 	ROSE_Mesh3D* cube_mesh = ROSE_Mesh3DCreate(cube, 36);
 	ROSE_Quat spin = ROSE_QUAT_IDENTITY;
 
-	ROSE_CameraPositionSet((ROSE_Vec3) { 0.0f, 0.5f, -6.0f });
+	ROSE_Camera camera = ROSE_CAMERA_DEFAULT;
+	camera.position = (ROSE_Vec3) { 0.0f, 0.5f, -6.0f };
 
 	/*
 	 *   Text
 	 */
 
 	ROSE_Text* stats = ROSE_TextCreate("FPS: --");
-	ROSE_Text* hello = ROSE_TextCreate(
-		"Hello, rose!\n"
-		"lowercase -> UPPERCASE\n"
-		"not in font: ~ \xC3\xA9 \t <- 3 specials");
 
 	while (true) {
 		if (ROSE_WindowClosed())
@@ -63,23 +60,54 @@ int main(void)
 		if (ROSE_MousePressing(ROSE_MOUSE_LEFT)) {
 			float dx, dy;
 			ROSE_MouseVelocity(&dx, &dy);
-			ROSE_CameraRotate((ROSE_Vec3) { 0.0f, 1.0f, 0.0f }, dx * 0.2f);
-			ROSE_CameraRotate(ROSE_CameraDirectionRight(), dy * 0.2f);
+			ROSE_Quat quat = camera.orientation;
+			ROSE_Vec3 right = ROSE_QuatRight(quat);
+			quat = ROSE_QuatRotate(quat, (ROSE_Vec3) { 0.0f, 1.0f, 0.0f }, dx * 0.2f);
+			quat = ROSE_QuatRotate(quat, right, dy * 0.2f);
+			camera.orientation = quat;
 		}
 
 		float speed = 7.0f * dt;
 		ROSE_Vec3 world_up = { 0.0f, 1.0f, 0.0f };
 
-		if (ROSE_KeyboardPressing(ROSE_SCANCODE_W)) ROSE_CameraPositionMove(ROSE_CameraDirectionForward(), speed);
-		if (ROSE_KeyboardPressing(ROSE_SCANCODE_S)) ROSE_CameraPositionMove(ROSE_CameraDirectionForward(), -speed);
-		if (ROSE_KeyboardPressing(ROSE_SCANCODE_D)) ROSE_CameraPositionMove(ROSE_CameraDirectionRight(), speed);
-		if (ROSE_KeyboardPressing(ROSE_SCANCODE_A)) ROSE_CameraPositionMove(ROSE_CameraDirectionRight(), -speed);
-		if (ROSE_KeyboardPressing(ROSE_SCANCODE_SPACE)) ROSE_CameraPositionMove(world_up, speed);
-		if (ROSE_KeyboardPressing(ROSE_SCANCODE_LEFT_SHIFT)) ROSE_CameraPositionMove(world_up, -speed);
+		if (ROSE_KeyboardPressing(ROSE_SCANCODE_W)) {
+			ROSE_Quat quat = camera.orientation;
+			ROSE_Vec3 forward = ROSE_QuatForward(quat);
+			camera.position.x += forward.x * speed;
+			camera.position.y += forward.y * speed;
+			camera.position.z += forward.z * speed;
+		}
 
-		if (ROSE_KeyboardPressed(ROSE_SCANCODE_R)) {
-			ROSE_CameraOrientationSet(ROSE_QUAT_IDENTITY);
-			ROSE_CameraPositionSet((ROSE_Vec3) { 0.0f, 0.5f, -6.0f });
+		if (ROSE_KeyboardPressing(ROSE_SCANCODE_S)) {
+			ROSE_Quat quat = camera.orientation;
+			ROSE_Vec3 forward = ROSE_QuatForward(quat);
+			camera.position.x -= forward.x * speed;
+			camera.position.y -= forward.y * speed;
+			camera.position.z -= forward.z * speed;
+		}
+
+		if (ROSE_KeyboardPressing(ROSE_SCANCODE_D)) {
+			ROSE_Quat quat = camera.orientation;
+			ROSE_Vec3 right = ROSE_QuatRight(quat);
+			camera.position.x += right.x * speed;
+			camera.position.y += right.y * speed;
+			camera.position.z += right.z * speed;
+		}
+
+		if (ROSE_KeyboardPressing(ROSE_SCANCODE_A)) {
+			ROSE_Quat quat = camera.orientation;
+			ROSE_Vec3 right = ROSE_QuatRight(quat);
+			camera.position.x -= right.x * speed;
+			camera.position.y -= right.y * speed;
+			camera.position.z -= right.z * speed;
+		}
+
+		if (ROSE_KeyboardPressing(ROSE_SCANCODE_SPACE)) {
+
+		}
+
+		if (ROSE_KeyboardPressing(ROSE_SCANCODE_LEFT_SHIFT)) {
+
 		}
 
 		spin = ROSE_QuatRotate(spin, (ROSE_Vec3) { 0.0f, 1.0f, 0.0f }, 60.0f * dt);
@@ -87,24 +115,23 @@ int main(void)
 
 		ROSE_FrameClear(ROSE_COLOR_RGBA(30, 15, 70, 255));
 
-		ROSE_Mesh3DDraw(cube_mesh, (ROSE_Vec3) { 0.0f, 0.0f, 0.0f }, spin, 1.0f, ROSE_COLOR_WHITE);
+		ROSE_Mesh3DDraw(cube_mesh, camera, (ROSE_Vec3) { 0.0f, 0.0f, 0.0f }, spin, 1.0f, ROSE_COLOR_WHITE);
 
 		for (int i = 0; i < 8; i++) {
 			ROSE_Quat facing = ROSE_QuatRotate(ROSE_QUAT_IDENTITY, world_up, (float)i * 45.0f);
 			ROSE_Vec3 out = ROSE_QuatForward(facing);
 			ROSE_Vec3 pos = { out.x * 3.0f, -1.0f, out.z * 3.0f };
-			ROSE_Mesh3DDraw(cube_mesh, pos, facing, 0.4f, ROSE_COLOR_WHITE);
+			ROSE_Mesh3DDraw(cube_mesh, camera, pos, facing, 0.4f, ROSE_COLOR_WHITE);
 		}
 
-		ROSE_Vec3 cam = ROSE_CameraPositionGet();
-		ROSE_TextUpdate(stats, "FPS: %.0f\nPOS: %.1f %.1f %.1f", ROSE_WindowFPS(), cam.x, cam.y, cam.z);
+		ROSE_Vec3 cam_pos = camera.position;
+		ROSE_TextUpdate(stats, "FPS: %.0f\nPOS: %.1f %.1f %.1f", ROSE_WindowFPS(), cam_pos.x, cam_pos.y, cam_pos.z);
 		ROSE_TextDraw(stats, 8.0f, 8.0f, 2.0f, ROSE_COLOR_YELLOW);
 
 		ROSE_FrameRender();
 	}
 
 	ROSE_TextDestroy(stats);
-	ROSE_TextDestroy(hello);
 
 	ROSE_Quit();
 }

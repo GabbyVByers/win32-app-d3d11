@@ -78,14 +78,6 @@ typedef struct rose__keyboard_t {
 	bool released[ROSE_SCANCODE_COUNT];
 } rose__keyboard_t;
 
-typedef struct rose__camera_t {
-	float fov;
-	float near_plane;
-	float far_plane;
-	ROSE_Vec3 position;
-	ROSE_Quat orientation;
-} rose__camera_t;
-
 typedef struct ROSE_Image {
 	uInt32 width;
 	uInt32 height;
@@ -171,7 +163,6 @@ ROSE_GLOBAL(Int64,  rose__fps_window_start)
 
 ROSE_GLOBAL(rose__mouse_t,    rose__mouse)
 ROSE_GLOBAL(rose__keyboard_t, rose__keyboard)
-ROSE_GLOBAL(rose__camera_t,   rose__camera)
 
 ROSE_GLOBAL(ID3D11DepthStencilView*,  rose__depth_view)
 ROSE_GLOBAL(ID3D11DepthStencilState*, rose__depth_on)

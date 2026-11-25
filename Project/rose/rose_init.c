@@ -249,14 +249,6 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	result = ID3D11Device_CreateDepthStencilState(rose__device, &depth_off_desc, &rose__depth_off);
 	CHECK_HRESULT(result, "ID3D11Device_CreateDepthStencilState()");
 
-	rose__camera = (rose__camera_t) {
-		.fov         = 100.0f,
-		.near_plane  = 0.1f,
-		.far_plane   = 100.0f,
-		.position    = { 0.0f, 0.0f, 0.0f },
-		.orientation = ROSE_QUAT_IDENTITY,
-	};
-
 	ROSE_Image* blank = ROSE_ImageCreate(1, 1);
 	ROSE_Image* ascii = ROSE_ImageLoad("textures/ascii.png");
 	
@@ -392,7 +384,6 @@ void ROSE_Quit(void)
 
 	rose__mouse    = (rose__mouse_t){ 0 };
 	rose__keyboard = (rose__keyboard_t){ 0 };
-	rose__camera   = (rose__camera_t){ 0 };
 
 	MSG message;
 	while (PeekMessageW(&message, NULL, 0, 0, PM_REMOVE)) {}

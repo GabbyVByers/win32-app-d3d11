@@ -5,28 +5,6 @@
 
 #include "rose_internal.h"
 
-static void reserve(ROSE_Mesh3D* mesh, uInt32 capacity)
-{
-	if (capacity <= mesh->capacity)
-		return;
-
-	if (mesh->vertices != NULL)
-		ID3D11Buffer_Release(mesh->vertices);
-
-	D3D11_BUFFER_DESC vertex_buffer_desc = {
-		.ByteWidth = sizeof(ROSE_Vertex3D) * capacity,
-		.Usage = D3D11_USAGE_DYNAMIC,
-		.BindFlags = D3D11_BIND_VERTEX_BUFFER,
-		.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE,
-	};
-
-	mesh->vertices = NULL;
-	HRESULT result = ID3D11Device_CreateBuffer(rose__device, &vertex_buffer_desc, NULL, &mesh->vertices);
-	CHECK_HRESULT(result, "ID3D11Device_CreateBuffer()");
-
-	mesh->capacity = capacity;
-}
-
 ROSE_Mesh3D* ROSE_Mesh3DCreate(const ROSE_Vertex3D* vertices, uInt32 count)
 {
 	ROSE_Mesh3D* mesh = calloc(1, sizeof(ROSE_Mesh3D));
@@ -62,7 +40,21 @@ void ROSE_Mesh3DUpdate(ROSE_Mesh3D* mesh, const ROSE_Vertex3D* vertices, uInt32 
 		if (capacity < count)
 			capacity = count;
 
-		reserve(mesh, capacity);
+		if (mesh->vertices != NULL)
+			ID3D11Buffer_Release(mesh->vertices);
+
+		D3D11_BUFFER_DESC vertex_buffer_desc = {
+			.ByteWidth = sizeof(ROSE_Vertex3D) * capacity,
+			.Usage = D3D11_USAGE_DYNAMIC,
+			.BindFlags = D3D11_BIND_VERTEX_BUFFER,
+			.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE,
+		};
+
+		mesh->vertices = NULL;
+		HRESULT result = ID3D11Device_CreateBuffer(rose__device, &vertex_buffer_desc, NULL, &mesh->vertices);
+		CHECK_HRESULT(result, "ID3D11Device_CreateBuffer()");
+
+		mesh->capacity = capacity;
 	}
 
 	D3D11_MAPPED_SUBRESOURCE mapped;
@@ -75,7 +67,7 @@ void ROSE_Mesh3DUpdate(ROSE_Mesh3D* mesh, const ROSE_Vertex3D* vertices, uInt32 
 	mesh->count = count;
 }
 
-void ROSE_Mesh3DDraw(ROSE_Mesh3D* mesh, ROSE_Vec3 position, ROSE_Quat orientation, float scale, ROSE_Color color)
+void ROSE_Mesh3DDraw(ROSE_Mesh3D* mesh, ROSE_Camera camera, ROSE_Vec3 position, ROSE_Quat orientation, float scale, ROSE_Color color)
 {
 	rose__batch_flush();
 
@@ -89,8 +81,8 @@ void ROSE_Mesh3DDraw(ROSE_Mesh3D* mesh, ROSE_Vec3 position, ROSE_Quat orientatio
 	float aspect = rose__viewport.Width / rose__viewport.Height;
 
 	rose__matrix_t model   = rose__matrix_model(position, orientation, scale);
-	rose__matrix_t view    = rose__matrix_view(rose__camera.position, rose__camera.orientation);
-	rose__matrix_t project = rose__matrix_project(rose__camera.fov, aspect, rose__camera.near_plane, rose__camera.far_plane);
+	rose__matrix_t view    = rose__matrix_view(camera.position, camera.orientation);
+	rose__matrix_t project = rose__matrix_project(camera.fov, aspect, camera.near_plane, camera.far_plane);
 
 	rose__constants3d_t constants = {
 		.mvp = rose__matrix_multiply(rose__matrix_multiply(model, view), project),

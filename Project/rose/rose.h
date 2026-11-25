@@ -14,6 +14,14 @@
 #define ROSE_QUAT_IDENTITY \
 ((ROSE_Quat){ 1.0f, 0.0f, 0.0f, 0.0f })
 
+#define ROSE_CAMERA_DEFAULT       \
+((ROSE_Camera){                   \
+.fov = 100.0f,                    \
+.near_plane = 0.1f,               \
+.far_plane = 100.0f,              \
+.position = { 0.0f, 0.0f, 0.0f }, \
+.orientation = ROSE_QUAT_IDENTITY })
+
 #define ROSE_COLOR_RGBA(r, g, b, a) \
 ((ROSE_Color) {                     \
 (((float)(r)) / 255.f),             \
@@ -64,6 +72,14 @@ typedef struct ROSE_Vertex3D {
 	float x, y, z;
 	ROSE_Color color;
 } ROSE_Vertex3D;
+
+typedef struct ROSE_Camera {
+	float fov;
+	float near_plane;
+	float far_plane;
+	ROSE_Vec3 position;
+	ROSE_Quat orientation;
+} ROSE_Camera;
 
 typedef struct ROSE_Image   ROSE_Image;
 typedef struct ROSE_Texture ROSE_Texture;
@@ -132,23 +148,10 @@ ROSE_Vec3     ROSE_QuatForward(ROSE_Quat quat);
 ROSE_Vec3     ROSE_QuatUp(ROSE_Quat quat);
 ROSE_Vec3     ROSE_QuatRight(ROSE_Quat quat);
 
-void          ROSE_CameraFOV(float degrees);
-void          ROSE_CameraNearPlane(float distance);
-void          ROSE_CameraFarPlane(float distance);
-void          ROSE_CameraPositionMove(ROSE_Vec3 direction, float distance);
-void          ROSE_CameraPositionSet(ROSE_Vec3 position);
-ROSE_Vec3     ROSE_CameraPositionGet(void);
-void          ROSE_CameraRotate(ROSE_Vec3 axis, float theta);
-ROSE_Vec3     ROSE_CameraDirectionForward(void);
-ROSE_Vec3     ROSE_CameraDirectionUp(void);
-ROSE_Vec3     ROSE_CameraDirectionRight(void);
-ROSE_Quat     ROSE_CameraOrientationGet(void);
-void          ROSE_CameraOrientationSet(ROSE_Quat orientation);
-
 ROSE_Mesh3D*  ROSE_Mesh3DCreate(const ROSE_Vertex3D* vertices, uInt32 count);
 void          ROSE_Mesh3DDestroy(ROSE_Mesh3D* mesh);
 void          ROSE_Mesh3DUpdate(ROSE_Mesh3D* mesh, const ROSE_Vertex3D* vertices, uInt32 count);
-void          ROSE_Mesh3DDraw(ROSE_Mesh3D* mesh, ROSE_Vec3 position, ROSE_Quat orientation, float scale, ROSE_Color color);
+void          ROSE_Mesh3DDraw(ROSE_Mesh3D* mesh, ROSE_Camera camera, ROSE_Vec3 position, ROSE_Quat orientation, float scale, ROSE_Color color);
 
 #endif /* ROSE_ROSE_HEADER_GUARD */
 
