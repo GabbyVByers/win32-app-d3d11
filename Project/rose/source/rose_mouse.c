@@ -28,20 +28,20 @@ float ROSE_MouseScroll(void)
 	return rose__mouse.scroll;
 }
 
-void ROSE_MousePosition(float* xpos, float* ypos)
+ROSE_Vec2 ROSE_MousePosition(void)
 {
-	assert(xpos != NULL);
-	assert(ypos != NULL);
-	(*xpos) = rose__mouse.curr_xpos;
-	(*ypos) = rose__mouse.curr_ypos;
+	return (ROSE_Vec2) {
+		rose__mouse.curr_pos.x,
+		rose__mouse.curr_pos.y,
+	};
 }
 
-void ROSE_MouseVelocity(float* xvel, float* yvel)
+ROSE_Vec2 ROSE_MouseVelocity(void)
 {
-	assert(xvel != NULL);
-	assert(yvel != NULL);
-	(*xvel) = rose__mouse.curr_xpos - rose__mouse.prev_xpos;
-	(*yvel) = rose__mouse.curr_ypos - rose__mouse.prev_ypos;
+	return (ROSE_Vec2) {
+		rose__mouse.curr_pos.x - rose__mouse.prev_pos.x,
+		rose__mouse.curr_pos.y - rose__mouse.prev_pos.y,
+	};
 }
 
 void rose__mouse_update(void)
@@ -69,8 +69,8 @@ void rose__mouse_clear(void)
 	memset(rose__mouse.pressed,  0, sizeof(rose__mouse.pressed));
 	memset(rose__mouse.released, 0, sizeof(rose__mouse.released));
 	rose__mouse.scroll = 0.0f;
-	rose__mouse.prev_xpos = rose__mouse.curr_xpos;
-	rose__mouse.prev_ypos = rose__mouse.curr_ypos;
+	rose__mouse.prev_pos.x = rose__mouse.curr_pos.x;
+	rose__mouse.prev_pos.y = rose__mouse.curr_pos.y;
 }
 
 void rose__mouse_button(ROSE_MouseButton button, bool pressing)

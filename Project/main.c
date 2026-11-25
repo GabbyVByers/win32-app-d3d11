@@ -59,11 +59,10 @@ int main(void)
 static void camera_control(ROSE_Camera* camera, float dt)
 {
 	if (ROSE_MousePressing(ROSE_MOUSE_LEFT)) {
-		float dx, dy;
-		ROSE_MouseVelocity(&dx, &dy);
+		ROSE_Vec2 mouse_vel = ROSE_MouseVelocity();
 		ROSE_Quat quat = camera->orientation;
-		quat = ROSE_QuatRotate(quat, ROSE_VEC3_YPOS, dx * 0.2f);
-		quat = ROSE_QuatRotate(quat, ROSE_QuatRight(quat), dy * 0.2f);
+		quat = ROSE_QuatRotate(quat, ROSE_VEC3_YPOS, mouse_vel.x * 0.2f);
+		quat = ROSE_QuatRotate(quat, ROSE_QuatRight(quat), mouse_vel.y * 0.2f);
 		camera->orientation = quat;
 	}
 

@@ -21,8 +21,8 @@ LRESULT CALLBACK rose__proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	}
 
 	if (msg == WM_MOUSEMOVE) {
-		rose__mouse.curr_xpos = (float)GET_X_LPARAM(lparam);
-		rose__mouse.curr_ypos = (float)GET_Y_LPARAM(lparam);
+		rose__mouse.curr_pos.x = (float)GET_X_LPARAM(lparam);
+		rose__mouse.curr_pos.y = (float)GET_Y_LPARAM(lparam);
 		return 0;
 	}
 

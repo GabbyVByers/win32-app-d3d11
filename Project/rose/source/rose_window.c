@@ -135,14 +135,14 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	CHECK_HRESULT(result, "ID3D11Device_CreatePixelShader()");
 
 	D3D11_INPUT_ELEMENT_DESC input_desc[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(ROSE_Vertex2D, x),     D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(ROSE_Vertex2D, u),     D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(ROSE_Vertex2D, color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(ROSE_Vertex2D, position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(ROSE_Vertex2D, texcoord), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(ROSE_Vertex2D, color),    D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
 	D3D11_INPUT_ELEMENT_DESC input_desc_3d[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, offsetof(ROSE_Vertex3D, x),     D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(ROSE_Vertex3D, color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, offsetof(ROSE_Vertex3D, position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(ROSE_Vertex3D, color),    D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
 	result = ID3D11Device_CreateInputLayout(
@@ -285,10 +285,10 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	float mouse_xpos = (float)cursor.x;
 	float mouse_ypos = (float)cursor.y;
 
-	rose__mouse.curr_xpos = mouse_xpos;
-	rose__mouse.curr_ypos = mouse_ypos;
-	rose__mouse.prev_xpos = mouse_xpos;
-	rose__mouse.prev_ypos = mouse_ypos;
+	rose__mouse.curr_pos.x = mouse_xpos;
+	rose__mouse.curr_pos.y = mouse_ypos;
+	rose__mouse.prev_pos.x = mouse_xpos;
+	rose__mouse.prev_pos.y = mouse_ypos;
 }
 
 void ROSE_Quit(void)

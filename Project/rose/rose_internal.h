@@ -63,8 +63,8 @@ typedef struct rose__mouse_t {
 	bool pressing[ROSE_MOUSE_COUNT];
 	bool pressed[ROSE_MOUSE_COUNT];
 	bool released[ROSE_MOUSE_COUNT];
-	float curr_xpos, curr_ypos;
-	float prev_xpos, prev_ypos;
+	ROSE_Vec2 curr_pos;
+	ROSE_Vec2 prev_pos;
 	float scroll;
 } rose__mouse_t;
 

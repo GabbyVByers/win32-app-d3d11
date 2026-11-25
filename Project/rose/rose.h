@@ -53,13 +53,13 @@ typedef struct ROSE_Color {
 } ROSE_Color;
 
 typedef struct ROSE_Vertex2D {
-	float x, y;
-	float u, v;
+	ROSE_Vec2 position;
+	ROSE_Vec2 texcoord;
 	ROSE_Color color;
 } ROSE_Vertex2D;
 
 typedef struct ROSE_Vertex3D {
-	float x, y, z;
+	ROSE_Vec3 position;
 	ROSE_Color color;
 } ROSE_Vertex3D;
 
@@ -80,29 +80,28 @@ typedef struct ROSE_Mesh3D ROSE_Mesh3D;
 typedef struct ROSE_Sprite ROSE_Sprite;
 typedef struct ROSE_Text   ROSE_Text;
 
-void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height);
-void ROSE_Quit(void);
+void      ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height);
+void      ROSE_Quit(void);
+bool      ROSE_WindowClosed(void);
+bool      ROSE_WindowMinimized(void);
+void      ROSE_WindowVSync(bool vsync);
+void      ROSE_WindowMaxFPS(float max);
+float     ROSE_WindowFPS(void);
+float     ROSE_FrameDelta(void);
+double    ROSE_Time(void);
+void      ROSE_FrameClear(ROSE_Color color);
+void      ROSE_FrameRender(void);
 
-bool   ROSE_WindowClosed(void);
-bool   ROSE_WindowMinimized(void);
-void   ROSE_WindowVSync(bool vsync);
-void   ROSE_WindowMaxFPS(float max);
-float  ROSE_WindowFPS(void);
-float  ROSE_FrameDelta(void);
-double ROSE_Time(void);
-void   ROSE_FrameClear(ROSE_Color color);
-void   ROSE_FrameRender(void);
+bool      ROSE_MousePressing(ROSE_MouseButton button);
+bool      ROSE_MousePressed(ROSE_MouseButton button);
+bool      ROSE_MouseReleased(ROSE_MouseButton button);
+float     ROSE_MouseScroll(void);
+ROSE_Vec2 ROSE_MousePosition(void);
+ROSE_Vec2 ROSE_MouseVelocity(void);
 
-bool   ROSE_MousePressing(ROSE_MouseButton button);
-bool   ROSE_MousePressed(ROSE_MouseButton button);
-bool   ROSE_MouseReleased(ROSE_MouseButton button);
-float  ROSE_MouseScroll(void);
-void   ROSE_MousePosition(float* xpos, float* ypos);
-void   ROSE_MouseVelocity(float* xvel, float* yvel);
-
-bool   ROSE_KeyboardPressing(ROSE_Scancode scancode);
-bool   ROSE_KeyboardPressed(ROSE_Scancode scancode);
-bool   ROSE_KeyboardReleased(ROSE_Scancode scancode);
+bool      ROSE_KeyboardPressing(ROSE_Scancode scancode);
+bool      ROSE_KeyboardPressed(ROSE_Scancode scancode);
+bool      ROSE_KeyboardReleased(ROSE_Scancode scancode);
 
 ROSE_Image*   ROSE_ImageCreate(uInt32 width, uInt32 height);
 void          ROSE_ImageDestroy(ROSE_Image* image);

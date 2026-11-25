@@ -78,10 +78,10 @@ void ROSE_TextDraw(ROSE_Text* text, float xpos, float ypos, float scale, ROSE_Co
 		for (uInt32 k = 0; k < 6; k++) {
 			ROSE_Vertex2D src = text->vertices[i + k];
 			dst[k] = (ROSE_Vertex2D) {
-				.x = xpos + src.x * scale,
-				.y = ypos + src.y * scale,
-				.u = src.u,
-				.v = src.v,
+				.position.x = xpos + src.position.x * scale,
+				.position.y = ypos + src.position.y * scale,
+				.texcoord.x = src.texcoord.x,
+				.texcoord.y = src.texcoord.y,
 				.color = color,
 			};
 		}
