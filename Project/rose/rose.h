@@ -118,11 +118,6 @@ uInt32*       ROSE_ImageCopyPixels(ROSE_Image* image);
 ROSE_Texture* ROSE_TextureCreate(ROSE_Image* image);
 void          ROSE_TextureDestroy(ROSE_Texture* texture);
 
-ROSE_Mesh2D*  ROSE_Mesh2DCreate(const ROSE_Vertex2D* vertices, uInt32 count);
-void          ROSE_Mesh2DDestroy(ROSE_Mesh2D* mesh);
-void          ROSE_Mesh2DUpdate(ROSE_Mesh2D* mesh, const ROSE_Vertex2D* vertices, uInt32 count);
-void          ROSE_Mesh2DDraw(ROSE_Mesh2D* mesh, ROSE_Texture* texture);
-
 ROSE_Sprite*  ROSE_SpriteCreate(ROSE_Texture* texture);
 void          ROSE_SpriteDestroy(ROSE_Sprite* sprite);
 void          ROSE_SpriteRegion(ROSE_Sprite* sprite, uInt32 xpos, uInt32 ypos, uInt32 width, uInt32 height);
@@ -132,6 +127,11 @@ ROSE_Text*    ROSE_TextCreate(const char* format, ...);
 void          ROSE_TextDestroy(ROSE_Text* text);
 void          ROSE_TextUpdate(ROSE_Text* text, const char* format, ...);
 void          ROSE_TextDraw(ROSE_Text* text, float xpos, float ypos, float scale, ROSE_Color color);
+
+ROSE_Mesh2D*  ROSE_Mesh2DCreate(const ROSE_Vertex2D* vertices, uInt32 count);
+void          ROSE_Mesh2DDestroy(ROSE_Mesh2D* mesh);
+void          ROSE_Mesh2DUpdate(ROSE_Mesh2D* mesh, const ROSE_Vertex2D* vertices, uInt32 count);
+void          ROSE_Mesh2DDraw(ROSE_Mesh2D* mesh, ROSE_Texture* texture);
 
 ROSE_Mesh3D*  ROSE_Mesh3DCreate(const ROSE_Vertex3D* vertices, uInt32 count);
 void          ROSE_Mesh3DDestroy(ROSE_Mesh3D* mesh);

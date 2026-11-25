@@ -9,44 +9,33 @@
 #include <stdlib.h>
 #include <math.h>
 
-static void push_face(ROSE_Vertex3D* out, ROSE_Vec3 a, ROSE_Vec3 b, ROSE_Vec3 c, ROSE_Vec3 d, ROSE_Color color)
-{
-	ROSE_Vec3 corners[6] = { a, b, c, a, c, d };
-
-	for (uInt32 i = 0; i < 6; i++)
-		out[i] = (ROSE_Vertex3D){ corners[i].x, corners[i].y, corners[i].z, color };
-}
+static void camera_control(ROSE_Camera* camera, float dt);
 
 int main(void)
 {
 	ROSE_Init(L"My Window", 1200, 700);
 	ROSE_WindowVSync(false);
 
-	/*
-	 *   Cube
-	 */
+	ROSE_Vertex3D vertices[] = {
+		{ 0.0f, 1.0f, 0.0f, ROSE_COLOR_RED    }, { 1.0f, 1.0f, 0.0f, ROSE_COLOR_RED    }, { 1.0f, 0.0f, 0.0f, ROSE_COLOR_RED    },
+		{ 0.0f, 1.0f, 0.0f, ROSE_COLOR_RED    }, { 1.0f, 0.0f, 0.0f, ROSE_COLOR_RED    }, { 0.0f, 0.0f, 0.0f, ROSE_COLOR_RED    },
+		{ 1.0f, 1.0f, 1.0f, ROSE_COLOR_GREEN  }, { 0.0f, 1.0f, 1.0f, ROSE_COLOR_GREEN  }, { 0.0f, 0.0f, 1.0f, ROSE_COLOR_GREEN  },
+		{ 1.0f, 1.0f, 1.0f, ROSE_COLOR_GREEN  }, { 0.0f, 0.0f, 1.0f, ROSE_COLOR_GREEN  }, { 1.0f, 0.0f, 1.0f, ROSE_COLOR_GREEN  },
+		{ 1.0f, 1.0f, 0.0f, ROSE_COLOR_BLUE   }, { 1.0f, 1.0f, 1.0f, ROSE_COLOR_BLUE   }, { 1.0f, 0.0f, 1.0f, ROSE_COLOR_BLUE   },
+		{ 1.0f, 1.0f, 0.0f, ROSE_COLOR_BLUE   }, { 1.0f, 0.0f, 1.0f, ROSE_COLOR_BLUE   }, { 1.0f, 0.0f, 0.0f, ROSE_COLOR_BLUE   },
+		{ 0.0f, 1.0f, 1.0f, ROSE_COLOR_PURPLE }, { 0.0f, 1.0f, 0.0f, ROSE_COLOR_PURPLE }, { 0.0f, 0.0f, 0.0f, ROSE_COLOR_PURPLE },
+		{ 0.0f, 1.0f, 1.0f, ROSE_COLOR_PURPLE }, { 0.0f, 0.0f, 0.0f, ROSE_COLOR_PURPLE }, { 0.0f, 0.0f, 1.0f, ROSE_COLOR_PURPLE },
+		{ 0.0f, 1.0f, 1.0f, ROSE_COLOR_CYAN   }, { 1.0f, 1.0f, 1.0f, ROSE_COLOR_CYAN   }, { 1.0f, 1.0f, 0.0f, ROSE_COLOR_CYAN   },
+		{ 0.0f, 1.0f, 1.0f, ROSE_COLOR_CYAN   }, { 1.0f, 1.0f, 0.0f, ROSE_COLOR_CYAN   }, { 0.0f, 1.0f, 0.0f, ROSE_COLOR_CYAN   },
+		{ 0.0f, 0.0f, 0.0f, ROSE_COLOR_YELLOW }, { 1.0f, 0.0f, 0.0f, ROSE_COLOR_YELLOW }, { 1.0f, 0.0f, 1.0f, ROSE_COLOR_YELLOW },
+		{ 0.0f, 0.0f, 0.0f, ROSE_COLOR_YELLOW }, { 1.0f, 0.0f, 1.0f, ROSE_COLOR_YELLOW }, { 0.0f, 0.0f, 1.0f, ROSE_COLOR_YELLOW },
+	};
 
-	const float h = 0.5f;
-	ROSE_Vertex3D cube[36];
-
-	push_face(cube,      (ROSE_Vec3) { -h,  h, -h }, (ROSE_Vec3) {  h,  h, -h }, (ROSE_Vec3) {  h, -h, -h }, (ROSE_Vec3) { -h, -h, -h }, ROSE_COLOR_RED);    // -Z
-	push_face(cube +  6, (ROSE_Vec3) {  h,  h,  h }, (ROSE_Vec3) { -h,  h,  h }, (ROSE_Vec3) { -h, -h,  h }, (ROSE_Vec3) {  h, -h,  h }, ROSE_COLOR_CYAN);   // +Z
-	push_face(cube + 12, (ROSE_Vec3) {  h,  h, -h }, (ROSE_Vec3) {  h,  h,  h }, (ROSE_Vec3) {  h, -h,  h }, (ROSE_Vec3) {  h, -h, -h }, ROSE_COLOR_GREEN);  // +X
-	push_face(cube + 18, (ROSE_Vec3) { -h,  h,  h }, (ROSE_Vec3) { -h,  h, -h }, (ROSE_Vec3) { -h, -h, -h }, (ROSE_Vec3) { -h, -h,  h }, ROSE_COLOR_PURPLE); // -X
-	push_face(cube + 24, (ROSE_Vec3) { -h,  h,  h }, (ROSE_Vec3) {  h,  h,  h }, (ROSE_Vec3) {  h,  h, -h }, (ROSE_Vec3) { -h,  h, -h }, ROSE_COLOR_BLUE);   // +Y
-	push_face(cube + 30, (ROSE_Vec3) { -h, -h, -h }, (ROSE_Vec3) {  h, -h, -h }, (ROSE_Vec3) {  h, -h,  h }, (ROSE_Vec3) { -h, -h,  h }, ROSE_COLOR_YELLOW); // -Y
-
-	ROSE_Mesh3D* cube_mesh = ROSE_Mesh3DCreate(cube, 36);
-	ROSE_Quat spin = ROSE_QUAT_IDENTITY;
+	uInt32 count = sizeof(vertices) / sizeof(vertices[0]);
+	ROSE_Mesh3D* mesh = ROSE_Mesh3DCreate(vertices, count);
 
 	ROSE_Camera camera = ROSE_CAMERA_DEFAULT;
-	camera.position = (ROSE_Vec3) { 0.0f, 0.5f, -6.0f };
-
-	/*
-	 *   Text
-	 */
-
-	ROSE_Text* stats = ROSE_TextCreate("FPS: --");
+	camera.position = (ROSE_Vec3) { 0.0f, 0.0f, -3.0f };
 
 	while (true) {
 		if (ROSE_WindowClosed())
@@ -56,63 +45,46 @@ int main(void)
 			continue;
 
 		float dt = ROSE_FrameDelta();
-
-		if (ROSE_MousePressing(ROSE_MOUSE_LEFT)) {
-			float dx, dy;
-			ROSE_MouseVelocity(&dx, &dy);
-			ROSE_Quat quat = camera.orientation;
-			quat = ROSE_QuatRotate(quat, ROSE_VEC3_YPOS, dx * 0.2f);
-			quat = ROSE_QuatRotate(quat, ROSE_QuatRight(quat), dy * 0.2f);
-			camera.orientation = quat;
-		}
-
-		float speed = 7.0f * dt;
-		ROSE_Vec3 forward = ROSE_Vec3Scale(ROSE_QuatForward(camera.orientation), speed);
-		ROSE_Vec3 right   = ROSE_Vec3Scale(ROSE_QuatRight(camera.orientation), speed);
-		ROSE_Vec3 up      = ROSE_Vec3Scale(ROSE_VEC3_YPOS, speed);
-
-		if (ROSE_KeyboardPressing(ROSE_SCANCODE_W))
-			camera.position = ROSE_Vec3Add(camera.position, forward);
-
-		if (ROSE_KeyboardPressing(ROSE_SCANCODE_S))
-			camera.position = ROSE_Vec3Sub(camera.position, forward);
-
-		if (ROSE_KeyboardPressing(ROSE_SCANCODE_D))
-			camera.position = ROSE_Vec3Add(camera.position, right);
-
-		if (ROSE_KeyboardPressing(ROSE_SCANCODE_A))
-			camera.position = ROSE_Vec3Sub(camera.position, right);
-
-		if (ROSE_KeyboardPressing(ROSE_SCANCODE_SPACE))
-			camera.position = ROSE_Vec3Add(camera.position, up);
-
-		if (ROSE_KeyboardPressing(ROSE_SCANCODE_LEFT_SHIFT))
-			camera.position = ROSE_Vec3Sub(camera.position, up);
-
-		spin = ROSE_QuatRotate(spin, ROSE_VEC3_YPOS, 60.0f * dt);
-		spin = ROSE_QuatRotate(spin, ROSE_VEC3_XPOS, 25.0f * dt);
+		camera_control(&camera, dt);
 
 		ROSE_FrameClear(ROSE_COLOR_RGBA(30, 15, 70, 255));
-
-		ROSE_Mesh3DDraw(cube_mesh, camera, ROSE_VEC3_ZERO, spin, 1.0f, ROSE_COLOR_WHITE);
-
-		for (int i = 0; i < 8; i++) {
-			ROSE_Quat facing = ROSE_QuatRotate(ROSE_QUAT_IDENTITY, ROSE_VEC3_YPOS, (float)i * 45.0f);
-			ROSE_Vec3 pos = ROSE_Vec3Scale(ROSE_QuatForward(facing), 3.0f);
-			pos.y = -1.0f;
-			ROSE_Mesh3DDraw(cube_mesh, camera, pos, facing, 0.4f, ROSE_COLOR_WHITE);
-		}
-
-		ROSE_Vec3 cam_pos = camera.position;
-		ROSE_TextUpdate(stats, "FPS: %.0f\nPOS: %.1f %.1f %.1f", ROSE_WindowFPS(), cam_pos.x, cam_pos.y, cam_pos.z);
-		ROSE_TextDraw(stats, 8.0f, 8.0f, 2.0f, ROSE_COLOR_YELLOW);
-
+		ROSE_Mesh3DDraw(mesh, camera, ROSE_VEC3_ZERO, ROSE_QUAT_IDENTITY, 1.0f, ROSE_COLOR_WHITE);
 		ROSE_FrameRender();
 	}
 
-	ROSE_Mesh3DDestroy(cube_mesh);
-	ROSE_TextDestroy(stats);
-
+	ROSE_Mesh3DDestroy(mesh);
 	ROSE_Quit();
+}
+
+static void camera_control(ROSE_Camera* camera, float dt)
+{
+	if (ROSE_MousePressing(ROSE_MOUSE_LEFT)) {
+		float dx, dy;
+		ROSE_MouseVelocity(&dx, &dy);
+		ROSE_Quat quat = camera->orientation;
+		quat = ROSE_QuatRotate(quat, ROSE_VEC3_YPOS, dx * 0.2f);
+		quat = ROSE_QuatRotate(quat, ROSE_QuatRight(quat), dy * 0.2f);
+		camera->orientation = quat;
+	}
+
+	float speed = 7.0f * dt;
+	ROSE_Vec3 forward = ROSE_QuatForward(camera->orientation);
+	forward.y = 0.0f;
+	forward = ROSE_Vec3Normalize(forward);
+	forward = ROSE_Vec3Scale(forward, speed);
+
+	ROSE_Vec3 right = ROSE_Vec3Scale(ROSE_QuatRight(camera->orientation), speed);
+	ROSE_Vec3 up = ROSE_Vec3Scale(ROSE_VEC3_YPOS, speed);
+
+	if (ROSE_KeyboardPressing(ROSE_SCANCODE_W)) camera->position = ROSE_Vec3Add(camera->position, forward);
+	if (ROSE_KeyboardPressing(ROSE_SCANCODE_S)) camera->position = ROSE_Vec3Sub(camera->position, forward);
+	if (ROSE_KeyboardPressing(ROSE_SCANCODE_D)) camera->position = ROSE_Vec3Add(camera->position, right);
+	if (ROSE_KeyboardPressing(ROSE_SCANCODE_A)) camera->position = ROSE_Vec3Sub(camera->position, right);
+
+	if (ROSE_KeyboardPressing(ROSE_SCANCODE_SPACE))
+		camera->position = ROSE_Vec3Add(camera->position, up);
+
+	if (ROSE_KeyboardPressing(ROSE_SCANCODE_LEFT_SHIFT))
+		camera->position = ROSE_Vec3Sub(camera->position, up);
 }
 
