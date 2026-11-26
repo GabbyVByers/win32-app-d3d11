@@ -14,7 +14,7 @@
 
 #define ROSE_CAMERA_DEFAULT       \
 ((ROSE_Camera) {                  \
-.fov = 100.0f,                    \
+.fov = 70.0f,                     \
 .near_plane = 0.1f,               \
 .far_plane = 100.0f,              \
 .position = { 0.0f, 0.0f, 0.0f }, \

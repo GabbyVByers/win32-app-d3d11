@@ -340,11 +340,15 @@ ROSE_Matrix ROSE_MatrixView(ROSE_Vec3 position, ROSE_Quat orientation)
 	ROSE_Vec3 f = ROSE_QuatForward(orientation);
 	ROSE_Vec3 p = position;
 
+	float d0 = -ROSE_Vec3Dot(p, r);
+	float d1 = -ROSE_Vec3Dot(p, u);
+	float d2 = -ROSE_Vec3Dot(p, f);
+
 	return (ROSE_Matrix) {{
 		r.x, u.x, f.x, 0.0f,
 		r.y, u.y, f.y, 0.0f,
 		r.z, u.z, f.z, 0.0f,
-		-ROSE_Vec3Dot(p, r), -ROSE_Vec3Dot(p, u), -ROSE_Vec3Dot(p, f), 1.0f,
+		d0,  d1,  d2,  1.0f,
 	}};
 }
 
@@ -353,12 +357,13 @@ ROSE_Matrix ROSE_MatrixProject(float fov_degrees, float aspect, float near_plane
 	float ys = 1.0f / tanf(fov_degrees * DEGREE_TO_RADIAN * 0.5f);
 	float xs = ys / aspect;
 	float zs = far_plane / (far_plane - near_plane);
+	float np = -near_plane * zs;
 
 	return (ROSE_Matrix) {{
-		xs,   0.0f, 0.0f,             0.0f,
-		0.0f, ys,   0.0f,             0.0f,
-		0.0f, 0.0f, zs,               1.0f,
-		0.0f, 0.0f, -near_plane * zs, 0.0f,
+		xs,   0.0f, 0.0f, 0.0f,
+		0.0f, ys,   0.0f, 0.0f,
+		0.0f, 0.0f, zs,   1.0f,
+		0.0f, 0.0f, np,   0.0f,
 	}};
 }
 

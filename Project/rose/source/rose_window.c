@@ -218,6 +218,16 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	result = ID3D11Device_CreateBlendState(rose__device, &blend_desc, &rose__blend_state);
 	CHECK_HRESULT(result, "ID3D11Device_CreateBlendState()");
 
+	D3D11_RASTERIZER_DESC raster_2d_desc = {
+		.FillMode              = D3D11_FILL_SOLID,
+		.CullMode              = D3D11_CULL_NONE,
+		.FrontCounterClockwise = FALSE,
+		.DepthClipEnable       = TRUE,
+	};
+
+	result = ID3D11Device_CreateRasterizerState(rose__device, &raster_2d_desc, &rose__raster_2d);
+	CHECK_HRESULT(result, "ID3D11Device_CreateRasterizerState()");
+
 	D3D11_DEPTH_STENCILOP_DESC stencil_keep = {
 		.StencilFailOp      = D3D11_STENCIL_OP_KEEP,
 		.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP,
@@ -300,6 +310,7 @@ void ROSE_Quit(void)
 	ROSE_TextureDestroy(rose__ascii_texture);
 
 	ID3D11BlendState_Release(rose__blend_state);
+	ID3D11RasterizerState_Release(rose__raster_2d);
 	ID3D11SamplerState_Release(rose__sampler);
 
 	ID3D11Buffer_Release(rose__constant_buffer);
@@ -343,6 +354,7 @@ void ROSE_Quit(void)
 	rose__ascii_texture = NULL;
 
 	rose__blend_state   = NULL;
+	rose__raster_2d     = NULL;
 	rose__sampler       = NULL;
 
 	bool close =

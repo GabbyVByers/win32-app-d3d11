@@ -181,6 +181,7 @@ void ROSE_Mesh3DDraw(ROSE_Mesh3D* mesh, ROSE_Camera camera, ROSE_Vec3 position, 
 	ID3D11DeviceContext_VSSetShader(rose__context, rose__vertex_shader_3d, NULL, 0);
 	ID3D11DeviceContext_PSSetShader(rose__context, rose__pixel_shader_3d, NULL, 0);
 	ID3D11DeviceContext_VSSetConstantBuffers(rose__context, 0, 1, &rose__constant_buffer_3d);
+	ID3D11DeviceContext_RSSetState(rose__context, NULL);
 
 	ID3D11DeviceContext_OMSetBlendState(rose__context, rose__blend_state, NULL, 0xFFFFFFFF);
 	ID3D11DeviceContext_OMSetDepthStencilState(rose__context, rose__depth_on, 0);

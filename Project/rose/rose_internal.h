@@ -96,6 +96,7 @@ ROSE_GLOBAL(ID3D11VertexShader*,     rose__vertex_shader)
 ROSE_GLOBAL(ID3D11PixelShader*,      rose__pixel_shader)
 ROSE_GLOBAL(ID3D11SamplerState*,     rose__sampler)
 ROSE_GLOBAL(ID3D11BlendState*,       rose__blend_state)
+ROSE_GLOBAL(ID3D11RasterizerState*,  rose__raster_2d)
 
 ROSE_GLOBAL(ROSE_Texture*, rose__blank_texture)
 ROSE_GLOBAL(ROSE_Texture*, rose__ascii_texture)

@@ -178,6 +178,7 @@ void ROSE__BindPipeline2D(ID3D11Buffer* vertices, ROSE_Texture* texture)
 
 	ID3D11DeviceContext_PSSetShaderResources(rose__context, 0, 1, &texture->view);
 	ID3D11DeviceContext_PSSetSamplers(rose__context, 0, 1, &rose__sampler);
+	ID3D11DeviceContext_RSSetState(rose__context, rose__raster_2d);
 	ID3D11DeviceContext_OMSetBlendState(rose__context, rose__blend_state, NULL, 0xFFFFFFFF);
 	ID3D11DeviceContext_OMSetDepthStencilState(rose__context, rose__depth_off, 0);
 }
