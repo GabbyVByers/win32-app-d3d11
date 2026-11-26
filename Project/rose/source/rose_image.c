@@ -34,9 +34,7 @@ void ROSE_ImageDestroy(ROSE_Image* image)
 	if (image == NULL)
 		return;
 
-	if (image->pixels != NULL)
-		free(image->pixels);
-
+	free(image->pixels);
 	free(image);
 }
 

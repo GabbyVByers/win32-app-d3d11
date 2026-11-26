@@ -74,46 +74,6 @@ typedef struct rose__keyboard_t {
 	bool released[ROSE_SCANCODE_COUNT];
 } rose__keyboard_t;
 
-typedef struct ROSE_Image {
-	uInt32 width;
-	uInt32 height;
-	uInt32* pixels;
-} ROSE_Image;
-
-typedef struct ROSE_Texture {
-	uInt32 width;
-	uInt32 height;
-	ID3D11ShaderResourceView* view;
-} ROSE_Texture;
-
-typedef struct ROSE_Mesh2D {
-	uInt32 count;
-	uInt32 capacity;
-	ID3D11Buffer* vertices;
-} ROSE_Mesh2D;
-
-typedef struct ROSE_Mesh3D {
-	uInt32 count;
-	uInt32 capacity;
-	ID3D11Buffer* vertices;
-} ROSE_Mesh3D;
-
-typedef struct ROSE_Sprite {
-	float width;
-	float height;
-	float u0, v0;
-	float u1, v1;
-	ROSE_Texture* texture;
-} ROSE_Sprite;
-
-typedef struct ROSE_Text {
-	char* string;
-	uInt32 count;
-	uInt32 capacity;
-	ROSE_Vertex2D* vertices;
-	uInt32 vertex_count;
-} ROSE_Text;
-
 #define ROSE_GLOBAL(type, name) \
 extern type name;
 #ifdef ROSE_DEFINE_GLOBALS
@@ -169,23 +129,62 @@ ROSE_GLOBAL(ID3D11PixelShader*,  rose__pixel_shader_3d)
 ROSE_GLOBAL(ID3D11InputLayout*,  rose__input_layout_3d)
 ROSE_GLOBAL(ID3D11Buffer*,       rose__constant_buffer_3d)
 
+typedef struct ROSE_Image {
+	uInt32 width;
+	uInt32 height;
+	uInt32* pixels;
+} ROSE_Image;
+
+typedef struct ROSE_Texture {
+	uInt32 width;
+	uInt32 height;
+	ID3D11ShaderResourceView* view;
+} ROSE_Texture;
+
+typedef struct ROSE_Mesh2D {
+	uInt32 count;
+	uInt32 capacity;
+	ID3D11Buffer* vertices;
+} ROSE_Mesh2D;
+
+typedef struct ROSE_Mesh3D {
+	uInt32 count;
+	uInt32 capacity;
+	ID3D11Buffer* vertices;
+} ROSE_Mesh3D;
+
+typedef struct ROSE_Sprite {
+	float width;
+	float height;
+	float u0, v0;
+	float u1, v1;
+	ROSE_Texture* texture;
+} ROSE_Sprite;
+
+typedef struct ROSE_Text {
+	char* string;
+	uInt32 count;
+	uInt32 capacity;
+	ROSE_Vertex2D* vertices;
+	uInt32 vertex_count;
+} ROSE_Text;
+
 LRESULT CALLBACK ROSE__WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 ID3DBlob*        ROSE__CompileShader(const wchar_t* path, const char* entry, const char* target);
 void             ROSE__CreateRenderTarget(void);
 void             ROSE__BindPipeline2D(ID3D11Buffer* vertices, ROSE_Texture* texture);
 Int64            ROSE__Ticks(void);
-
-ROSE_Vertex2D* ROSE__BatchAllocate(ROSE_Texture* texture, uInt32 count);
-void           ROSE__BatchCreate(void);
-void           ROSE__BatchDestroy(void);
-void           ROSE__BatchFlush(void);
+ROSE_Vertex2D*   ROSE__BatchAllocate(ROSE_Texture* texture, uInt32 count);
+void             ROSE__BatchCreate(void);
+void             ROSE__BatchDestroy(void);
+void             ROSE__BatchFlush(void);
 
 void ROSE__MouseClear(void);
 void ROSE__MouseButton(ROSE_MouseButton button, bool pressing);
 void ROSE__MouseRelease(void);
 
-void ROSE__KeyboardMessage(UINT msg, WPARAM wparam, LPARAM lparam);
 void ROSE__KeyboardClear(void);
+void ROSE__KeyboardMessage(UINT msg, WPARAM wparam, LPARAM lparam);
 void ROSE__KeyboardRelease(void);
 
 #endif /* ROSE_INTERNAL_HEADER_GUARD */

@@ -253,6 +253,12 @@ static void keyboard_scancode(ROSE_Scancode scancode, bool pressing)
 	rose__keyboard.pressing[scancode] = pressing;
 }
 
+void ROSE__KeyboardClear(void)
+{
+	memset(rose__keyboard.pressed,  0, sizeof(rose__keyboard.pressed));
+	memset(rose__keyboard.released, 0, sizeof(rose__keyboard.released));
+}
+
 void ROSE__KeyboardMessage(UINT msg, WPARAM wparam, LPARAM lparam)
 {
 	UINT code = HIWORD(lparam) & (KF_EXTENDED | 0xFF);
@@ -273,12 +279,6 @@ void ROSE__KeyboardMessage(UINT msg, WPARAM wparam, LPARAM lparam)
 		(msg == WM_SYSKEYDOWN);
 
 	keyboard_scancode(scancode, pressing);
-}
-
-void ROSE__KeyboardClear(void)
-{
-	memset(rose__keyboard.pressed,  0, sizeof(rose__keyboard.pressed));
-	memset(rose__keyboard.released, 0, sizeof(rose__keyboard.released));
 }
 
 void ROSE__KeyboardRelease(void)
