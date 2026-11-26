@@ -169,29 +169,24 @@ ROSE_GLOBAL(ID3D11PixelShader*,  rose__pixel_shader_3d)
 ROSE_GLOBAL(ID3D11InputLayout*,  rose__input_layout_3d)
 ROSE_GLOBAL(ID3D11Buffer*,       rose__constant_buffer_3d)
 
-LRESULT CALLBACK rose__proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
-ID3DBlob* rose__compile_shader(const wchar_t* path, const char* entry, const char* target);
-void rose__create_render_target(void);
-Int64 rose__ticks(void);
-void rose__bind_2d(ID3D11Buffer* vertices, ROSE_Texture* texture);
+LRESULT CALLBACK ROSE__WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+ID3DBlob*        ROSE__CompileShader(const wchar_t* path, const char* entry, const char* target);
+void             ROSE__CreateRenderTarget(void);
+void             ROSE__BindPipeline2D(ID3D11Buffer* vertices, ROSE_Texture* texture);
+Int64            ROSE__Ticks(void);
 
-ROSE_Vertex2D* rose__batch_alloc(ROSE_Texture* texture, uInt32 count);
-void rose__batch_create(void);
-void rose__batch_destroy(void);
-void rose__batch_flush(void);
+ROSE_Vertex2D* ROSE__BatchAllocate(ROSE_Texture* texture, uInt32 count);
+void           ROSE__BatchCreate(void);
+void           ROSE__BatchDestroy(void);
+void           ROSE__BatchFlush(void);
 
-void rose__mouse_update(void);
-void rose__mouse_clear(void);
-void rose__mouse_button(ROSE_MouseButton button, bool pressing);
-void rose__mouse_release(void);
+void ROSE__MouseClear(void);
+void ROSE__MouseButton(ROSE_MouseButton button, bool pressing);
+void ROSE__MouseRelease(void);
 
-void rose__keyboard_scancode(ROSE_Scancode scancode, bool pressing);
-void rose__keyboard_message(UINT msg, WPARAM wparam, LPARAM lparam);
-void rose__keyboard_clear(void);
-void rose__keyboard_release(void);
-
-void rose__text_reserve(ROSE_Text* text, uInt32 count);
-void rose__text_write_characters(ROSE_Text* text);
+void ROSE__KeyboardMessage(UINT msg, WPARAM wparam, LPARAM lparam);
+void ROSE__KeyboardClear(void);
+void ROSE__KeyboardRelease(void);
 
 #endif /* ROSE_INTERNAL_HEADER_GUARD */
 

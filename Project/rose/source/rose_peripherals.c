@@ -1,9 +1,49 @@
 
 /*
- *   Source [rose_keyboard.c]
+ *   Source [rose_peripherals.c]
  */
 
 #include "rose_internal.h"
+
+static void mouse_update(void);
+static void keyboard_scancode(ROSE_Scancode, bool);
+
+// MOUSE
+
+bool ROSE_MousePressing(ROSE_MouseButton button)
+{
+	assert(button < ROSE_MOUSE_COUNT);
+	return rose__mouse.pressing[button];
+}
+
+bool ROSE_MousePressed(ROSE_MouseButton button)
+{
+	assert(button < ROSE_MOUSE_COUNT);
+	return rose__mouse.pressed[button];
+}
+
+bool ROSE_MouseReleased(ROSE_MouseButton button)
+{
+	assert(button < ROSE_MOUSE_COUNT);
+	return rose__mouse.released[button];
+}
+
+float ROSE_MouseScroll(void)
+{
+	return rose__mouse.scroll;
+}
+
+ROSE_Vec2 ROSE_MousePosition(void)
+{
+	return rose__mouse.curr_pos;
+}
+
+ROSE_Vec2 ROSE_MouseVelocity(void)
+{
+	return ROSE_Vec2Sub(rose__mouse.curr_pos, rose__mouse.prev_pos);
+}
+
+// KEYBOARD
 
 bool ROSE_KeyboardPressing(ROSE_Scancode scancode)
 {
@@ -22,6 +62,64 @@ bool ROSE_KeyboardReleased(ROSE_Scancode scancode)
 	assert(scancode < ROSE_SCANCODE_COUNT);
 	return rose__keyboard.released[scancode];
 }
+
+// INTERNAL MOUSE
+
+void ROSE__MouseClear(void)
+{
+	memset(rose__mouse.pressed,  0, sizeof(rose__mouse.pressed));
+	memset(rose__mouse.released, 0, sizeof(rose__mouse.released));
+	rose__mouse.scroll = 0.0f;
+	rose__mouse.prev_pos.x = rose__mouse.curr_pos.x;
+	rose__mouse.prev_pos.y = rose__mouse.curr_pos.y;
+}
+
+void ROSE__MouseButton(ROSE_MouseButton button, bool pressing)
+{
+	bool prev = rose__mouse.pressing[button];
+
+	if (pressing && !prev)
+		rose__mouse.pressed[button] = true;
+
+	if (!pressing && prev)
+		rose__mouse.released[button] = true;
+
+	rose__mouse.pressing[button] = pressing;
+	mouse_update();
+}
+
+void ROSE__MouseRelease(void)
+{
+	for (uInt32 i = 0; i < ROSE_MOUSE_COUNT; i++) {
+		if (rose__mouse.pressing[i])
+			rose__mouse.released[i] = true;
+		rose__mouse.pressing[i] = false;
+	}
+
+	mouse_update();
+}
+
+static void mouse_update(void)
+{
+	bool any = false;
+	for (uInt32 i = 0; i < ROSE_MOUSE_COUNT; i++) {
+		if (rose__mouse.pressing[i]) {
+			any = true;
+			break;
+		}
+	}
+
+	bool capture = (any)  && (GetCapture() != rose__hwnd);
+	bool release = (!any) && (GetCapture() == rose__hwnd);
+
+	if (capture)
+		SetCapture(rose__hwnd);
+
+	if (release)
+		ReleaseCapture();
+}
+
+// INTERNAL KEYBOARD
 
 static const uInt8 scancodes[512] = {
 	[0x001] = ROSE_SCANCODE_ESCAPE,
@@ -142,7 +240,7 @@ static const uInt8 scancodes[512] = {
 	[0x15D] = ROSE_SCANCODE_MENU,
 };
 
-void rose__keyboard_scancode(ROSE_Scancode scancode, bool pressing)
+static void keyboard_scancode(ROSE_Scancode scancode, bool pressing)
 {
 	bool prev = rose__keyboard.pressing[scancode];
 
@@ -155,7 +253,7 @@ void rose__keyboard_scancode(ROSE_Scancode scancode, bool pressing)
 	rose__keyboard.pressing[scancode] = pressing;
 }
 
-void rose__keyboard_message(UINT msg, WPARAM wparam, LPARAM lparam)
+void ROSE__KeyboardMessage(UINT msg, WPARAM wparam, LPARAM lparam)
 {
 	UINT code = HIWORD(lparam) & (KF_EXTENDED | 0xFF);
 
@@ -174,16 +272,16 @@ void rose__keyboard_message(UINT msg, WPARAM wparam, LPARAM lparam)
 		(msg == WM_KEYDOWN) ||
 		(msg == WM_SYSKEYDOWN);
 
-	rose__keyboard_scancode(scancode, pressing);
+	keyboard_scancode(scancode, pressing);
 }
 
-void rose__keyboard_clear(void)
+void ROSE__KeyboardClear(void)
 {
 	memset(rose__keyboard.pressed,  0, sizeof(rose__keyboard.pressed));
 	memset(rose__keyboard.released, 0, sizeof(rose__keyboard.released));
 }
 
-void rose__keyboard_release(void)
+void ROSE__KeyboardRelease(void)
 {
 	for (uInt32 i = 0; i < ROSE_SCANCODE_COUNT; i++) {
 		if (rose__keyboard.pressing[i])

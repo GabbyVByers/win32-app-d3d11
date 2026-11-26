@@ -151,14 +151,11 @@
     <ClCompile Include="rose\source\png.c" />
     <ClCompile Include="rose\source\rose_image.c" />
     <ClCompile Include="rose\source\rose_internal.c" />
-    <ClCompile Include="rose\source\rose_keyboard.c" />
+    <ClCompile Include="rose\source\rose_peripherals.c" />
     <ClCompile Include="rose\source\rose_math.c" />
     <ClCompile Include="rose\source\rose_mesh.c" />
-    <ClCompile Include="rose\source\rose_mesh3d.c" />
-    <ClCompile Include="rose\source\rose_mouse.c" />
     <ClCompile Include="rose\source\rose_sprite.c" />
     <ClCompile Include="rose\source\rose_text.c" />
-    <ClCompile Include="rose\source\rose_texture.c" />
     <ClCompile Include="rose\source\rose_window.c" />
   </ItemGroup>
   <ItemGroup>

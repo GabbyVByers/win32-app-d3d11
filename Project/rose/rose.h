@@ -120,12 +120,12 @@ void          ROSE_TextureDestroy(ROSE_Texture* texture);
 ROSE_Sprite*  ROSE_SpriteCreate(ROSE_Texture* texture);
 void          ROSE_SpriteDestroy(ROSE_Sprite* sprite);
 void          ROSE_SpriteRegion(ROSE_Sprite* sprite, uInt32 xpos, uInt32 ypos, uInt32 width, uInt32 height);
-void          ROSE_SpriteDraw(ROSE_Sprite* sprite, float xpos, float ypos, float scale, ROSE_Color color);
+void          ROSE_SpriteDraw(ROSE_Sprite* sprite, ROSE_Vec2 position, float scale, ROSE_Color color);
 
 ROSE_Text*    ROSE_TextCreate(const char* format, ...);
 void          ROSE_TextDestroy(ROSE_Text* text);
 void          ROSE_TextUpdate(ROSE_Text* text, const char* format, ...);
-void          ROSE_TextDraw(ROSE_Text* text, float xpos, float ypos, float scale, ROSE_Color color);
+void          ROSE_TextDraw(ROSE_Text* text, ROSE_Vec2 position, float scale, ROSE_Color color);
 
 ROSE_Mesh2D*  ROSE_Mesh2DCreate(const ROSE_Vertex2D* vertices, uInt32 count);
 void          ROSE_Mesh2DDestroy(ROSE_Mesh2D* mesh);

@@ -48,17 +48,17 @@ void ROSE_SpriteRegion(ROSE_Sprite* sprite, uInt32 xpos, uInt32 ypos, uInt32 wid
 	sprite->height = (float)height;
 }
 
-void ROSE_SpriteDraw(ROSE_Sprite* sprite, float xpos, float ypos, float scale, ROSE_Color color)
+void ROSE_SpriteDraw(ROSE_Sprite* sprite, ROSE_Vec2 position, float scale, ROSE_Color color)
 {
-	float x0 = xpos;
-	float y0 = ypos;
-	float x1 = xpos + sprite->width  * scale;
-	float y1 = ypos + sprite->height * scale;
+	float x0 = position.x;
+	float y0 = position.y;
+	float x1 = position.x + sprite->width  * scale;
+	float y1 = position.y + sprite->height * scale;
 
 	float u0 = sprite->u0, v0 = sprite->v0;
 	float u1 = sprite->u1, v1 = sprite->v1;
 
-	ROSE_Vertex2D* verts = rose__batch_alloc(sprite->texture, 6);
+	ROSE_Vertex2D* verts = ROSE__BatchAllocate(sprite->texture, 6);
 	verts[0] = (ROSE_Vertex2D){ x0, y0, u0, v0, color };
 	verts[1] = (ROSE_Vertex2D){ x1, y0, u1, v0, color };
 	verts[2] = (ROSE_Vertex2D){ x0, y1, u0, v1, color };
@@ -67,22 +67,22 @@ void ROSE_SpriteDraw(ROSE_Sprite* sprite, float xpos, float ypos, float scale, R
 	verts[5] = (ROSE_Vertex2D){ x0, y1, u0, v1, color };
 }
 
-ROSE_Vertex2D* rose__batch_alloc(ROSE_Texture* texture, uInt32 count)
+ROSE_Vertex2D* ROSE__BatchAllocate(ROSE_Texture* texture, uInt32 count)
 {
 	if (texture != batch_texture) {
-		rose__batch_flush();
+		ROSE__BatchFlush();
 		batch_texture = texture;
 	}
 
 	if ((batch_count + count) > BATCH_VERTICES)
-		rose__batch_flush();
+		ROSE__BatchFlush();
 
 	ROSE_Vertex2D* vertices = batch_vertices + batch_count;
 	batch_count += count;
 	return vertices;
 }
 
-void rose__batch_create(void)
+void ROSE__BatchCreate(void)
 {
 	D3D11_BUFFER_DESC desc = {
 		.ByteWidth      = sizeof(ROSE_Vertex2D) * BATCH_VERTICES,
@@ -99,7 +99,7 @@ void rose__batch_create(void)
 	batch_texture = NULL;
 }
 
-void rose__batch_destroy(void)
+void ROSE__BatchDestroy(void)
 {
 	if (batch_buffer != NULL)
 		ID3D11Buffer_Release(batch_buffer);
@@ -110,7 +110,7 @@ void rose__batch_destroy(void)
 	batch_texture = NULL;
 }
 
-void rose__batch_flush(void)
+void ROSE__BatchFlush(void)
 {
 	if (batch_count == 0)
 		return;
@@ -131,7 +131,7 @@ void rose__batch_flush(void)
 	memcpy(dst, batch_vertices, sizeof(ROSE_Vertex2D) * batch_count);
 	ID3D11DeviceContext_Unmap(rose__context, (ID3D11Resource*)batch_buffer, 0);
 
-	rose__bind_2d(batch_buffer, batch_texture);
+	ROSE__BindPipeline2D(batch_buffer, batch_texture);
 	ID3D11DeviceContext_Draw(rose__context, batch_count, batch_cursor);
 
 	batch_cursor += batch_count;

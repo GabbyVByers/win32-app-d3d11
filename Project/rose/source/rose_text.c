@@ -10,6 +10,9 @@
 #define GLYPH_COUNT  95
 #define GLYPH_SPECIAL (GLYPH_COUNT - 1)
 
+static void reserve(ROSE_Text*, uInt32);
+static void characters(ROSE_Text*);
+
 ROSE_Text* ROSE_TextCreate(const char* format, ...)
 {
 	ROSE_Text* text = calloc(1, sizeof(ROSE_Text));
@@ -27,11 +30,11 @@ ROSE_Text* ROSE_TextCreate(const char* format, ...)
 
 	uInt32 count = (uInt32)length;
 
-	rose__text_reserve(text, count);
+	reserve(text, count);
 	vsnprintf(text->string, (size_t)count + 1, format, args);
 
 	text->count = count;
-	rose__text_write_characters(text);
+	characters(text);
 	va_end(args);
 
 	return text;
@@ -62,24 +65,24 @@ void ROSE_TextUpdate(ROSE_Text* text, const char* format, ...)
 
 	uInt32 count = (uInt32)length;
 
-	rose__text_reserve(text, count);
+	reserve(text, count);
 	vsnprintf(text->string, (size_t)count + 1, format, args);
 
 	text->count = count;
-	rose__text_write_characters(text);
+	characters(text);
 	va_end(args);
 }
 
-void ROSE_TextDraw(ROSE_Text* text, float xpos, float ypos, float scale, ROSE_Color color)
+void ROSE_TextDraw(ROSE_Text* text, ROSE_Vec2 position, float scale, ROSE_Color color)
 {
 	for (uInt32 i = 0; i < text->vertex_count; i += 6) {
-		ROSE_Vertex2D* dst = rose__batch_alloc(rose__ascii_texture, 6);
+		ROSE_Vertex2D* dst = ROSE__BatchAllocate(rose__ascii_texture, 6);
 
 		for (uInt32 k = 0; k < 6; k++) {
 			ROSE_Vertex2D src = text->vertices[i + k];
 			dst[k] = (ROSE_Vertex2D) {
-				.position.x = xpos + src.position.x * scale,
-				.position.y = ypos + src.position.y * scale,
+				.position.x = position.x + src.position.x * scale,
+				.position.y = position.y + src.position.y * scale,
 				.texcoord.x = src.texcoord.x,
 				.texcoord.y = src.texcoord.y,
 				.color = color,
@@ -88,7 +91,9 @@ void ROSE_TextDraw(ROSE_Text* text, float xpos, float ypos, float scale, ROSE_Co
 	}
 }
 
-void rose__text_reserve(ROSE_Text* text, uInt32 count)
+// INTERNAL
+
+static void reserve(ROSE_Text* text, uInt32 count)
 {
 	bool fits =
 		(text->string != NULL) &&
@@ -110,7 +115,7 @@ void rose__text_reserve(ROSE_Text* text, uInt32 count)
 	text->capacity = capacity;
 }
 
-void rose__text_write_characters(ROSE_Text* text)
+static void characters(ROSE_Text* text)
 {
 	float pen_x = 0.0f;
 	float pen_y = 0.0f;

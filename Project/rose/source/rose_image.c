@@ -5,6 +5,8 @@
 
 #include "rose_internal.h"
 
+// IMAGE
+
 ROSE_Image* ROSE_ImageCreate(uInt32 width, uInt32 height)
 {
 	ROSE_Image* image = calloc(1, sizeof(ROSE_Image));
@@ -143,10 +145,10 @@ void ROSE_ImageSetPixel(ROSE_Image* image, uInt32 xpos, uInt32 ypos, ROSE_Color 
 	assert(xpos < image->width  && "bad bounds!");
 	assert(ypos < image->height && "bad bounds!");
 
-	uInt8 r = (uInt8)(color.r * 255.5f);
-	uInt8 g = (uInt8)(color.g * 255.5f);
-	uInt8 b = (uInt8)(color.b * 255.5f);
-	uInt8 a = (uInt8)(color.a * 255.5f);
+	uInt8 r = (uInt8)(ROSE_Clamp(color.r, 0.0f, 1.0f) * 255.0f);
+	uInt8 g = (uInt8)(ROSE_Clamp(color.g, 0.0f, 1.0f) * 255.0f);
+	uInt8 b = (uInt8)(ROSE_Clamp(color.b, 0.0f, 1.0f) * 255.0f);
+	uInt8 a = (uInt8)(ROSE_Clamp(color.a, 0.0f, 1.0f) * 255.0f);
 
 	uInt32 pixel =
 		((uInt32)r)       |
@@ -175,5 +177,59 @@ uInt32* ROSE_ImageCopyPixels(ROSE_Image* image)
 	memcpy(copy, pixels, count * sizeof(uInt32));
 
 	return copy;
+}
+
+// TEXTURE
+
+ROSE_Texture* ROSE_TextureCreate(ROSE_Image* image)
+{
+	ROSE_Texture* texture = calloc(1, sizeof(ROSE_Texture));
+
+	if (image->pixels == NULL)
+		return texture;
+
+	D3D11_TEXTURE2D_DESC texture_desc = {
+		.Width      = image->width,
+		.Height     = image->height,
+		.MipLevels  = 1,
+		.ArraySize  = 1,
+		.Format     = DXGI_FORMAT_R8G8B8A8_UNORM,
+		.SampleDesc = { .Count = 1, .Quality = 0 },
+		.Usage      = D3D11_USAGE_IMMUTABLE,
+		.BindFlags  = D3D11_BIND_SHADER_RESOURCE,
+	};
+
+	D3D11_SUBRESOURCE_DATA texture_data = {
+		.pSysMem     = image->pixels,
+		.SysMemPitch = image->width * sizeof(uInt32),
+	};
+
+	ID3D11Texture2D* texture2d = NULL;
+	HRESULT result = ID3D11Device_CreateTexture2D(rose__device, &texture_desc, &texture_data, &texture2d);
+	CHECK_HRESULT(result, "ID3D11Device_CreateTexture2D()");
+
+	ID3D11ShaderResourceView* view = NULL;
+	result = ID3D11Device_CreateShaderResourceView(rose__device, (ID3D11Resource*)texture2d, NULL, &view);
+	CHECK_HRESULT(result, "ID3D11Device_CreateShaderResourceView()");
+
+	ID3D11Texture2D_Release(texture2d);
+
+	texture->view   = view;
+	texture->width  = image->width;
+	texture->height = image->height;
+
+	return texture;
+}
+
+void ROSE_TextureDestroy(ROSE_Texture* texture)
+{
+	if (texture == NULL)
+		return;
+
+	ROSE__BatchFlush();
+	if (texture->view != NULL)
+		ID3D11ShaderResourceView_Release(texture->view);
+
+	free(texture);
 }
 

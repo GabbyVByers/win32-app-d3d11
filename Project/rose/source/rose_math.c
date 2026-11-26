@@ -5,7 +5,7 @@
 
 #include "rose_internal.h"
 
-#define DEGREE_TO_RADIAN (3.1415926535897f / 180.0f)
+#define DEGREE_TO_RADIAN (3.1415927f / 180.0f)
 #define EPSILON (1e-8f)
 
 // SCALAR

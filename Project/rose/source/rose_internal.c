@@ -6,7 +6,7 @@
 #define ROSE_DEFINE_GLOBALS
 #include "rose_internal.h"
 
-LRESULT CALLBACK rose__proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+LRESULT CALLBACK ROSE__WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 	if (msg == WM_DESTROY) {
 		PostQuitMessage(0);
@@ -26,12 +26,12 @@ LRESULT CALLBACK rose__proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		return 0;
 	}
 
-	if (msg == WM_LBUTTONDOWN) { rose__mouse_button(ROSE_MOUSE_LEFT,   true);  return 0; }
-	if (msg == WM_LBUTTONUP)   { rose__mouse_button(ROSE_MOUSE_LEFT,   false); return 0; }
-	if (msg == WM_MBUTTONDOWN) { rose__mouse_button(ROSE_MOUSE_MIDDLE, true);  return 0; }
-	if (msg == WM_MBUTTONUP)   { rose__mouse_button(ROSE_MOUSE_MIDDLE, false); return 0; }
-	if (msg == WM_RBUTTONDOWN) { rose__mouse_button(ROSE_MOUSE_RIGHT,  true);  return 0; }
-	if (msg == WM_RBUTTONUP)   { rose__mouse_button(ROSE_MOUSE_RIGHT,  false); return 0; }
+	if (msg == WM_LBUTTONDOWN) { ROSE__MouseButton(ROSE_MOUSE_LEFT,   true);  return 0; }
+	if (msg == WM_LBUTTONUP)   { ROSE__MouseButton(ROSE_MOUSE_LEFT,   false); return 0; }
+	if (msg == WM_MBUTTONDOWN) { ROSE__MouseButton(ROSE_MOUSE_MIDDLE, true);  return 0; }
+	if (msg == WM_MBUTTONUP)   { ROSE__MouseButton(ROSE_MOUSE_MIDDLE, false); return 0; }
+	if (msg == WM_RBUTTONDOWN) { ROSE__MouseButton(ROSE_MOUSE_RIGHT,  true);  return 0; }
+	if (msg == WM_RBUTTONUP)   { ROSE__MouseButton(ROSE_MOUSE_RIGHT,  false); return 0; }
 
 	bool mousex =
 		(msg == WM_XBUTTONDOWN) ||
@@ -44,7 +44,7 @@ LRESULT CALLBACK rose__proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			(ROSE_MOUSE_X2);
 
 		bool pressed = (msg == WM_XBUTTONDOWN);
-		rose__mouse_button(button, pressed);
+		ROSE__MouseButton(button, pressed);
 		return TRUE;
 	}
 
@@ -56,8 +56,8 @@ LRESULT CALLBACK rose__proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	}
 
 	if (msg == WM_KILLFOCUS) {
-		rose__mouse_release();
-		rose__keyboard_release();
+		ROSE__MouseRelease();
+		ROSE__KeyboardRelease();
 		return 0;
 	}
 
@@ -68,7 +68,7 @@ LRESULT CALLBACK rose__proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		(msg == WM_SYSKEYUP);
 
 	if (scancode) {
-		rose__keyboard_message(msg, wparam, lparam);
+		ROSE__KeyboardMessage(msg, wparam, lparam);
 
 		if ((msg == WM_SYSKEYDOWN) ||
 			(msg == WM_SYSKEYUP))
@@ -87,7 +87,7 @@ LRESULT CALLBACK rose__proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	return DefWindowProcW(hwnd, msg, wparam, lparam);
 }
 
-ID3DBlob* rose__compile_shader(const wchar_t* path, const char* entry, const char* target)
+ID3DBlob* ROSE__CompileShader(const wchar_t* path, const char* entry, const char* target)
 {
 	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
 	#ifdef ROSE_DEBUG
@@ -115,7 +115,7 @@ ID3DBlob* rose__compile_shader(const wchar_t* path, const char* entry, const cha
 	return code;
 }
 
-void rose__create_render_target(void)
+void ROSE__CreateRenderTarget(void)
 {
 	ID3D11Texture2D* back_buffer = NULL;
 	HRESULT result = IDXGISwapChain1_GetBuffer(rose__swapchain, 0, &IID_ID3D11Texture2D, (void**)&back_buffer);
@@ -158,14 +158,7 @@ void rose__create_render_target(void)
 	};
 }
 
-Int64 rose__ticks(void)
-{
-	LARGE_INTEGER ticks;
-	QueryPerformanceCounter(&ticks);
-	return ticks.QuadPart;
-}
-
-void rose__bind_2d(ID3D11Buffer* vertices, ROSE_Texture* texture)
+void ROSE__BindPipeline2D(ID3D11Buffer* vertices, ROSE_Texture* texture)
 {
 	if ((texture == NULL) || (texture->view == NULL))
 		texture = rose__blank_texture;
@@ -187,5 +180,12 @@ void rose__bind_2d(ID3D11Buffer* vertices, ROSE_Texture* texture)
 	ID3D11DeviceContext_PSSetSamplers(rose__context, 0, 1, &rose__sampler);
 	ID3D11DeviceContext_OMSetBlendState(rose__context, rose__blend_state, NULL, 0xFFFFFFFF);
 	ID3D11DeviceContext_OMSetDepthStencilState(rose__context, rose__depth_off, 0);
+}
+
+Int64 ROSE__Ticks(void)
+{
+	LARGE_INTEGER ticks;
+	QueryPerformanceCounter(&ticks);
+	return ticks.QuadPart;
 }
 

@@ -11,7 +11,7 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	WNDCLASSEXW window_class = {
 		.cbSize        = sizeof(WNDCLASSEXW),
 		.style         = CS_HREDRAW | CS_VREDRAW,
-		.lpfnWndProc   = rose__proc,
+		.lpfnWndProc   = ROSE__WindowProc,
 		.hInstance     = rose__hinstance,
 		.hCursor       = LoadCursor(NULL, IDC_ARROW),
 		.lpszClassName = WINDOW_CLASS_NAME,
@@ -114,13 +114,13 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	IDXGIAdapter_Release(adapter);
 	IDXGIDevice_Release(dxgi_device);
 
-	rose__create_render_target();
+	ROSE__CreateRenderTarget();
 	
-	ID3DBlob* vs_blob = rose__compile_shader(L"HLSL/shader.hlsl", "vs_main", "vs_5_0");
-	ID3DBlob* ps_blob = rose__compile_shader(L"HLSL/shader.hlsl", "ps_main", "ps_5_0");
+	ID3DBlob* vs_blob = ROSE__CompileShader(L"HLSL/shader.hlsl", "vs_main", "vs_5_0");
+	ID3DBlob* ps_blob = ROSE__CompileShader(L"HLSL/shader.hlsl", "ps_main", "ps_5_0");
 
-	ID3DBlob* vs3d_blob = rose__compile_shader(L"HLSL/shader3d.hlsl", "vs_main", "vs_5_0");
-	ID3DBlob* ps3d_blob = rose__compile_shader(L"HLSL/shader3d.hlsl", "ps_main", "ps_5_0");
+	ID3DBlob* vs3d_blob = ROSE__CompileShader(L"HLSL/shader3d.hlsl", "vs_main", "vs_5_0");
+	ID3DBlob* ps3d_blob = ROSE__CompileShader(L"HLSL/shader3d.hlsl", "ps_main", "ps_5_0");
 
 	result = ID3D11Device_CreateVertexShader(rose__device, ID3D10Blob_GetBufferPointer(vs_blob), ID3D10Blob_GetBufferSize(vs_blob), NULL, &rose__vertex_shader);
 	CHECK_HRESULT(result, "ID3D11Device_CreateVertexShader()");
@@ -254,7 +254,7 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	
 	rose__blank_texture = ROSE_TextureCreate(blank);
 	rose__ascii_texture = ROSE_TextureCreate(ascii);
-	rose__batch_create();
+	ROSE__BatchCreate();
 
 	ROSE_ImageDestroy(blank);
 	ROSE_ImageDestroy(ascii);
@@ -263,7 +263,7 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	QueryPerformanceFrequency(&frequency);
 	rose__qpc_frequency = frequency.QuadPart;
 
-	Int64 now = rose__ticks();
+	Int64 now = ROSE__Ticks();
 	rose__time_start       = now;
 	rose__frame_last       = now;
 	rose__frame_next       = now;
@@ -294,7 +294,7 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 void ROSE_Quit(void)
 {
 	ID3D11DeviceContext_ClearState(rose__context);
-	rose__batch_destroy();
+	ROSE__BatchDestroy();
 
 	ROSE_TextureDestroy(rose__blank_texture);
 	ROSE_TextureDestroy(rose__ascii_texture);
@@ -391,8 +391,8 @@ void ROSE_Quit(void)
 
 bool ROSE_WindowClosed(void)
 {
-	rose__mouse_clear();
-	rose__keyboard_clear();
+	ROSE__MouseClear();
+	ROSE__KeyboardClear();
 
 	MSG message;
 	while (PeekMessageW(&message, NULL, 0, 0, PM_REMOVE)) {
@@ -427,7 +427,7 @@ void ROSE_WindowVSync(bool vsync)
 void ROSE_WindowMaxFPS(float max)
 {
 	rose__max_fps = (max > 0.0f) ? max : 0.0f;
-	rose__frame_next = rose__ticks();
+	rose__frame_next = ROSE__Ticks();
 }
 
 float ROSE_WindowFPS(void)
@@ -442,7 +442,7 @@ float ROSE_FrameDelta(void)
 
 double ROSE_Time(void)
 {
-	return (double)(rose__ticks() - rose__time_start) / (double)rose__qpc_frequency;
+	return (double)(ROSE__Ticks() - rose__time_start) / (double)rose__qpc_frequency;
 }
 
 void ROSE_FrameClear(ROSE_Color color)
@@ -464,7 +464,7 @@ void ROSE_FrameClear(ROSE_Color color)
 		);
 
 		CHECK_HRESULT(result, "IDXGISwapChain1_ResizeBuffers()");
-		rose__create_render_target();
+		ROSE__CreateRenderTarget();
 	}
 
 	ID3D11DeviceContext_OMSetRenderTargets(rose__context, 1, &rose__render_target, rose__depth_view);
@@ -475,7 +475,7 @@ void ROSE_FrameClear(ROSE_Color color)
 
 void ROSE_FrameRender(void)
 {
-	rose__batch_flush();
+	ROSE__BatchFlush();
 	UINT flags = (!rose__vsync && rose__tearing) ? DXGI_PRESENT_ALLOW_TEARING : 0;
 	HRESULT result = IDXGISwapChain1_Present(rose__swapchain, (UINT)rose__vsync, flags);
 	CHECK_HRESULT(result, "IDXGISwapChain1_Present()");
@@ -484,12 +484,12 @@ void ROSE_FrameRender(void)
 		Int64 period = (Int64)((double)rose__qpc_frequency / (double)rose__max_fps);
 		rose__frame_next += period;
 
-		if (rose__frame_next < rose__ticks()) {
-			rose__frame_next = rose__ticks();
+		if (rose__frame_next < ROSE__Ticks()) {
+			rose__frame_next = ROSE__Ticks();
 		}
 		else {
 			Int64 spin = rose__qpc_frequency / 1000;
-			Int64 remaining = rose__frame_next - rose__ticks();
+			Int64 remaining = rose__frame_next - ROSE__Ticks();
 
 			if (remaining > spin) {
 				LARGE_INTEGER due = { 0 };
@@ -498,12 +498,12 @@ void ROSE_FrameRender(void)
 				WaitForSingleObject(rose__timer, INFINITE);
 			}
 
-			while (rose__ticks() < rose__frame_next)
+			while (ROSE__Ticks() < rose__frame_next)
 				YieldProcessor();
 		}
 	}
 
-	Int64 now = rose__ticks();
+	Int64 now = ROSE__Ticks();
 	double delta = (double)(now - rose__frame_last) / (double)rose__qpc_frequency;
 	rose__frame_last = now;
 	rose__frame_delta = (float)((delta > 0.25) ? 0.25 : delta);
