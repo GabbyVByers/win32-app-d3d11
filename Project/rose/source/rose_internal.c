@@ -48,6 +48,21 @@ LRESULT CALLBACK ROSE__WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpa
 		return TRUE;
 	}
 
+	if (msg == WM_INPUT) {
+		ROSE__MouseRawInput(lparam);
+		return DefWindowProcW(hwnd, msg, wparam, lparam);
+	}
+
+	bool hide_cursor =
+		(msg == WM_SETCURSOR) &&
+		(rose__mouse.hidden)  &&
+		(LOWORD(lparam) == HTCLIENT);
+
+	if (hide_cursor) {
+		SetCursor(NULL);
+		return TRUE;
+	}
+
 	if (msg == WM_MOUSEWHEEL) {
 		rose__mouse.scroll +=
 			(float)GET_WHEEL_DELTA_WPARAM(wparam) /
@@ -158,7 +173,7 @@ void ROSE__CreateRenderTarget(void)
 	};
 }
 
-void ROSE__BindPipeline2D(ID3D11Buffer* vertices, ROSE_Texture* texture)
+void ROSE__BindPipeline2D(ID3D11Buffer* vertices, ROSE_Texture* texture, ROSE_Vec2 position, float scale, ROSE_Color color)
 {
 	if ((texture == NULL) || (texture->view == NULL))
 		texture = rose__blank_texture;
@@ -172,7 +187,13 @@ void ROSE__BindPipeline2D(ID3D11Buffer* vertices, ROSE_Texture* texture)
 	ID3D11DeviceContext_VSSetShader(rose__context, rose__vertex_shader, NULL, 0);
 	ID3D11DeviceContext_PSSetShader(rose__context, rose__pixel_shader, NULL, 0);
 
-	rose__constants_t constants = { .screen_size = { rose__viewport.Width, rose__viewport.Height } };
+	rose__constants_t constants = {
+		.screen_size = { rose__viewport.Width, rose__viewport.Height },
+		.offset      = position,
+		.tint        = color,
+		.scale       = scale,
+	};
+
 	ID3D11DeviceContext_UpdateSubresource(rose__context, (ID3D11Resource*)rose__constant_buffer, 0, NULL, &constants, 0, 0);
 	ID3D11DeviceContext_VSSetConstantBuffers(rose__context, 0, 1, &rose__constant_buffer);
 
@@ -264,7 +285,7 @@ void ROSE__BatchFlush(void)
 	memcpy(dst, batch_vertices, sizeof(ROSE_Vertex2D) * batch_count);
 	ID3D11DeviceContext_Unmap(rose__context, (ID3D11Resource*)batch_buffer, 0);
 
-	ROSE__BindPipeline2D(batch_buffer, batch_texture);
+	ROSE__BindPipeline2D(batch_buffer, batch_texture, ROSE_VEC2_ZERO, 1.0f, ROSE_COLOR_WHITE);
 	ID3D11DeviceContext_Draw(rose__context, batch_count, batch_cursor);
 
 	batch_cursor += batch_count;

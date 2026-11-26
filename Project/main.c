@@ -17,18 +17,18 @@ int main(void)
 	ROSE_WindowVSync(false);
 
 	ROSE_Vertex3D vertices[] = {
-		{ 0.0f, 1.0f, 0.0f, ROSE_COLOR_RED    }, { 1.0f, 1.0f, 0.0f, ROSE_COLOR_RED    }, { 1.0f, 0.0f, 0.0f, ROSE_COLOR_RED    },
-		{ 0.0f, 1.0f, 0.0f, ROSE_COLOR_RED    }, { 1.0f, 0.0f, 0.0f, ROSE_COLOR_RED    }, { 0.0f, 0.0f, 0.0f, ROSE_COLOR_RED    },
-		{ 1.0f, 1.0f, 1.0f, ROSE_COLOR_GREEN  }, { 0.0f, 1.0f, 1.0f, ROSE_COLOR_GREEN  }, { 0.0f, 0.0f, 1.0f, ROSE_COLOR_GREEN  },
-		{ 1.0f, 1.0f, 1.0f, ROSE_COLOR_GREEN  }, { 0.0f, 0.0f, 1.0f, ROSE_COLOR_GREEN  }, { 1.0f, 0.0f, 1.0f, ROSE_COLOR_GREEN  },
-		{ 1.0f, 1.0f, 0.0f, ROSE_COLOR_BLUE   }, { 1.0f, 1.0f, 1.0f, ROSE_COLOR_BLUE   }, { 1.0f, 0.0f, 1.0f, ROSE_COLOR_BLUE   },
-		{ 1.0f, 1.0f, 0.0f, ROSE_COLOR_BLUE   }, { 1.0f, 0.0f, 1.0f, ROSE_COLOR_BLUE   }, { 1.0f, 0.0f, 0.0f, ROSE_COLOR_BLUE   },
-		{ 0.0f, 1.0f, 1.0f, ROSE_COLOR_PURPLE }, { 0.0f, 1.0f, 0.0f, ROSE_COLOR_PURPLE }, { 0.0f, 0.0f, 0.0f, ROSE_COLOR_PURPLE },
-		{ 0.0f, 1.0f, 1.0f, ROSE_COLOR_PURPLE }, { 0.0f, 0.0f, 0.0f, ROSE_COLOR_PURPLE }, { 0.0f, 0.0f, 1.0f, ROSE_COLOR_PURPLE },
-		{ 0.0f, 1.0f, 1.0f, ROSE_COLOR_CYAN   }, { 1.0f, 1.0f, 1.0f, ROSE_COLOR_CYAN   }, { 1.0f, 1.0f, 0.0f, ROSE_COLOR_CYAN   },
-		{ 0.0f, 1.0f, 1.0f, ROSE_COLOR_CYAN   }, { 1.0f, 1.0f, 0.0f, ROSE_COLOR_CYAN   }, { 0.0f, 1.0f, 0.0f, ROSE_COLOR_CYAN   },
-		{ 0.0f, 0.0f, 0.0f, ROSE_COLOR_YELLOW }, { 1.0f, 0.0f, 0.0f, ROSE_COLOR_YELLOW }, { 1.0f, 0.0f, 1.0f, ROSE_COLOR_YELLOW },
-		{ 0.0f, 0.0f, 0.0f, ROSE_COLOR_YELLOW }, { 1.0f, 0.0f, 1.0f, ROSE_COLOR_YELLOW }, { 0.0f, 0.0f, 1.0f, ROSE_COLOR_YELLOW },
+		{ { 0, 1, 0 }, { 0, 0 }, ROSE_COLOR_RED    }, { { 1, 1, 0 }, { 1, 0 }, ROSE_COLOR_RED    }, { { 1, 0, 0 }, { 1, 1 }, ROSE_COLOR_RED    },
+		{ { 0, 1, 0 }, { 0, 0 }, ROSE_COLOR_RED    }, { { 1, 0, 0 }, { 1, 1 }, ROSE_COLOR_RED    }, { { 0, 0, 0 }, { 0, 1 }, ROSE_COLOR_RED    },
+		{ { 1, 1, 1 }, { 0, 0 }, ROSE_COLOR_CYAN   }, { { 0, 1, 1 }, { 1, 0 }, ROSE_COLOR_CYAN   }, { { 0, 0, 1 }, { 1, 1 }, ROSE_COLOR_CYAN   },
+		{ { 1, 1, 1 }, { 0, 0 }, ROSE_COLOR_CYAN   }, { { 0, 0, 1 }, { 1, 1 }, ROSE_COLOR_CYAN   }, { { 1, 0, 1 }, { 0, 1 }, ROSE_COLOR_CYAN   },
+		{ { 1, 1, 0 }, { 0, 0 }, ROSE_COLOR_BLUE   }, { { 1, 1, 1 }, { 1, 0 }, ROSE_COLOR_BLUE   }, { { 1, 0, 1 }, { 1, 1 }, ROSE_COLOR_BLUE   },
+		{ { 1, 1, 0 }, { 0, 0 }, ROSE_COLOR_BLUE   }, { { 1, 0, 1 }, { 1, 1 }, ROSE_COLOR_BLUE   }, { { 1, 0, 0 }, { 0, 1 }, ROSE_COLOR_BLUE   },
+		{ { 0, 1, 1 }, { 0, 0 }, ROSE_COLOR_PURPLE }, { { 0, 1, 0 }, { 1, 0 }, ROSE_COLOR_PURPLE }, { { 0, 0, 0 }, { 1, 1 }, ROSE_COLOR_PURPLE },
+		{ { 0, 1, 1 }, { 0, 0 }, ROSE_COLOR_PURPLE }, { { 0, 0, 0 }, { 1, 1 }, ROSE_COLOR_PURPLE }, { { 0, 0, 1 }, { 0, 1 }, ROSE_COLOR_PURPLE },
+		{ { 0, 1, 1 }, { 0, 0 }, ROSE_COLOR_GREEN  }, { { 1, 1, 1 }, { 1, 0 }, ROSE_COLOR_GREEN  }, { { 1, 1, 0 }, { 1, 1 }, ROSE_COLOR_GREEN  },
+		{ { 0, 1, 1 }, { 0, 0 }, ROSE_COLOR_GREEN  }, { { 1, 1, 0 }, { 1, 1 }, ROSE_COLOR_GREEN  }, { { 0, 1, 0 }, { 0, 1 }, ROSE_COLOR_GREEN  },
+		{ { 0, 0, 0 }, { 0, 0 }, ROSE_COLOR_YELLOW }, { { 1, 0, 0 }, { 1, 0 }, ROSE_COLOR_YELLOW }, { { 1, 0, 1 }, { 1, 1 }, ROSE_COLOR_YELLOW },
+		{ { 0, 0, 0 }, { 0, 0 }, ROSE_COLOR_YELLOW }, { { 1, 0, 1 }, { 1, 1 }, ROSE_COLOR_YELLOW }, { { 0, 0, 1 }, { 0, 1 }, ROSE_COLOR_YELLOW },
 	};
 
 	uInt32 count = sizeof(vertices) / sizeof(vertices[0]);
@@ -48,7 +48,7 @@ int main(void)
 		camera_control(&camera, dt);
 
 		ROSE_FrameClear(ROSE_COLOR_RGBA(30, 15, 70, 255));
-		ROSE_Mesh3DDraw(mesh, camera, ROSE_VEC3_ZERO, ROSE_QUAT_IDENTITY, 1.0f, ROSE_COLOR_WHITE);
+		ROSE_Mesh3DDraw(mesh, NULL, camera, ROSE_QUAT_IDENTITY, ROSE_VEC3_ZERO, 1.0f, ROSE_COLOR_WHITE);
 		ROSE_FrameRender();
 	}
 
@@ -58,6 +58,9 @@ int main(void)
 
 static void camera_control(ROSE_Camera* camera, float dt)
 {
+	if (ROSE_MousePressed(ROSE_MOUSE_LEFT))  ROSE_MouseCursorHide();
+	if (ROSE_MouseReleased(ROSE_MOUSE_LEFT)) ROSE_MouseCursorReveal();
+
 	if (ROSE_MousePressing(ROSE_MOUSE_LEFT)) {
 		ROSE_Vec2 mouse_vel = ROSE_MouseVelocity();
 		ROSE_Quat quat = camera->orientation;

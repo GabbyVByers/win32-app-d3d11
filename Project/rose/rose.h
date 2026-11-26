@@ -60,6 +60,7 @@ typedef struct ROSE_Vertex2D {
 
 typedef struct ROSE_Vertex3D {
 	ROSE_Vec3 position;
+	ROSE_Vec2 texcoord;
 	ROSE_Color color;
 } ROSE_Vertex3D;
 
@@ -80,17 +81,17 @@ typedef struct ROSE_Mesh3D ROSE_Mesh3D;
 typedef struct ROSE_Sprite ROSE_Sprite;
 typedef struct ROSE_Text   ROSE_Text;
 
-void      ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height);
-void      ROSE_Quit(void);
-bool      ROSE_WindowClosed(void);
-bool      ROSE_WindowMinimized(void);
-void      ROSE_WindowVSync(bool vsync);
-void      ROSE_WindowMaxFPS(float max);
-float     ROSE_WindowFPS(void);
-float     ROSE_FrameDelta(void);
-double    ROSE_Time(void);
-void      ROSE_FrameClear(ROSE_Color color);
-void      ROSE_FrameRender(void);
+void   ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height);
+void   ROSE_Quit(void);
+bool   ROSE_WindowClosed(void);
+bool   ROSE_WindowMinimized(void);
+void   ROSE_WindowVSync(bool vsync);
+void   ROSE_WindowMaxFPS(float max);
+float  ROSE_WindowFPS(void);
+float  ROSE_FrameDelta(void);
+double ROSE_Time(void);
+void   ROSE_FrameClear(ROSE_Color color);
+void   ROSE_FrameRender(void);
 
 bool      ROSE_MousePressing(ROSE_MouseButton button);
 bool      ROSE_MousePressed(ROSE_MouseButton button);
@@ -98,6 +99,8 @@ bool      ROSE_MouseReleased(ROSE_MouseButton button);
 float     ROSE_MouseScroll(void);
 ROSE_Vec2 ROSE_MousePosition(void);
 ROSE_Vec2 ROSE_MouseVelocity(void);
+void      ROSE_MouseCursorHide(void);
+void      ROSE_MouseCursorReveal(void);
 
 bool      ROSE_KeyboardPressing(ROSE_Scancode scancode);
 bool      ROSE_KeyboardPressed(ROSE_Scancode scancode);
@@ -130,12 +133,12 @@ void          ROSE_TextDraw(ROSE_Text* text, ROSE_Vec2 position, float scale, RO
 ROSE_Mesh2D*  ROSE_Mesh2DCreate(const ROSE_Vertex2D* vertices, uInt32 count);
 void          ROSE_Mesh2DDestroy(ROSE_Mesh2D* mesh);
 void          ROSE_Mesh2DUpdate(ROSE_Mesh2D* mesh, const ROSE_Vertex2D* vertices, uInt32 count);
-void          ROSE_Mesh2DDraw(ROSE_Mesh2D* mesh, ROSE_Texture* texture);
+void          ROSE_Mesh2DDraw(ROSE_Mesh2D* mesh, ROSE_Texture* texture, ROSE_Vec2 position, float scale, ROSE_Color color);
 
 ROSE_Mesh3D*  ROSE_Mesh3DCreate(const ROSE_Vertex3D* vertices, uInt32 count);
 void          ROSE_Mesh3DDestroy(ROSE_Mesh3D* mesh);
 void          ROSE_Mesh3DUpdate(ROSE_Mesh3D* mesh, const ROSE_Vertex3D* vertices, uInt32 count);
-void          ROSE_Mesh3DDraw(ROSE_Mesh3D* mesh, ROSE_Camera camera, ROSE_Vec3 position, ROSE_Quat orientation, float scale, ROSE_Color color);
+void          ROSE_Mesh3DDraw(ROSE_Mesh3D* mesh, ROSE_Texture* texture, ROSE_Camera camera, ROSE_Quat orientation, ROSE_Vec3 position, float scale, ROSE_Color color);
 
 #endif /* ROSE_ROSE_HEADER_GUARD */
 

@@ -50,8 +50,11 @@
 #endif
 
 typedef struct rose__constants_t {
-	float screen_size[2];
-	float _padding[2];
+	ROSE_Vec2 screen_size;
+	ROSE_Vec2 offset;
+	ROSE_Color tint;
+	float scale;
+	float _padding[3];
 } rose__constants_t;
 
 typedef struct rose__constants3d_t {
@@ -65,6 +68,9 @@ typedef struct rose__mouse_t {
 	bool released[ROSE_MOUSE_COUNT];
 	ROSE_Vec2 curr_pos;
 	ROSE_Vec2 prev_pos;
+	ROSE_Vec2 raw_delta;
+	ROSE_Vec2 hidden_pos;
+	bool hidden;
 	float scroll;
 } rose__mouse_t;
 
@@ -173,7 +179,7 @@ typedef struct ROSE_Text {
 LRESULT CALLBACK ROSE__WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 ID3DBlob*        ROSE__CompileShader(const wchar_t* path, const char* entry, const char* target);
 void             ROSE__CreateRenderTarget(void);
-void             ROSE__BindPipeline2D(ID3D11Buffer* vertices, ROSE_Texture* texture);
+void             ROSE__BindPipeline2D(ID3D11Buffer* vertices, ROSE_Texture* texture, ROSE_Vec2 position, float scale, ROSE_Color color);
 Int64            ROSE__Ticks(void);
 ROSE_Vertex2D*   ROSE__BatchAllocate(ROSE_Texture* texture, uInt32 count);
 void             ROSE__BatchCreate(void);
@@ -183,6 +189,7 @@ void             ROSE__BatchFlush(void);
 void ROSE__MouseClear(void);
 void ROSE__MouseButton(ROSE_MouseButton button, bool pressing);
 void ROSE__MouseRelease(void);
+void ROSE__MouseRawInput(LPARAM lparam);
 
 void ROSE__KeyboardClear(void);
 void ROSE__KeyboardMessage(UINT msg, WPARAM wparam, LPARAM lparam);

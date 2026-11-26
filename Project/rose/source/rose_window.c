@@ -142,6 +142,7 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 
 	D3D11_INPUT_ELEMENT_DESC input_desc_3d[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, offsetof(ROSE_Vertex3D, position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(ROSE_Vertex3D, texcoord), D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(ROSE_Vertex3D, color),    D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
@@ -299,6 +300,16 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	rose__mouse.curr_pos.y = mouse_ypos;
 	rose__mouse.prev_pos.x = mouse_xpos;
 	rose__mouse.prev_pos.y = mouse_ypos;
+
+	RAWINPUTDEVICE raw_mouse = {
+		.usUsagePage = 0x01,
+		.usUsage     = 0x02,
+		.dwFlags     = 0,
+		.hwndTarget  = rose__hwnd,
+	};
+
+	if (!RegisterRawInputDevices(&raw_mouse, 1, sizeof(raw_mouse)))
+		fprintf(stderr, "RegisterRawInputDevices() failed!\n");
 }
 
 void ROSE_Quit(void)
@@ -356,6 +367,18 @@ void ROSE_Quit(void)
 	rose__blend_state   = NULL;
 	rose__raster_2d     = NULL;
 	rose__sampler       = NULL;
+
+	if (rose__mouse.hidden)
+		ClipCursor(NULL);
+
+	RAWINPUTDEVICE raw_mouse = {
+		.usUsagePage = 0x01,
+		.usUsage     = 0x02,
+		.dwFlags     = RIDEV_REMOVE,
+		.hwndTarget  = NULL,
+	};
+
+	RegisterRawInputDevices(&raw_mouse, 1, sizeof(raw_mouse));
 
 	bool close =
 		rose__hwnd &&

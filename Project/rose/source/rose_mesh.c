@@ -25,7 +25,7 @@ void ROSE_Mesh2DDestroy(ROSE_Mesh2D* mesh)
 	free(mesh);
 }
 
-void ROSE_Mesh2DDraw(ROSE_Mesh2D* mesh, ROSE_Texture* texture)
+void ROSE_Mesh2DDraw(ROSE_Mesh2D* mesh, ROSE_Texture* texture, ROSE_Vec2 position, float scale, ROSE_Color color)
 {
 	ROSE__BatchFlush();
 
@@ -36,7 +36,7 @@ void ROSE_Mesh2DDraw(ROSE_Mesh2D* mesh, ROSE_Texture* texture)
 	if (empty)
 		return;
 
-	ROSE__BindPipeline2D(mesh->vertices, texture);
+	ROSE__BindPipeline2D(mesh->vertices, texture, position, scale, color);
 	ID3D11DeviceContext_Draw(rose__context, mesh->count, 0);
 }
 
@@ -148,7 +148,7 @@ void ROSE_Mesh3DUpdate(ROSE_Mesh3D* mesh, const ROSE_Vertex3D* vertices, uInt32 
 	mesh->count = count;
 }
 
-void ROSE_Mesh3DDraw(ROSE_Mesh3D* mesh, ROSE_Camera camera, ROSE_Vec3 position, ROSE_Quat orientation, float scale, ROSE_Color color)
+void ROSE_Mesh3DDraw(ROSE_Mesh3D* mesh, ROSE_Texture* texture, ROSE_Camera camera, ROSE_Quat orientation, ROSE_Vec3 position, float scale, ROSE_Color color)
 {
 	ROSE__BatchFlush();
 
@@ -158,6 +158,9 @@ void ROSE_Mesh3DDraw(ROSE_Mesh3D* mesh, ROSE_Camera camera, ROSE_Vec3 position, 
 
 	if (empty)
 		return;
+
+	if ((texture == NULL) || (texture->view == NULL))
+		texture = rose__blank_texture;
 
 	float aspect = rose__viewport.Width / rose__viewport.Height;
 
@@ -181,6 +184,8 @@ void ROSE_Mesh3DDraw(ROSE_Mesh3D* mesh, ROSE_Camera camera, ROSE_Vec3 position, 
 	ID3D11DeviceContext_VSSetShader(rose__context, rose__vertex_shader_3d, NULL, 0);
 	ID3D11DeviceContext_PSSetShader(rose__context, rose__pixel_shader_3d, NULL, 0);
 	ID3D11DeviceContext_VSSetConstantBuffers(rose__context, 0, 1, &rose__constant_buffer_3d);
+	ID3D11DeviceContext_PSSetShaderResources(rose__context, 0, 1, &texture->view);
+	ID3D11DeviceContext_PSSetSamplers(rose__context, 0, 1, &rose__sampler);
 	ID3D11DeviceContext_RSSetState(rose__context, NULL);
 
 	ID3D11DeviceContext_OMSetBlendState(rose__context, rose__blend_state, NULL, 0xFFFFFFFF);

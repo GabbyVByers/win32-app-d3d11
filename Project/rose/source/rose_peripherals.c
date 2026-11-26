@@ -6,6 +6,7 @@
 #include "rose_internal.h"
 
 static void mouse_update(void);
+static void mouse_lock(void);
 static void keyboard_scancode(ROSE_Scancode, bool);
 
 // MOUSE
@@ -40,7 +41,59 @@ ROSE_Vec2 ROSE_MousePosition(void)
 
 ROSE_Vec2 ROSE_MouseVelocity(void)
 {
+	if (rose__mouse.hidden)
+		return rose__mouse.raw_delta;
+
 	return ROSE_Vec2Sub(rose__mouse.curr_pos, rose__mouse.prev_pos);
+}
+
+void ROSE_MouseCursorHide(void)
+{
+	if (rose__mouse.hidden)
+		return;
+
+	POINT cursor;
+	GetCursorPos(&cursor);
+	ScreenToClient(rose__hwnd, &cursor);
+
+	RECT client;
+	GetClientRect(rose__hwnd, &client);
+
+	if (cursor.x < client.left)       cursor.x = client.left;
+	if (cursor.y < client.top)        cursor.y = client.top;
+	if (cursor.x >= client.right)     cursor.x = client.right  - 1;
+	if (cursor.y >= client.bottom)    cursor.y = client.bottom - 1;
+
+	ROSE_Vec2 position = { (float)cursor.x, (float)cursor.y };
+	rose__mouse.hidden_pos = position;
+	rose__mouse.curr_pos   = position;
+	rose__mouse.prev_pos   = position;
+	rose__mouse.hidden     = true;
+
+	SetCursor(NULL);
+	mouse_lock();
+}
+
+void ROSE_MouseCursorReveal(void)
+{
+	if (!rose__mouse.hidden)
+		return;
+
+	rose__mouse.hidden = false;
+	ClipCursor(NULL);
+
+	POINT point = {
+		(LONG)rose__mouse.hidden_pos.x,
+		(LONG)rose__mouse.hidden_pos.y
+	};
+
+	ClientToScreen(rose__hwnd, &point);
+	SetCursorPos(point.x, point.y);
+
+	rose__mouse.curr_pos = rose__mouse.hidden_pos;
+	rose__mouse.prev_pos = rose__mouse.hidden_pos;
+
+	SetCursor(LoadCursorW(NULL, IDC_ARROW));
 }
 
 // KEYBOARD
@@ -72,6 +125,33 @@ void ROSE__MouseClear(void)
 	rose__mouse.scroll = 0.0f;
 	rose__mouse.prev_pos.x = rose__mouse.curr_pos.x;
 	rose__mouse.prev_pos.y = rose__mouse.curr_pos.y;
+	rose__mouse.raw_delta  = ROSE_VEC2_ZERO;
+
+	bool relock =
+		(rose__mouse.hidden) &&
+		(GetForegroundWindow() == rose__hwnd);
+
+	if (relock)
+		mouse_lock();
+}
+
+void ROSE__MouseRawInput(LPARAM lparam)
+{
+	RAWINPUT raw;
+	UINT size = sizeof(raw);
+	UINT read = GetRawInputData((HRAWINPUT)lparam, RID_INPUT, &raw, &size, sizeof(RAWINPUTHEADER));
+
+	if (read == (UINT)-1)
+		return;
+
+	if (raw.header.dwType != RIM_TYPEMOUSE)
+		return;
+
+	if (raw.data.mouse.usFlags & MOUSE_MOVE_ABSOLUTE)
+		return;
+
+	rose__mouse.raw_delta.x += (float)raw.data.mouse.lLastX;
+	rose__mouse.raw_delta.y += (float)raw.data.mouse.lLastY;
 }
 
 void ROSE__MouseButton(ROSE_MouseButton button, bool pressing)
@@ -96,7 +176,22 @@ void ROSE__MouseRelease(void)
 		rose__mouse.pressing[i] = false;
 	}
 
+	if (rose__mouse.hidden)
+		ClipCursor(NULL);
+
 	mouse_update();
+}
+
+static void mouse_lock(void)
+{
+	POINT point = {
+		(LONG)rose__mouse.hidden_pos.x,
+		(LONG)rose__mouse.hidden_pos.y
+	};
+
+	ClientToScreen(rose__hwnd, &point);
+	RECT rect = { point.x, point.y, point.x + 1, point.y + 1 };
+	ClipCursor(&rect);
 }
 
 static void mouse_update(void)
