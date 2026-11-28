@@ -185,6 +185,17 @@ typedef struct ROSE_Text {
 	uInt32 vertex_count;
 } ROSE_Text;
 
+typedef struct ROSE_Slider {
+	float*      value;
+	ROSE_Vec2   dimensions;
+	float       min;
+	float       max;
+	bool        hovered;
+	bool        dragging;
+	ROSE_Shape* track;
+	ROSE_Shape* knob;
+} ROSE_Slider;
+
 LRESULT CALLBACK  ROSE__WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 ID3DBlob*         ROSE__CompileShader(const wchar_t* path, const char* entry, const char* target);
 void              ROSE__CreateRenderTarget(void);

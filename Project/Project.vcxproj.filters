@@ -33,6 +33,9 @@
     <ClCompile Include="rose\source\rose_shape.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="rose\source\rose_slider.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="rose\source\rose_window.c">
       <Filter>Source Files</Filter>
     </ClCompile>

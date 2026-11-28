@@ -130,9 +130,6 @@ static void characters(ROSE_Text* text)
 			continue;
 		}
 
-		if ((c & 0xC0) == 0x80)
-			continue;
-
 		uInt32 glyph = GLYPH_SPECIAL;
 		if ((c >= ' ') && (c <= '}'))
 			glyph = (uInt32)(c - ' ');

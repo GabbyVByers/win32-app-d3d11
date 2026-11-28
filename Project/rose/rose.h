@@ -28,6 +28,7 @@ typedef struct ROSE_Sprite  ROSE_Sprite;
 typedef struct ROSE_Text    ROSE_Text;
 typedef struct ROSE_Shape   ROSE_Shape;
 typedef struct ROSE_Mesh    ROSE_Mesh;
+typedef struct ROSE_Slider  ROSE_Slider;
 
 typedef struct ROSE_Color {
 	float r;
@@ -201,6 +202,11 @@ ROSE_Mesh*    ROSE_MeshCreate(const ROSE_VertexMesh* vertices, uInt32 count);
 void          ROSE_MeshDestroy(ROSE_Mesh* mesh);
 void          ROSE_MeshUpdate(ROSE_Mesh* mesh, const ROSE_VertexMesh* vertices, uInt32 count);
 void          ROSE_MeshDraw(ROSE_Mesh* mesh, ROSE_MeshDrawInfo draw, ROSE_Camera camera);
+
+ROSE_Slider*  ROSE_SliderCreate(ROSE_Vec2 dimensions, float min, float max, float* value);
+void          ROSE_SliderDestroy(ROSE_Slider* slider);
+bool          ROSE_SliderDraw(ROSE_Slider* slider, ROSE_DrawInfo draw);
+
 
 #endif /* ROSE_ROSE_HEADER_GUARD */
 

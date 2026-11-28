@@ -17,25 +17,28 @@ int main(void)
 	ROSE_WindowVSync(false);
 
 	ROSE_VertexMesh vertices[] = {
-		{ { 0, 1, 0 }, { 0, 0 }, ROSE_COLOR_RED    }, { { 1, 1, 0 }, { 1, 0 }, ROSE_COLOR_RED    }, { { 1, 0, 0 }, { 1, 1 }, ROSE_COLOR_RED    },
-		{ { 0, 1, 0 }, { 0, 0 }, ROSE_COLOR_RED    }, { { 1, 0, 0 }, { 1, 1 }, ROSE_COLOR_RED    }, { { 0, 0, 0 }, { 0, 1 }, ROSE_COLOR_RED    },
-		{ { 1, 1, 1 }, { 0, 0 }, ROSE_COLOR_CYAN   }, { { 0, 1, 1 }, { 1, 0 }, ROSE_COLOR_CYAN   }, { { 0, 0, 1 }, { 1, 1 }, ROSE_COLOR_CYAN   },
-		{ { 1, 1, 1 }, { 0, 0 }, ROSE_COLOR_CYAN   }, { { 0, 0, 1 }, { 1, 1 }, ROSE_COLOR_CYAN   }, { { 1, 0, 1 }, { 0, 1 }, ROSE_COLOR_CYAN   },
-		{ { 1, 1, 0 }, { 0, 0 }, ROSE_COLOR_BLUE   }, { { 1, 1, 1 }, { 1, 0 }, ROSE_COLOR_BLUE   }, { { 1, 0, 1 }, { 1, 1 }, ROSE_COLOR_BLUE   },
-		{ { 1, 1, 0 }, { 0, 0 }, ROSE_COLOR_BLUE   }, { { 1, 0, 1 }, { 1, 1 }, ROSE_COLOR_BLUE   }, { { 1, 0, 0 }, { 0, 1 }, ROSE_COLOR_BLUE   },
-		{ { 0, 1, 1 }, { 0, 0 }, ROSE_COLOR_PURPLE }, { { 0, 1, 0 }, { 1, 0 }, ROSE_COLOR_PURPLE }, { { 0, 0, 0 }, { 1, 1 }, ROSE_COLOR_PURPLE },
-		{ { 0, 1, 1 }, { 0, 0 }, ROSE_COLOR_PURPLE }, { { 0, 0, 0 }, { 1, 1 }, ROSE_COLOR_PURPLE }, { { 0, 0, 1 }, { 0, 1 }, ROSE_COLOR_PURPLE },
-		{ { 0, 1, 1 }, { 0, 0 }, ROSE_COLOR_GREEN  }, { { 1, 1, 1 }, { 1, 0 }, ROSE_COLOR_GREEN  }, { { 1, 1, 0 }, { 1, 1 }, ROSE_COLOR_GREEN  },
-		{ { 0, 1, 1 }, { 0, 0 }, ROSE_COLOR_GREEN  }, { { 1, 1, 0 }, { 1, 1 }, ROSE_COLOR_GREEN  }, { { 0, 1, 0 }, { 0, 1 }, ROSE_COLOR_GREEN  },
-		{ { 0, 0, 0 }, { 0, 0 }, ROSE_COLOR_YELLOW }, { { 1, 0, 0 }, { 1, 0 }, ROSE_COLOR_YELLOW }, { { 1, 0, 1 }, { 1, 1 }, ROSE_COLOR_YELLOW },
-		{ { 0, 0, 0 }, { 0, 0 }, ROSE_COLOR_YELLOW }, { { 1, 0, 1 }, { 1, 1 }, ROSE_COLOR_YELLOW }, { { 0, 0, 1 }, { 0, 1 }, ROSE_COLOR_YELLOW },
+		{ { -.5,  .5, -.5 }, { 0, 0 }, ROSE_COLOR_RED    }, { {  .5,  .5, -.5 }, { 1, 0 }, ROSE_COLOR_RED    }, { {  .5, -.5, -.5 }, { 1, 1 }, ROSE_COLOR_RED    },
+		{ { -.5,  .5, -.5 }, { 0, 0 }, ROSE_COLOR_RED    }, { {  .5, -.5, -.5 }, { 1, 1 }, ROSE_COLOR_RED    }, { { -.5, -.5, -.5 }, { 0, 1 }, ROSE_COLOR_RED    },
+		{ {  .5,  .5,  .5 }, { 0, 0 }, ROSE_COLOR_CYAN   }, { { -.5,  .5,  .5 }, { 1, 0 }, ROSE_COLOR_CYAN   }, { { -.5, -.5,  .5 }, { 1, 1 }, ROSE_COLOR_CYAN   },
+		{ {  .5,  .5,  .5 }, { 0, 0 }, ROSE_COLOR_CYAN   }, { { -.5, -.5,  .5 }, { 1, 1 }, ROSE_COLOR_CYAN   }, { {  .5, -.5,  .5 }, { 0, 1 }, ROSE_COLOR_CYAN   },
+		{ {  .5,  .5, -.5 }, { 0, 0 }, ROSE_COLOR_BLUE   }, { {  .5,  .5,  .5 }, { 1, 0 }, ROSE_COLOR_BLUE   }, { {  .5, -.5,  .5 }, { 1, 1 }, ROSE_COLOR_BLUE   },
+		{ {  .5,  .5, -.5 }, { 0, 0 }, ROSE_COLOR_BLUE   }, { {  .5, -.5,  .5 }, { 1, 1 }, ROSE_COLOR_BLUE   }, { {  .5, -.5, -.5 }, { 0, 1 }, ROSE_COLOR_BLUE   },
+		{ { -.5,  .5,  .5 }, { 0, 0 }, ROSE_COLOR_PURPLE }, { { -.5,  .5, -.5 }, { 1, 0 }, ROSE_COLOR_PURPLE }, { { -.5, -.5, -.5 }, { 1, 1 }, ROSE_COLOR_PURPLE },
+		{ { -.5,  .5,  .5 }, { 0, 0 }, ROSE_COLOR_PURPLE }, { { -.5, -.5, -.5 }, { 1, 1 }, ROSE_COLOR_PURPLE }, { { -.5, -.5,  .5 }, { 0, 1 }, ROSE_COLOR_PURPLE },
+		{ { -.5,  .5,  .5 }, { 0, 0 }, ROSE_COLOR_GREEN  }, { {  .5,  .5,  .5 }, { 1, 0 }, ROSE_COLOR_GREEN  }, { {  .5,  .5, -.5 }, { 1, 1 }, ROSE_COLOR_GREEN  },
+		{ { -.5,  .5,  .5 }, { 0, 0 }, ROSE_COLOR_GREEN  }, { {  .5,  .5, -.5 }, { 1, 1 }, ROSE_COLOR_GREEN  }, { { -.5,  .5, -.5 }, { 0, 1 }, ROSE_COLOR_GREEN  },
+		{ { -.5, -.5, -.5 }, { 0, 0 }, ROSE_COLOR_YELLOW }, { {  .5, -.5, -.5 }, { 1, 0 }, ROSE_COLOR_YELLOW }, { {  .5, -.5,  .5 }, { 1, 1 }, ROSE_COLOR_YELLOW },
+		{ { -.5, -.5, -.5 }, { 0, 0 }, ROSE_COLOR_YELLOW }, { {  .5, -.5,  .5 }, { 1, 1 }, ROSE_COLOR_YELLOW }, { { -.5, -.5,  .5 }, { 0, 1 }, ROSE_COLOR_YELLOW },
 	};
 
 	uInt32 count = sizeof(vertices) / sizeof(vertices[0]);
 	ROSE_Mesh* mesh = ROSE_MeshCreate(vertices, count);
 
 	ROSE_Camera camera = ROSE_CAMERA_DEFAULT;
-	camera.position = (ROSE_Vec3) { 0.0f, 0.0f, -3.0f };
+	camera.position = (ROSE_Vec3){ 0.0f, 0.0f, -3.0f };
+
+	float scale = 1.0f;
+	ROSE_Slider* slider = ROSE_SliderCreate((ROSE_Vec2) { 300.0f, 16.0f }, 0.25f, 3.0f, &scale);
 
 	while (true) {
 		if (ROSE_WindowClosed())
@@ -47,21 +50,32 @@ int main(void)
 		float dt = ROSE_FrameDelta();
 		camera_control(&camera, dt);
 
+		ROSE_MeshDrawInfo info = ROSE_MESH_DRAW_DEFAULT;
+		info.scale = scale;
+
+		ROSE_DrawInfo ui = ROSE_DRAW_DEFAULT;
+		ui.position = (ROSE_Vec2) { 40.0f, 40.0f };
+
 		ROSE_FrameClear(ROSE_COLOR_RGBA(30, 15, 70, 255));
-		ROSE_MeshDraw(mesh, ROSE_MESH_DRAW_DEFAULT, camera);
+		ROSE_MeshDraw(mesh, info, camera);
+		ROSE_SliderDraw(slider, ui);
 		ROSE_FrameRender();
 	}
 
+	ROSE_SliderDestroy(slider);
 	ROSE_MeshDestroy(mesh);
 	ROSE_Quit();
 }
 
 static void camera_control(ROSE_Camera* camera, float dt)
 {
-	if (ROSE_MousePressed(ROSE_MOUSE_LEFT))  ROSE_MouseCursorHide();
-	if (ROSE_MouseReleased(ROSE_MOUSE_LEFT)) ROSE_MouseCursorReveal();
+	if (ROSE_MousePressed(ROSE_MOUSE_RIGHT))
+		ROSE_MouseCursorHide();
 
-	if (ROSE_MousePressing(ROSE_MOUSE_LEFT)) {
+	if (ROSE_MouseReleased(ROSE_MOUSE_RIGHT))
+		ROSE_MouseCursorReveal();
+
+	if (ROSE_MousePressing(ROSE_MOUSE_RIGHT)) {
 		ROSE_Vec2 mouse_vel = ROSE_MouseVelocity();
 		ROSE_Quat quat = camera->orientation;
 		quat = ROSE_QuatRotate(quat, ROSE_VEC3_YPOS, mouse_vel.x * 0.2f);
