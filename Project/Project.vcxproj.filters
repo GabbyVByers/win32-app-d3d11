@@ -51,7 +51,10 @@
     <ClCompile Include="rose\source\rose_math.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="map.c">
+    <ClCompile Include="econ.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="provinces.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -71,7 +74,10 @@
     <ClInclude Include="rose\rose_math.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="map.h">
+    <ClInclude Include="econ.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="provinces.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -147,8 +147,9 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="econ.c" />
     <ClCompile Include="main.c" />
-    <ClCompile Include="map.c" />
+    <ClCompile Include="provinces.c" />
     <ClCompile Include="rose\source\png.c" />
     <ClCompile Include="rose\source\rose_image.c" />
     <ClCompile Include="rose\source\rose_internal.c" />
@@ -162,7 +163,8 @@
     <ClCompile Include="rose\source\rose_window.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="map.h" />
+    <ClInclude Include="econ.h" />
+    <ClInclude Include="provinces.h" />
     <ClInclude Include="rose\rose_enums.h" />
     <ClInclude Include="rose\rose_internal.h" />
     <ClInclude Include="rose\rose_math.h" />
