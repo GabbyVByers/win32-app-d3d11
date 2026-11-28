@@ -172,6 +172,22 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	ID3D10Blob_Release(vs3d_blob);
 	ID3D10Blob_Release(ps3d_blob);
 
+	ID3DBlob* gs_points_blob = ROSE__CompileShader(L"HLSL/points.hlsl", "gs_main", "gs_5_0");
+
+	result = ID3D11Device_CreateGeometryShader(rose__device, ID3D10Blob_GetBufferPointer(gs_points_blob), ID3D10Blob_GetBufferSize(gs_points_blob), NULL, &rose__geometry_shader_points);
+	CHECK_HRESULT(result, "ID3D11Device_CreateGeometryShader()");
+
+	ID3D10Blob_Release(gs_points_blob);
+
+	D3D11_BUFFER_DESC constant_buffer_points_desc = {
+		.ByteWidth = sizeof(rose__constants_points_t),
+		.Usage     = D3D11_USAGE_DEFAULT,
+		.BindFlags = D3D11_BIND_CONSTANT_BUFFER,
+	};
+
+	result = ID3D11Device_CreateBuffer(rose__device, &constant_buffer_points_desc, NULL, &rose__constant_buffer_points);
+	CHECK_HRESULT(result, "ID3D11Device_CreateBuffer()");
+
 	D3D11_BUFFER_DESC constant_buffer_3d_desc = {
 		.ByteWidth = sizeof(rose__constants3d_t),
 		.Usage = D3D11_USAGE_DEFAULT,
@@ -341,6 +357,9 @@ void ROSE_Quit(void)
 	ID3D11PixelShader_Release(rose__pixel_shader_3d);
 	ID3D11VertexShader_Release(rose__vertex_shader_3d);
 
+	ID3D11GeometryShader_Release(rose__geometry_shader_points);
+	ID3D11Buffer_Release(rose__constant_buffer_points);
+
 	#ifdef ROSE_DEBUG
 	ID3D11Debug* debug = NULL;
 	if (SUCCEEDED(ID3D11Device_QueryInterface(rose__device, &IID_ID3D11Debug, (void**)&debug))) {
@@ -416,6 +435,9 @@ void ROSE_Quit(void)
 	rose__input_layout_3d    = NULL;
 	rose__pixel_shader_3d    = NULL;
 	rose__vertex_shader_3d   = NULL;
+
+	rose__geometry_shader_points = NULL;
+	rose__constant_buffer_points = NULL;
 
 	rose__mouse    = (rose__mouse_t){ 0 };
 	rose__keyboard = (rose__keyboard_t){ 0 };

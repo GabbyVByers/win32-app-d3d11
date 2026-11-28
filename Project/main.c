@@ -48,7 +48,7 @@ int main(void)
 		camera_control(&camera, dt);
 
 		ROSE_FrameClear(ROSE_COLOR_RGBA(30, 15, 70, 255));
-		ROSE_Mesh3DDraw(mesh, NULL, camera, ROSE_QUAT_IDENTITY, ROSE_VEC3_ZERO, 1.0f, ROSE_COLOR_WHITE);
+		ROSE_Mesh3DDraw(mesh, NULL, camera, ROSE_QUAT_IDENTITY, ROSE_VEC3_ZERO, 1.0f, ROSE_COLOR_WHITE, ROSE_TRIANGLES, 0.0f);
 		ROSE_FrameRender();
 	}
 

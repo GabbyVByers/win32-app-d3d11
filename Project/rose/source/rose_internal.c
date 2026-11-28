@@ -173,7 +173,7 @@ void ROSE__CreateRenderTarget(void)
 	};
 }
 
-void ROSE__BindPipeline2D(ID3D11Buffer* vertices, ROSE_Texture* texture, ROSE_Vec2 position, float scale, ROSE_Color color)
+void ROSE__BindPipeline2D(ID3D11Buffer* vertices, ROSE_Texture* texture, ROSE_Vec2 position, float scale, ROSE_Color color, ROSE_PRIMITIVE primitive, float diameter)
 {
 	if ((texture == NULL) || (texture->view == NULL))
 		texture = rose__blank_texture;
@@ -182,7 +182,7 @@ void ROSE__BindPipeline2D(ID3D11Buffer* vertices, ROSE_Texture* texture, ROSE_Ve
 	UINT offset = 0;
 	ID3D11DeviceContext_IASetInputLayout(rose__context, rose__input_layout);
 	ID3D11DeviceContext_IASetVertexBuffers(rose__context, 0, 1, &vertices, &stride, &offset);
-	ID3D11DeviceContext_IASetPrimitiveTopology(rose__context, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	ROSE__BindPrimitive(primitive, diameter);
 
 	ID3D11DeviceContext_VSSetShader(rose__context, rose__vertex_shader, NULL, 0);
 	ID3D11DeviceContext_PSSetShader(rose__context, rose__pixel_shader, NULL, 0);
@@ -202,6 +202,33 @@ void ROSE__BindPipeline2D(ID3D11Buffer* vertices, ROSE_Texture* texture, ROSE_Ve
 	ID3D11DeviceContext_RSSetState(rose__context, rose__raster_2d);
 	ID3D11DeviceContext_OMSetBlendState(rose__context, rose__blend_state, NULL, 0xFFFFFFFF);
 	ID3D11DeviceContext_OMSetDepthStencilState(rose__context, rose__depth_off, 0);
+}
+
+void ROSE__BindPrimitive(ROSE_PRIMITIVE primitive, float diameter)
+{
+	if (primitive == ROSE_TRIANGLES) {
+		ID3D11DeviceContext_IASetPrimitiveTopology(rose__context, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		ID3D11DeviceContext_GSSetShader(rose__context, NULL, NULL, 0);
+		return;
+	}
+
+	if (primitive == ROSE_LINES) {
+		ID3D11DeviceContext_IASetPrimitiveTopology(rose__context, D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+		ID3D11DeviceContext_GSSetShader(rose__context, NULL, NULL, 0);
+		return;
+	}
+
+	assert(primitive == ROSE_POINTS);
+
+	rose__constants_points_t constants = {
+		.screen_size = { rose__viewport.Width, rose__viewport.Height },
+		.diameter    = diameter,
+	};
+
+	ID3D11DeviceContext_UpdateSubresource(rose__context, (ID3D11Resource*)rose__constant_buffer_points, 0, NULL, &constants, 0, 0);
+	ID3D11DeviceContext_IASetPrimitiveTopology(rose__context, D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	ID3D11DeviceContext_GSSetShader(rose__context, rose__geometry_shader_points, NULL, 0);
+	ID3D11DeviceContext_GSSetConstantBuffers(rose__context, 0, 1, &rose__constant_buffer_points);
 }
 
 Int64 ROSE__Ticks(void)
@@ -285,7 +312,7 @@ void ROSE__BatchFlush(void)
 	memcpy(dst, batch_vertices, sizeof(ROSE_Vertex2D) * batch_count);
 	ID3D11DeviceContext_Unmap(rose__context, (ID3D11Resource*)batch_buffer, 0);
 
-	ROSE__BindPipeline2D(batch_buffer, batch_texture, ROSE_VEC2_ZERO, 1.0f, ROSE_COLOR_WHITE);
+	ROSE__BindPipeline2D(batch_buffer, batch_texture, ROSE_VEC2_ZERO, 1.0f, ROSE_COLOR_WHITE, ROSE_TRIANGLES, 0.0f);
 	ID3D11DeviceContext_Draw(rose__context, batch_count, batch_cursor);
 
 	batch_cursor += batch_count;

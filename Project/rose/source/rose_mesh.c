@@ -25,7 +25,7 @@ void ROSE_Mesh2DDestroy(ROSE_Mesh2D* mesh)
 	free(mesh);
 }
 
-void ROSE_Mesh2DDraw(ROSE_Mesh2D* mesh, ROSE_Texture* texture, ROSE_Vec2 position, float scale, ROSE_Color color)
+void ROSE_Mesh2DDraw(ROSE_Mesh2D* mesh, ROSE_Texture* texture, ROSE_Vec2 position, float scale, ROSE_Color color, ROSE_PRIMITIVE primitive, float diameter)
 {
 	ROSE__BatchFlush();
 
@@ -36,7 +36,7 @@ void ROSE_Mesh2DDraw(ROSE_Mesh2D* mesh, ROSE_Texture* texture, ROSE_Vec2 positio
 	if (empty)
 		return;
 
-	ROSE__BindPipeline2D(mesh->vertices, texture, position, scale, color);
+	ROSE__BindPipeline2D(mesh->vertices, texture, position, scale, color, primitive, diameter);
 	ID3D11DeviceContext_Draw(rose__context, mesh->count, 0);
 }
 
@@ -148,7 +148,7 @@ void ROSE_Mesh3DUpdate(ROSE_Mesh3D* mesh, const ROSE_Vertex3D* vertices, uInt32 
 	mesh->count = count;
 }
 
-void ROSE_Mesh3DDraw(ROSE_Mesh3D* mesh, ROSE_Texture* texture, ROSE_Camera camera, ROSE_Quat orientation, ROSE_Vec3 position, float scale, ROSE_Color color)
+void ROSE_Mesh3DDraw(ROSE_Mesh3D* mesh, ROSE_Texture* texture, ROSE_Camera camera, ROSE_Quat orientation, ROSE_Vec3 position, float scale, ROSE_Color color, ROSE_PRIMITIVE primitive, float diameter)
 {
 	ROSE__BatchFlush();
 
@@ -179,7 +179,7 @@ void ROSE_Mesh3DDraw(ROSE_Mesh3D* mesh, ROSE_Texture* texture, ROSE_Camera camer
 	UINT offset = 0;
 	ID3D11DeviceContext_IASetInputLayout(rose__context, rose__input_layout_3d);
 	ID3D11DeviceContext_IASetVertexBuffers(rose__context, 0, 1, &mesh->vertices, &stride, &offset);
-	ID3D11DeviceContext_IASetPrimitiveTopology(rose__context, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	ROSE__BindPrimitive(primitive, diameter);
 
 	ID3D11DeviceContext_VSSetShader(rose__context, rose__vertex_shader_3d, NULL, 0);
 	ID3D11DeviceContext_PSSetShader(rose__context, rose__pixel_shader_3d, NULL, 0);

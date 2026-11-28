@@ -72,6 +72,12 @@ typedef struct ROSE_Camera {
 	ROSE_Quat orientation;
 } ROSE_Camera;
 
+typedef enum ROSE_PRIMITIVE {
+	ROSE_TRIANGLES,
+	ROSE_LINES,
+	ROSE_POINTS,
+} ROSE_PRIMITIVE;
+
 typedef struct ROSE_Image   ROSE_Image;
 typedef struct ROSE_Texture ROSE_Texture;
 
@@ -133,12 +139,12 @@ void          ROSE_TextDraw(ROSE_Text* text, ROSE_Vec2 position, float scale, RO
 ROSE_Mesh2D*  ROSE_Mesh2DCreate(const ROSE_Vertex2D* vertices, uInt32 count);
 void          ROSE_Mesh2DDestroy(ROSE_Mesh2D* mesh);
 void          ROSE_Mesh2DUpdate(ROSE_Mesh2D* mesh, const ROSE_Vertex2D* vertices, uInt32 count);
-void          ROSE_Mesh2DDraw(ROSE_Mesh2D* mesh, ROSE_Texture* texture, ROSE_Vec2 position, float scale, ROSE_Color color);
+void          ROSE_Mesh2DDraw(ROSE_Mesh2D* mesh, ROSE_Texture* texture, ROSE_Vec2 position, float scale, ROSE_Color color, ROSE_PRIMITIVE primitive, float diameter);
 
 ROSE_Mesh3D*  ROSE_Mesh3DCreate(const ROSE_Vertex3D* vertices, uInt32 count);
 void          ROSE_Mesh3DDestroy(ROSE_Mesh3D* mesh);
 void          ROSE_Mesh3DUpdate(ROSE_Mesh3D* mesh, const ROSE_Vertex3D* vertices, uInt32 count);
-void          ROSE_Mesh3DDraw(ROSE_Mesh3D* mesh, ROSE_Texture* texture, ROSE_Camera camera, ROSE_Quat orientation, ROSE_Vec3 position, float scale, ROSE_Color color);
+void          ROSE_Mesh3DDraw(ROSE_Mesh3D* mesh, ROSE_Texture* texture, ROSE_Camera camera, ROSE_Quat orientation, ROSE_Vec3 position, float scale, ROSE_Color color, ROSE_PRIMITIVE primitive, float diameter);
 
 #endif /* ROSE_ROSE_HEADER_GUARD */
 

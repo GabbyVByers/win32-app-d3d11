@@ -62,6 +62,12 @@ typedef struct rose__constants3d_t {
 	ROSE_Color tint;
 } rose__constants3d_t;
 
+typedef struct rose__constants_points_t {
+	ROSE_Vec2 screen_size;
+	float diameter;
+	float _padding;
+} rose__constants_points_t;
+
 typedef struct rose__mouse_t {
 	bool pressing[ROSE_MOUSE_COUNT];
 	bool pressed[ROSE_MOUSE_COUNT];
@@ -136,6 +142,9 @@ ROSE_GLOBAL(ID3D11PixelShader*,  rose__pixel_shader_3d)
 ROSE_GLOBAL(ID3D11InputLayout*,  rose__input_layout_3d)
 ROSE_GLOBAL(ID3D11Buffer*,       rose__constant_buffer_3d)
 
+ROSE_GLOBAL(ID3D11GeometryShader*, rose__geometry_shader_points)
+ROSE_GLOBAL(ID3D11Buffer*,         rose__constant_buffer_points)
+
 typedef struct ROSE_Image {
 	uInt32 width;
 	uInt32 height;
@@ -179,7 +188,8 @@ typedef struct ROSE_Text {
 LRESULT CALLBACK ROSE__WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 ID3DBlob*        ROSE__CompileShader(const wchar_t* path, const char* entry, const char* target);
 void             ROSE__CreateRenderTarget(void);
-void             ROSE__BindPipeline2D(ID3D11Buffer* vertices, ROSE_Texture* texture, ROSE_Vec2 position, float scale, ROSE_Color color);
+void             ROSE__BindPipeline2D(ID3D11Buffer* vertices, ROSE_Texture* texture, ROSE_Vec2 position, float scale, ROSE_Color color, ROSE_PRIMITIVE primitive, float diameter);
+void             ROSE__BindPrimitive(ROSE_PRIMITIVE primitive, float diameter);
 Int64            ROSE__Ticks(void);
 ROSE_Vertex2D*   ROSE__BatchAllocate(ROSE_Texture* texture, uInt32 count);
 void             ROSE__BatchCreate(void);
