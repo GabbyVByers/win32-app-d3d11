@@ -50,12 +50,12 @@ void ROSE_SpriteDraw(ROSE_Sprite* sprite, ROSE_Vec2 position, float scale, ROSE_
 	float u0 = sprite->u0, v0 = sprite->v0;
 	float u1 = sprite->u1, v1 = sprite->v1;
 
-	ROSE_Vertex2D* verts = ROSE__BatchAllocate(sprite->texture, 6);
-	verts[0] = (ROSE_Vertex2D){ x0, y0, u0, v0, color };
-	verts[1] = (ROSE_Vertex2D){ x1, y0, u1, v0, color };
-	verts[2] = (ROSE_Vertex2D){ x0, y1, u0, v1, color };
-	verts[3] = (ROSE_Vertex2D){ x1, y0, u1, v0, color };
-	verts[4] = (ROSE_Vertex2D){ x1, y1, u1, v1, color };
-	verts[5] = (ROSE_Vertex2D){ x0, y1, u0, v1, color };
+	ROSE_ShapeVertex* verts = ROSE__BatchAllocate(sprite->texture, 6);
+	verts[0] = (ROSE_ShapeVertex){ x0, y0, u0, v0, color };
+	verts[1] = (ROSE_ShapeVertex){ x1, y0, u1, v0, color };
+	verts[2] = (ROSE_ShapeVertex){ x0, y1, u0, v1, color };
+	verts[3] = (ROSE_ShapeVertex){ x1, y0, u1, v0, color };
+	verts[4] = (ROSE_ShapeVertex){ x1, y1, u1, v1, color };
+	verts[5] = (ROSE_ShapeVertex){ x0, y1, u0, v1, color };
 }
 

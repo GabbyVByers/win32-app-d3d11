@@ -76,11 +76,11 @@ void ROSE_TextUpdate(ROSE_Text* text, const char* format, ...)
 void ROSE_TextDraw(ROSE_Text* text, ROSE_Vec2 position, float scale, ROSE_Color color)
 {
 	for (uInt32 i = 0; i < text->vertex_count; i += 6) {
-		ROSE_Vertex2D* dst = ROSE__BatchAllocate(rose__ascii_texture, 6);
+		ROSE_ShapeVertex* dst = ROSE__BatchAllocate(rose__ascii_texture, 6);
 
 		for (uInt32 k = 0; k < 6; k++) {
-			ROSE_Vertex2D src = text->vertices[i + k];
-			dst[k] = (ROSE_Vertex2D) {
+			ROSE_ShapeVertex src = text->vertices[i + k];
+			dst[k] = (ROSE_ShapeVertex) {
 				.position.x = position.x + src.position.x * scale,
 				.position.y = position.y + src.position.y * scale,
 				.texcoord.x = src.texcoord.x,
@@ -111,7 +111,7 @@ static void reserve(ROSE_Text* text, uInt32 count)
 		capacity = 32;
 
 	text->string = realloc(text->string, (size_t)capacity + 1);
-	text->vertices = realloc(text->vertices, sizeof(ROSE_Vertex2D) * 6 * capacity);
+	text->vertices = realloc(text->vertices, sizeof(ROSE_ShapeVertex) * 6 * capacity);
 	text->capacity = capacity;
 }
 
@@ -147,13 +147,13 @@ static void characters(ROSE_Text* text)
 		float v0 = 0.0f;
 		float v1 = 1.0f;
 
-		ROSE_Vertex2D* verts = text->vertices + n;
-		verts[0] = (ROSE_Vertex2D){ x0, y0, u0, v0, ROSE_COLOR_WHITE };
-		verts[1] = (ROSE_Vertex2D){ x1, y0, u1, v0, ROSE_COLOR_WHITE };
-		verts[2] = (ROSE_Vertex2D){ x0, y1, u0, v1, ROSE_COLOR_WHITE };
-		verts[3] = (ROSE_Vertex2D){ x1, y0, u1, v0, ROSE_COLOR_WHITE };
-		verts[4] = (ROSE_Vertex2D){ x1, y1, u1, v1, ROSE_COLOR_WHITE };
-		verts[5] = (ROSE_Vertex2D){ x0, y1, u0, v1, ROSE_COLOR_WHITE };
+		ROSE_ShapeVertex* verts = text->vertices + n;
+		verts[0] = (ROSE_ShapeVertex){ x0, y0, u0, v0, ROSE_COLOR_WHITE };
+		verts[1] = (ROSE_ShapeVertex){ x1, y0, u1, v0, ROSE_COLOR_WHITE };
+		verts[2] = (ROSE_ShapeVertex){ x0, y1, u0, v1, ROSE_COLOR_WHITE };
+		verts[3] = (ROSE_ShapeVertex){ x1, y0, u1, v0, ROSE_COLOR_WHITE };
+		verts[4] = (ROSE_ShapeVertex){ x1, y1, u1, v1, ROSE_COLOR_WHITE };
+		verts[5] = (ROSE_ShapeVertex){ x0, y1, u0, v1, ROSE_COLOR_WHITE };
 
 		n += 6;
 		pen_x += (float)GLYPH_WIDTH;

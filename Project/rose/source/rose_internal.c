@@ -173,33 +173,33 @@ void ROSE__CreateRenderTarget(void)
 	};
 }
 
-void ROSE__BindPipeline2D(ID3D11Buffer* vertices, ROSE_Texture* texture, ROSE_Vec2 position, float scale, ROSE_Color color, ROSE_PRIMITIVE primitive, float diameter)
+void ROSE__BindPipelineShape(ID3D11Buffer* vertices, ROSE_Texture* texture, ROSE_Vec2 position, float scale, ROSE_Color color, ROSE_PRIMITIVE primitive, float diameter)
 {
 	if ((texture == NULL) || (texture->view == NULL))
 		texture = rose__blank_texture;
 
-	UINT stride = sizeof(ROSE_Vertex2D);
+	UINT stride = sizeof(ROSE_ShapeVertex);
 	UINT offset = 0;
-	ID3D11DeviceContext_IASetInputLayout(rose__context, rose__input_layout);
+	ID3D11DeviceContext_IASetInputLayout(rose__context, rose__input_layout_shape);
 	ID3D11DeviceContext_IASetVertexBuffers(rose__context, 0, 1, &vertices, &stride, &offset);
 	ROSE__BindPrimitive(primitive, diameter);
 
-	ID3D11DeviceContext_VSSetShader(rose__context, rose__vertex_shader, NULL, 0);
-	ID3D11DeviceContext_PSSetShader(rose__context, rose__pixel_shader, NULL, 0);
+	ID3D11DeviceContext_VSSetShader(rose__context, rose__vertex_shader_shape, NULL, 0);
+	ID3D11DeviceContext_PSSetShader(rose__context, rose__pixel_shader_shape, NULL, 0);
 
-	rose__constants_t constants = {
+	rose__constants_shape_t constants = {
 		.screen_size = { rose__viewport.Width, rose__viewport.Height },
 		.offset      = position,
 		.tint        = color,
 		.scale       = scale,
 	};
 
-	ID3D11DeviceContext_UpdateSubresource(rose__context, (ID3D11Resource*)rose__constant_buffer, 0, NULL, &constants, 0, 0);
-	ID3D11DeviceContext_VSSetConstantBuffers(rose__context, 0, 1, &rose__constant_buffer);
+	ID3D11DeviceContext_UpdateSubresource(rose__context, (ID3D11Resource*)rose__constant_buffer_shape, 0, NULL, &constants, 0, 0);
+	ID3D11DeviceContext_VSSetConstantBuffers(rose__context, 0, 1, &rose__constant_buffer_shape);
 
 	ID3D11DeviceContext_PSSetShaderResources(rose__context, 0, 1, &texture->view);
 	ID3D11DeviceContext_PSSetSamplers(rose__context, 0, 1, &rose__sampler);
-	ID3D11DeviceContext_RSSetState(rose__context, rose__raster_2d);
+	ID3D11DeviceContext_RSSetState(rose__context, rose__raster_shape);
 	ID3D11DeviceContext_OMSetBlendState(rose__context, rose__blend_state, NULL, 0xFFFFFFFF);
 	ID3D11DeviceContext_OMSetDepthStencilState(rose__context, rose__depth_off, 0);
 }
@@ -246,9 +246,9 @@ static uInt32 batch_cursor = 0;
 static uInt32 batch_count  = 0;
 static ID3D11Buffer* batch_buffer  = NULL;
 static ROSE_Texture* batch_texture = NULL;
-static ROSE_Vertex2D batch_vertices[BATCH_VERTICES];
+static ROSE_ShapeVertex batch_vertices[BATCH_VERTICES];
 
-ROSE_Vertex2D* ROSE__BatchAllocate(ROSE_Texture* texture, uInt32 count)
+ROSE_ShapeVertex* ROSE__BatchAllocate(ROSE_Texture* texture, uInt32 count)
 {
 	if (texture != batch_texture) {
 		ROSE__BatchFlush();
@@ -258,7 +258,7 @@ ROSE_Vertex2D* ROSE__BatchAllocate(ROSE_Texture* texture, uInt32 count)
 	if ((batch_count + count) > BATCH_VERTICES)
 		ROSE__BatchFlush();
 
-	ROSE_Vertex2D* vertices = batch_vertices + batch_count;
+	ROSE_ShapeVertex* vertices = batch_vertices + batch_count;
 	batch_count += count;
 	return vertices;
 }
@@ -266,7 +266,7 @@ ROSE_Vertex2D* ROSE__BatchAllocate(ROSE_Texture* texture, uInt32 count)
 void ROSE__BatchCreate(void)
 {
 	D3D11_BUFFER_DESC desc = {
-		.ByteWidth      = sizeof(ROSE_Vertex2D) * BATCH_VERTICES,
+		.ByteWidth      = sizeof(ROSE_ShapeVertex) * BATCH_VERTICES,
 		.Usage          = D3D11_USAGE_DYNAMIC,
 		.BindFlags      = D3D11_BIND_VERTEX_BUFFER,
 		.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE,
@@ -308,11 +308,11 @@ void ROSE__BatchFlush(void)
 	HRESULT result = ID3D11DeviceContext_Map(rose__context, (ID3D11Resource*)batch_buffer, 0, mode, 0, &mapped);
 	CHECK_HRESULT(result, "ID3D11DeviceContext_Map()");
 
-	ROSE_Vertex2D* dst = (ROSE_Vertex2D*)mapped.pData + batch_cursor;
-	memcpy(dst, batch_vertices, sizeof(ROSE_Vertex2D) * batch_count);
+	ROSE_ShapeVertex* dst = (ROSE_ShapeVertex*)mapped.pData + batch_cursor;
+	memcpy(dst, batch_vertices, sizeof(ROSE_ShapeVertex) * batch_count);
 	ID3D11DeviceContext_Unmap(rose__context, (ID3D11Resource*)batch_buffer, 0);
 
-	ROSE__BindPipeline2D(batch_buffer, batch_texture, ROSE_VEC2_ZERO, 1.0f, ROSE_COLOR_WHITE, ROSE_TRIANGLES, 0.0f);
+	ROSE__BindPipelineShape(batch_buffer, batch_texture, ROSE_VEC2_ZERO, 1.0f, ROSE_COLOR_WHITE, ROSE_TRIANGLES, 0.0f);
 	ID3D11DeviceContext_Draw(rose__context, batch_count, batch_cursor);
 
 	batch_cursor += batch_count;

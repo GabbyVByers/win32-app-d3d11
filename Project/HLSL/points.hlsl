@@ -20,17 +20,15 @@ struct gs_vertex
 void gs_main(point gs_vertex input[1], inout TriangleStream<gs_vertex> stream)
 {
 	static const float2 corners[4] = {
-		float2(-1.0,  1.0), // top-left
-		float2( 1.0,  1.0), // top-right
-		float2(-1.0, -1.0), // bottom-left
-		float2( 1.0, -1.0), // bottom-right
+		float2(-1.0,  1.0),
+		float2( 1.0,  1.0),
+		float2(-1.0, -1.0),
+		float2( 1.0, -1.0),
 	};
 
 	gs_vertex v = input[0];
 	float4 center = v.position;
 
-	// half the diameter in NDC is (diameter / 2) * (2 / screen_size) = diameter / screen_size
-	// multiplied by w so the perspective divide cancels it (constant pixel size in 3D)
 	float2 half_size = diameter / screen_size * center.w;
 
 	for (int i = 0; i < 4; i++) {

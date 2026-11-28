@@ -1,6 +1,6 @@
 
 /*
- *   HLSL Shader (3D)
+ *   HLSL Shader (Mesh)
  */
 
 cbuffer constants : register(b0)

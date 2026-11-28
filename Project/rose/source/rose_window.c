@@ -116,61 +116,61 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 
 	ROSE__CreateRenderTarget();
 	
-	ID3DBlob* vs_blob = ROSE__CompileShader(L"HLSL/shader.hlsl", "vs_main", "vs_5_0");
-	ID3DBlob* ps_blob = ROSE__CompileShader(L"HLSL/shader.hlsl", "ps_main", "ps_5_0");
+	ID3DBlob* vs_shape_blob = ROSE__CompileShader(L"HLSL/shape.hlsl", "vs_main", "vs_5_0");
+	ID3DBlob* ps_shape_blob = ROSE__CompileShader(L"HLSL/shape.hlsl", "ps_main", "ps_5_0");
 
-	ID3DBlob* vs3d_blob = ROSE__CompileShader(L"HLSL/shader3d.hlsl", "vs_main", "vs_5_0");
-	ID3DBlob* ps3d_blob = ROSE__CompileShader(L"HLSL/shader3d.hlsl", "ps_main", "ps_5_0");
+	ID3DBlob* vs_mesh_blob = ROSE__CompileShader(L"HLSL/mesh.hlsl", "vs_main", "vs_5_0");
+	ID3DBlob* ps_mesh_blob = ROSE__CompileShader(L"HLSL/mesh.hlsl", "ps_main", "ps_5_0");
 
-	result = ID3D11Device_CreateVertexShader(rose__device, ID3D10Blob_GetBufferPointer(vs_blob), ID3D10Blob_GetBufferSize(vs_blob), NULL, &rose__vertex_shader);
+	result = ID3D11Device_CreateVertexShader(rose__device, ID3D10Blob_GetBufferPointer(vs_shape_blob), ID3D10Blob_GetBufferSize(vs_shape_blob), NULL, &rose__vertex_shader_shape);
 	CHECK_HRESULT(result, "ID3D11Device_CreateVertexShader()");
 
-	result = ID3D11Device_CreateVertexShader(rose__device, ID3D10Blob_GetBufferPointer(vs3d_blob), ID3D10Blob_GetBufferSize(vs3d_blob), NULL, &rose__vertex_shader_3d);
+	result = ID3D11Device_CreateVertexShader(rose__device, ID3D10Blob_GetBufferPointer(vs_mesh_blob), ID3D10Blob_GetBufferSize(vs_mesh_blob), NULL, &rose__vertex_shader_mesh);
 	CHECK_HRESULT(result, "ID3D11Device_CreateVertexShader()");
 
-	result = ID3D11Device_CreatePixelShader(rose__device, ID3D10Blob_GetBufferPointer(ps_blob), ID3D10Blob_GetBufferSize(ps_blob), NULL, &rose__pixel_shader);
+	result = ID3D11Device_CreatePixelShader(rose__device, ID3D10Blob_GetBufferPointer(ps_shape_blob), ID3D10Blob_GetBufferSize(ps_shape_blob), NULL, &rose__pixel_shader_shape);
 	CHECK_HRESULT(result, "ID3D11Device_CreatePixelShader()");
 
-	result = ID3D11Device_CreatePixelShader(rose__device, ID3D10Blob_GetBufferPointer(ps3d_blob), ID3D10Blob_GetBufferSize(ps3d_blob), NULL, &rose__pixel_shader_3d);
+	result = ID3D11Device_CreatePixelShader(rose__device, ID3D10Blob_GetBufferPointer(ps_mesh_blob), ID3D10Blob_GetBufferSize(ps_mesh_blob), NULL, &rose__pixel_shader_mesh);
 	CHECK_HRESULT(result, "ID3D11Device_CreatePixelShader()");
 
-	D3D11_INPUT_ELEMENT_DESC input_desc[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(ROSE_Vertex2D, position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(ROSE_Vertex2D, texcoord), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(ROSE_Vertex2D, color),    D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	D3D11_INPUT_ELEMENT_DESC input_desc_shape[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(ROSE_ShapeVertex, position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(ROSE_ShapeVertex, texcoord), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(ROSE_ShapeVertex, color),    D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	D3D11_INPUT_ELEMENT_DESC input_desc_3d[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, offsetof(ROSE_Vertex3D, position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(ROSE_Vertex3D, texcoord), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(ROSE_Vertex3D, color),    D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	D3D11_INPUT_ELEMENT_DESC input_desc_mesh[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, offsetof(ROSE_MeshVertex, position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(ROSE_MeshVertex, texcoord), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(ROSE_MeshVertex, color),    D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
 	result = ID3D11Device_CreateInputLayout(
-		rose__device, input_desc,
-		ARRAYSIZE(input_desc),
-		ID3D10Blob_GetBufferPointer(vs_blob),
-		ID3D10Blob_GetBufferSize(vs_blob),
-		&rose__input_layout
+		rose__device, input_desc_shape,
+		ARRAYSIZE(input_desc_shape),
+		ID3D10Blob_GetBufferPointer(vs_shape_blob),
+		ID3D10Blob_GetBufferSize(vs_shape_blob),
+		&rose__input_layout_shape
 	);
 
 	CHECK_HRESULT(result, "ID3D11Device_CreateInputLayout()");
 
 	result = ID3D11Device_CreateInputLayout(
-		rose__device, input_desc_3d,
-		ARRAYSIZE(input_desc_3d),
-		ID3D10Blob_GetBufferPointer(vs3d_blob),
-		ID3D10Blob_GetBufferSize(vs3d_blob),
-		&rose__input_layout_3d
+		rose__device, input_desc_mesh,
+		ARRAYSIZE(input_desc_mesh),
+		ID3D10Blob_GetBufferPointer(vs_mesh_blob),
+		ID3D10Blob_GetBufferSize(vs_mesh_blob),
+		&rose__input_layout_mesh
 	);
 
 	CHECK_HRESULT(result, "ID3D11Device_CreateInputLayout()");
 
-	ID3D10Blob_Release(vs_blob);
-	ID3D10Blob_Release(ps_blob);
+	ID3D10Blob_Release(vs_shape_blob);
+	ID3D10Blob_Release(ps_shape_blob);
 
-	ID3D10Blob_Release(vs3d_blob);
-	ID3D10Blob_Release(ps3d_blob);
+	ID3D10Blob_Release(vs_mesh_blob);
+	ID3D10Blob_Release(ps_mesh_blob);
 
 	ID3DBlob* gs_points_blob = ROSE__CompileShader(L"HLSL/points.hlsl", "gs_main", "gs_5_0");
 
@@ -188,22 +188,22 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	result = ID3D11Device_CreateBuffer(rose__device, &constant_buffer_points_desc, NULL, &rose__constant_buffer_points);
 	CHECK_HRESULT(result, "ID3D11Device_CreateBuffer()");
 
-	D3D11_BUFFER_DESC constant_buffer_3d_desc = {
-		.ByteWidth = sizeof(rose__constants3d_t),
+	D3D11_BUFFER_DESC constant_buffer_mesh_desc = {
+		.ByteWidth = sizeof(rose__constants_mesh_t),
 		.Usage = D3D11_USAGE_DEFAULT,
 		.BindFlags = D3D11_BIND_CONSTANT_BUFFER,
 	};
 
-	result = ID3D11Device_CreateBuffer(rose__device, &constant_buffer_3d_desc, NULL, &rose__constant_buffer_3d);
+	result = ID3D11Device_CreateBuffer(rose__device, &constant_buffer_mesh_desc, NULL, &rose__constant_buffer_mesh);
 	CHECK_HRESULT(result, "ID3D11Device_CreateBuffer()");
 
-	D3D11_BUFFER_DESC constant_buffer_desc = {
-		.ByteWidth = sizeof(rose__constants_t),
+	D3D11_BUFFER_DESC constant_buffer_shape_desc = {
+		.ByteWidth = sizeof(rose__constants_shape_t),
 		.Usage     = D3D11_USAGE_DEFAULT,
 		.BindFlags = D3D11_BIND_CONSTANT_BUFFER,
 	};
 
-	result = ID3D11Device_CreateBuffer(rose__device, &constant_buffer_desc, NULL, &rose__constant_buffer);
+	result = ID3D11Device_CreateBuffer(rose__device, &constant_buffer_shape_desc, NULL, &rose__constant_buffer_shape);
 	CHECK_HRESULT(result, "ID3D11Device_CreateBuffer()");
 
 	D3D11_SAMPLER_DESC sampler_desc = {
@@ -235,14 +235,14 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	result = ID3D11Device_CreateBlendState(rose__device, &blend_desc, &rose__blend_state);
 	CHECK_HRESULT(result, "ID3D11Device_CreateBlendState()");
 
-	D3D11_RASTERIZER_DESC raster_2d_desc = {
+	D3D11_RASTERIZER_DESC raster_shape_desc = {
 		.FillMode              = D3D11_FILL_SOLID,
 		.CullMode              = D3D11_CULL_NONE,
 		.FrontCounterClockwise = FALSE,
 		.DepthClipEnable       = TRUE,
 	};
 
-	result = ID3D11Device_CreateRasterizerState(rose__device, &raster_2d_desc, &rose__raster_2d);
+	result = ID3D11Device_CreateRasterizerState(rose__device, &raster_shape_desc, &rose__raster_shape);
 	CHECK_HRESULT(result, "ID3D11Device_CreateRasterizerState()");
 
 	D3D11_DEPTH_STENCILOP_DESC stencil_keep = {
@@ -337,13 +337,13 @@ void ROSE_Quit(void)
 	ROSE_TextureDestroy(rose__ascii_texture);
 
 	ID3D11BlendState_Release(rose__blend_state);
-	ID3D11RasterizerState_Release(rose__raster_2d);
+	ID3D11RasterizerState_Release(rose__raster_shape);
 	ID3D11SamplerState_Release(rose__sampler);
 
-	ID3D11Buffer_Release(rose__constant_buffer);
-	ID3D11InputLayout_Release(rose__input_layout);
-	ID3D11PixelShader_Release(rose__pixel_shader);
-	ID3D11VertexShader_Release(rose__vertex_shader);
+	ID3D11Buffer_Release(rose__constant_buffer_shape);
+	ID3D11InputLayout_Release(rose__input_layout_shape);
+	ID3D11PixelShader_Release(rose__pixel_shader_shape);
+	ID3D11VertexShader_Release(rose__vertex_shader_shape);
 	ID3D11RenderTargetView_Release(rose__render_target);
 	IDXGISwapChain1_Release(rose__swapchain);
 	ID3D11DeviceContext_Release(rose__context);
@@ -352,10 +352,10 @@ void ROSE_Quit(void)
 	ID3D11DepthStencilState_Release(rose__depth_off);
 	ID3D11DepthStencilView_Release(rose__depth_view);
 
-	ID3D11Buffer_Release(rose__constant_buffer_3d);
-	ID3D11InputLayout_Release(rose__input_layout_3d);
-	ID3D11PixelShader_Release(rose__pixel_shader_3d);
-	ID3D11VertexShader_Release(rose__vertex_shader_3d);
+	ID3D11Buffer_Release(rose__constant_buffer_mesh);
+	ID3D11InputLayout_Release(rose__input_layout_mesh);
+	ID3D11PixelShader_Release(rose__pixel_shader_mesh);
+	ID3D11VertexShader_Release(rose__vertex_shader_mesh);
 
 	ID3D11GeometryShader_Release(rose__geometry_shader_points);
 	ID3D11Buffer_Release(rose__constant_buffer_points);
@@ -369,10 +369,10 @@ void ROSE_Quit(void)
 
 	ID3D11Device_Release(rose__device);
 
-	rose__constant_buffer = NULL;
-	rose__input_layout    = NULL;
-	rose__pixel_shader    = NULL;
-	rose__vertex_shader   = NULL;
+	rose__constant_buffer_shape = NULL;
+	rose__input_layout_shape    = NULL;
+	rose__pixel_shader_shape    = NULL;
+	rose__vertex_shader_shape   = NULL;
 	rose__render_target   = NULL;
 	
 	rose__swapchain = NULL;
@@ -384,7 +384,7 @@ void ROSE_Quit(void)
 	rose__ascii_texture = NULL;
 
 	rose__blend_state   = NULL;
-	rose__raster_2d     = NULL;
+	rose__raster_shape  = NULL;
 	rose__sampler       = NULL;
 
 	if (rose__mouse.hidden)
@@ -431,10 +431,10 @@ void ROSE_Quit(void)
 	rose__depth_off  = NULL;
 	rose__depth_view = NULL;
 
-	rose__constant_buffer_3d = NULL;
-	rose__input_layout_3d    = NULL;
-	rose__pixel_shader_3d    = NULL;
-	rose__vertex_shader_3d   = NULL;
+	rose__constant_buffer_mesh = NULL;
+	rose__input_layout_mesh    = NULL;
+	rose__pixel_shader_mesh    = NULL;
+	rose__vertex_shader_mesh   = NULL;
 
 	rose__geometry_shader_points = NULL;
 	rose__constant_buffer_points = NULL;
