@@ -14,8 +14,16 @@
 #include <assert.h>
 #include <math.h>
 
+#ifndef UNICODE
+  #define UNICODE
+#endif
+#ifndef _UNICODE
+  #define _UNICODE
+#endif
 #define COBJMACROS
 #define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+
 #include <windows.h>
 #include <windowsx.h>
 #include <d3d11.h>
@@ -23,6 +31,34 @@
 #include <stddef.h>
 #include <string.h>
 #include <d3dcompiler.h>
+
+#ifdef near
+  #undef near
+#endif
+
+#ifdef far
+  #undef far
+#endif
+
+#ifdef small
+  #undef small
+#endif
+
+#ifdef interface
+  #undef interface
+#endif
+
+#ifdef IN
+  #undef IN
+#endif
+
+#ifdef OUT
+  #undef OUT
+#endif
+
+#ifdef OPTIONAL
+  #undef OPTIONAL
+#endif
 
 #pragma comment(lib, "user32.lib")
 #pragma comment(lib, "d3d11.lib")
