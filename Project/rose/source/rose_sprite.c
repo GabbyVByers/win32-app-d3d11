@@ -7,16 +7,16 @@
 
 ROSE_Sprite* ROSE_SpriteCreate(ROSE_Texture* texture)
 {
-	if ((texture == NULL) || (texture->view == NULL))
-		texture = rose__blank_texture;
+	if ((texture != NULL) && (texture->view == NULL))
+		texture = NULL;
 
 	ROSE_Sprite* sprite = calloc(1, sizeof(ROSE_Sprite));
 
 	sprite->u0 = 0.0f; sprite->v0 = 0.0f;
 	sprite->u1 = 1.0f; sprite->v1 = 1.0f;
 
-	sprite->width   = (float)texture->width;
-	sprite->height  = (float)texture->height;
+	sprite->width   = (texture != NULL) ? (float)texture->width  : 1.0f;
+	sprite->height  = (texture != NULL) ? (float)texture->height : 1.0f;
 	sprite->texture = texture;
 
 	return sprite;
@@ -29,8 +29,8 @@ void ROSE_SpriteDestroy(ROSE_Sprite* sprite)
 
 void ROSE_SpriteRegion(ROSE_Sprite* sprite, uInt32 xpos, uInt32 ypos, uInt32 width, uInt32 height)
 {
-	float tw = (float)sprite->texture->width;
-	float th = (float)sprite->texture->height;
+	float tw = (sprite->texture != NULL) ? (float)sprite->texture->width  : 1.0f;
+	float th = (sprite->texture != NULL) ? (float)sprite->texture->height : 1.0f;
 
 	sprite->u0 = (float)xpos / tw;
 	sprite->v0 = (float)ypos / th;
