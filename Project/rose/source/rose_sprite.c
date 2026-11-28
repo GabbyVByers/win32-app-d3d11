@@ -40,22 +40,22 @@ void ROSE_SpriteRegion(ROSE_Sprite* sprite, uInt32 xpos, uInt32 ypos, uInt32 wid
 	sprite->height = (float)height;
 }
 
-void ROSE_SpriteDraw(ROSE_Sprite* sprite, ROSE_Vec2 position, float scale, ROSE_Color color)
+void ROSE_SpriteDraw(ROSE_Sprite* sprite, ROSE_DrawInfo draw)
 {
-	float x0 = position.x;
-	float y0 = position.y;
-	float x1 = position.x + sprite->width  * scale;
-	float y1 = position.y + sprite->height * scale;
+	float x0 = draw.position.x;
+	float y0 = draw.position.y;
+	float x1 = draw.position.x + sprite->width  * draw.scale;
+	float y1 = draw.position.y + sprite->height * draw.scale;
 
 	float u0 = sprite->u0, v0 = sprite->v0;
 	float u1 = sprite->u1, v1 = sprite->v1;
 
-	ROSE_ShapeVertex* verts = ROSE__BatchAllocate(sprite->texture, 6);
-	verts[0] = (ROSE_ShapeVertex){ x0, y0, u0, v0, color };
-	verts[1] = (ROSE_ShapeVertex){ x1, y0, u1, v0, color };
-	verts[2] = (ROSE_ShapeVertex){ x0, y1, u0, v1, color };
-	verts[3] = (ROSE_ShapeVertex){ x1, y0, u1, v0, color };
-	verts[4] = (ROSE_ShapeVertex){ x1, y1, u1, v1, color };
-	verts[5] = (ROSE_ShapeVertex){ x0, y1, u0, v1, color };
+	ROSE_VertexShape* verts = ROSE__BatchAllocate(sprite->texture, 6);
+	verts[0] = (ROSE_VertexShape){ x0, y0, u0, v0, draw.color };
+	verts[1] = (ROSE_VertexShape){ x1, y0, u1, v0, draw.color };
+	verts[2] = (ROSE_VertexShape){ x0, y1, u0, v1, draw.color };
+	verts[3] = (ROSE_VertexShape){ x1, y0, u1, v0, draw.color };
+	verts[4] = (ROSE_VertexShape){ x1, y1, u1, v1, draw.color };
+	verts[5] = (ROSE_VertexShape){ x0, y1, u0, v1, draw.color };
 }
 

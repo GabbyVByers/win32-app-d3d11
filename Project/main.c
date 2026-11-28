@@ -16,7 +16,7 @@ int main(void)
 	ROSE_Init(L"My Window", 1200, 700);
 	ROSE_WindowVSync(false);
 
-	ROSE_MeshVertex vertices[] = {
+	ROSE_VertexMesh vertices[] = {
 		{ { 0, 1, 0 }, { 0, 0 }, ROSE_COLOR_RED    }, { { 1, 1, 0 }, { 1, 0 }, ROSE_COLOR_RED    }, { { 1, 0, 0 }, { 1, 1 }, ROSE_COLOR_RED    },
 		{ { 0, 1, 0 }, { 0, 0 }, ROSE_COLOR_RED    }, { { 1, 0, 0 }, { 1, 1 }, ROSE_COLOR_RED    }, { { 0, 0, 0 }, { 0, 1 }, ROSE_COLOR_RED    },
 		{ { 1, 1, 1 }, { 0, 0 }, ROSE_COLOR_CYAN   }, { { 0, 1, 1 }, { 1, 0 }, ROSE_COLOR_CYAN   }, { { 0, 0, 1 }, { 1, 1 }, ROSE_COLOR_CYAN   },
@@ -48,7 +48,7 @@ int main(void)
 		camera_control(&camera, dt);
 
 		ROSE_FrameClear(ROSE_COLOR_RGBA(30, 15, 70, 255));
-		ROSE_MeshDraw(mesh, NULL, camera, ROSE_QUAT_IDENTITY, ROSE_VEC3_ZERO, 1.0f, ROSE_COLOR_WHITE, ROSE_TRIANGLES, 0.0f);
+		ROSE_MeshDraw(mesh, ROSE_MESH_DRAW_DEFAULT, camera);
 		ROSE_FrameRender();
 	}
 

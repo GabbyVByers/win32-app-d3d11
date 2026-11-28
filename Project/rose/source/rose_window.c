@@ -135,15 +135,15 @@ void ROSE_Init(const wchar_t* title, uInt32 width, uInt32 height)
 	CHECK_HRESULT(result, "ID3D11Device_CreatePixelShader()");
 
 	D3D11_INPUT_ELEMENT_DESC input_desc_shape[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(ROSE_ShapeVertex, position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(ROSE_ShapeVertex, texcoord), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(ROSE_ShapeVertex, color),    D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(ROSE_VertexShape, position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(ROSE_VertexShape, texcoord), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(ROSE_VertexShape, color),    D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
 	D3D11_INPUT_ELEMENT_DESC input_desc_mesh[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, offsetof(ROSE_MeshVertex, position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(ROSE_MeshVertex, texcoord), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(ROSE_MeshVertex, color),    D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, offsetof(ROSE_VertexMesh, position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(ROSE_VertexMesh, texcoord), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(ROSE_VertexMesh, color),    D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
 	result = ID3D11Device_CreateInputLayout(

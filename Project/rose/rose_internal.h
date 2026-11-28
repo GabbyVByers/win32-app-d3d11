@@ -181,7 +181,7 @@ typedef struct ROSE_Text {
 	char* string;
 	uInt32 count;
 	uInt32 capacity;
-	ROSE_ShapeVertex* vertices;
+	ROSE_VertexShape* vertices;
 	uInt32 vertex_count;
 } ROSE_Text;
 
@@ -191,7 +191,7 @@ void              ROSE__CreateRenderTarget(void);
 void              ROSE__BindPipelineShape(ID3D11Buffer* vertices, ROSE_Texture* texture, ROSE_Vec2 position, float scale, ROSE_Color color, ROSE_PRIMITIVE primitive, float diameter);
 void              ROSE__BindPrimitive(ROSE_PRIMITIVE primitive, float diameter);
 Int64             ROSE__Ticks(void);
-ROSE_ShapeVertex* ROSE__BatchAllocate(ROSE_Texture* texture, uInt32 count);
+ROSE_VertexShape* ROSE__BatchAllocate(ROSE_Texture* texture, uInt32 count);
 void              ROSE__BatchCreate(void);
 void              ROSE__BatchDestroy(void);
 void              ROSE__BatchFlush(void);

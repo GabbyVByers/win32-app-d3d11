@@ -178,7 +178,7 @@ void ROSE__BindPipelineShape(ID3D11Buffer* vertices, ROSE_Texture* texture, ROSE
 	if ((texture == NULL) || (texture->view == NULL))
 		texture = rose__blank_texture;
 
-	UINT stride = sizeof(ROSE_ShapeVertex);
+	UINT stride = sizeof(ROSE_VertexShape);
 	UINT offset = 0;
 	ID3D11DeviceContext_IASetInputLayout(rose__context, rose__input_layout_shape);
 	ID3D11DeviceContext_IASetVertexBuffers(rose__context, 0, 1, &vertices, &stride, &offset);
@@ -246,9 +246,9 @@ static uInt32 batch_cursor = 0;
 static uInt32 batch_count  = 0;
 static ID3D11Buffer* batch_buffer  = NULL;
 static ROSE_Texture* batch_texture = NULL;
-static ROSE_ShapeVertex batch_vertices[BATCH_VERTICES];
+static ROSE_VertexShape batch_vertices[BATCH_VERTICES];
 
-ROSE_ShapeVertex* ROSE__BatchAllocate(ROSE_Texture* texture, uInt32 count)
+ROSE_VertexShape* ROSE__BatchAllocate(ROSE_Texture* texture, uInt32 count)
 {
 	if (texture != batch_texture) {
 		ROSE__BatchFlush();
@@ -258,7 +258,7 @@ ROSE_ShapeVertex* ROSE__BatchAllocate(ROSE_Texture* texture, uInt32 count)
 	if ((batch_count + count) > BATCH_VERTICES)
 		ROSE__BatchFlush();
 
-	ROSE_ShapeVertex* vertices = batch_vertices + batch_count;
+	ROSE_VertexShape* vertices = batch_vertices + batch_count;
 	batch_count += count;
 	return vertices;
 }
@@ -266,7 +266,7 @@ ROSE_ShapeVertex* ROSE__BatchAllocate(ROSE_Texture* texture, uInt32 count)
 void ROSE__BatchCreate(void)
 {
 	D3D11_BUFFER_DESC desc = {
-		.ByteWidth      = sizeof(ROSE_ShapeVertex) * BATCH_VERTICES,
+		.ByteWidth      = sizeof(ROSE_VertexShape) * BATCH_VERTICES,
 		.Usage          = D3D11_USAGE_DYNAMIC,
 		.BindFlags      = D3D11_BIND_VERTEX_BUFFER,
 		.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE,
@@ -308,8 +308,8 @@ void ROSE__BatchFlush(void)
 	HRESULT result = ID3D11DeviceContext_Map(rose__context, (ID3D11Resource*)batch_buffer, 0, mode, 0, &mapped);
 	CHECK_HRESULT(result, "ID3D11DeviceContext_Map()");
 
-	ROSE_ShapeVertex* dst = (ROSE_ShapeVertex*)mapped.pData + batch_cursor;
-	memcpy(dst, batch_vertices, sizeof(ROSE_ShapeVertex) * batch_count);
+	ROSE_VertexShape* dst = (ROSE_VertexShape*)mapped.pData + batch_cursor;
+	memcpy(dst, batch_vertices, sizeof(ROSE_VertexShape) * batch_count);
 	ID3D11DeviceContext_Unmap(rose__context, (ID3D11Resource*)batch_buffer, 0);
 
 	ROSE__BindPipelineShape(batch_buffer, batch_texture, ROSE_VEC2_ZERO, 1.0f, ROSE_COLOR_WHITE, ROSE_TRIANGLES, 0.0f);

@@ -154,6 +154,7 @@
     <ClCompile Include="rose\source\rose_peripherals.c" />
     <ClCompile Include="rose\source\rose_math.c" />
     <ClCompile Include="rose\source\rose_mesh.c" />
+    <ClCompile Include="rose\source\rose_shape.c" />
     <ClCompile Include="rose\source\rose_sprite.c" />
     <ClCompile Include="rose\source\rose_text.c" />
     <ClCompile Include="rose\source\rose_window.c" />
